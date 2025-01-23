@@ -1,0 +1,26 @@
+@m2e-onbuy-icons-admin__font-name-path: 'M2E_OnBuy::fonts/onbuy-icons';
+@m2e-onbuy-icons-admin__font-name: 'm2e-onbuy';
+
+.lib-font-face(
+  @family-name: @m2e-onbuy-icons-admin__font-name,
+  @font-path: @m2e-onbuy-icons-admin__font-name-path,
+  @font-weight: normal,
+  @font-style: normal
+);
+
+.admin__menu .item-onbuy-maintenance.parent.level-0 > a:before,
+.admin__menu .item-onbuy-maintenance.level-0 > a:before {
+  font-family: @m2e-onbuy-icons-admin__font-name;
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+  content: "\e800";
+}
+
+.admin__menu .item-onbuy.parent.level-0 > a:before,
+.admin__menu .item-onbuy.level-0 > a:before {
+  font-family: @m2e-onbuy-icons-admin__font-name;
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+  line-height: 25px;
+  content: "\e800";
+}

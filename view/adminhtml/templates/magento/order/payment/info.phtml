@@ -1,0 +1,23 @@
+<?php
+
+// @codingStandardsIgnoreFile
+
+/** @var $block \M2E\OnBuy\Block\Adminhtml\Magento\Payment\Info */
+
+?>
+
+<table>
+    <?php if ($block->getPaymentMethod() != '') : ?>
+        <tr>
+            <td style="width: 200px;"><label><?= __('Payment Method'); ?>:</label></td>
+            <td><strong><?= $block->escapeHtml($block->getPaymentMethod()); ?></strong></td>
+        </tr>
+    <?php endif; ?>
+
+    <?php if ($block->getChannelOrderId() != '') : ?>
+        <tr>
+            <td style="width: 200px;"><?= __('OnBuy Order ID') ?>:</td>
+            <td><strong><?= $block->escapeHtml($block->getChannelOrderId()); ?></strong></td>
+        </tr>
+    <?php endif; ?>
+</table>

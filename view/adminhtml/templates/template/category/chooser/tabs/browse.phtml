@@ -1,0 +1,47 @@
+<?php
+
+/** @var \M2E\OnBuy\Block\Adminhtml\Template\Category\Chooser\Tabs\Browse $block */
+
+$isWizard = !$block->viewHelper->isInstallationWizardFinished();
+
+$block->jsUrl->add($block->getUrl('*/general/getChildCategories'), 'general/getChildCategories');
+
+$block->js->add(
+    "
+require([
+    'OnBuy/OnBuy/Template/Category/Chooser/Tabs/Browse'
+], function(){
+
+    window.OnBuyTemplateCategoryChooserTabsBrowseObj = new OnBuyTemplateCategoryChooserTabsBrowse();
+
+    OnBuyTemplateCategoryChooserTabsBrowseObj.setShopId(OnBuyCategoryChooserObj.getShopId());
+    OnBuyTemplateCategoryChooserTabsBrowseObj.setAccountId(OnBuyCategoryChooserObj.getAccountId());
+    OnBuyTemplateCategoryChooserTabsBrowseObj.renderTopLevelCategories('chooser_browser-selects');
+    OnBuyTemplateCategoryChooserTabsBrowseObj.observe('leaf_selected', function(selectedCategories) {
+        const lastCategory = selectedCategories[selectedCategories.length-1];
+        if (lastCategory['invite_only'] == 1) {
+            OnBuyCategoryChooserObj.unSelectCategory();
+        } else {
+            OnBuyCategoryChooserObj.selectCategory(lastCategory['value']);
+        }
+    });
+});
+
+"
+);
+?>
+
+<style>
+    .category-children-block {
+        display: inline-block;
+        margin-left: 10px;
+    }
+    [data-invite_only="1"] {
+        color: gray
+    }
+</style>
+
+<div id="chooser_browser">
+    <div id="chooser_browser-message_wrapper"><?= $block->getInviteOnlyNotice() ?></div>
+    <div id="chooser_browser-selects"></div>
+</div>

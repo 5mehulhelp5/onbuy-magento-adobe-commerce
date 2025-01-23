@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      layout="admin-1column"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="M2E_OnBuy::css/listing/autoAction.css"/>
+        <css src="M2E_OnBuy::css/listing/view.css"/>
+    </head>
+    <update handle="m2e_onbuy_general_handler"/>
+    <body>
+        <referenceContainer name="main.top">
+            <container name="m2e.onbuy.help">
+                <block class="M2E\OnBuy\Block\Adminhtml\HelpBlock">
+                    <arguments>
+                        <argument name="content" xsi:type="string" translate="true">M2E OnBuy Connect Listing is a group of Magento Products sold on a certain Site from a particular Account. M2E OnBuy Connect has several options to display the content of Listings referring to different data details. Each of the view options contains a unique set of available Actions accessible in the Mass Actions drop-down.</argument>
+                    </arguments>
+                </block>
+            </container>
+        </referenceContainer>
+
+        <referenceContainer name="page.main.actions">
+            <container name="m2e.onbuy.listing.switcher">
+                <block class="M2E\OnBuy\Block\Adminhtml\Listing\View\Switcher"/>
+            </container>
+        </referenceContainer>
+
+        <referenceContainer name="content">
+            <container name="m2e.onbuy.listing.header">
+                <block class="M2E\OnBuy\Block\Adminhtml\Listing\View\Header">
+                    <arguments>
+                        <argument name="listing_view_mode" xsi:type="boolean">true</argument>
+                    </arguments>
+                </block>
+            </container>
+        </referenceContainer>
+        <block class="M2E\Core\Block\Adminhtml\Widget\SmartTitle" name="page.title"
+               template="M2E_Core::widget/smart_title.phtml">
+            <arguments>
+                <argument name="base_prefix" translate="true" xsi:type="string">M2E OnBuy Listing</argument>
+                <argument name="data_provider" xsi:type="object">
+                    M2E\OnBuy\Model\Listing\Ui\SmartTitle\DataProvider
+                </argument>
+                <argument name="url_builder" xsi:type="object">
+                    M2E\OnBuy\Model\Listing\Ui\SmartTitle\UrlBuilder
+                </argument>
+            </arguments>
+        </block>
+    </body>
+</page>

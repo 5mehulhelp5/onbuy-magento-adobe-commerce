@@ -1,0 +1,28 @@
+{
+    "name" : "m2e/onbuy-magento-adobe-commerce",
+    "description" : "OnBuy Magento (Adobe Commerce) Connect by M2E is a trusted Magento extension that enables merchants of all sizes to fully integrate their Magento-based systems with OnBuy",
+    "type" : "magento2-module",
+    "version" : "1.0.0",
+    "license" : "proprietary",
+    "keywords" : [
+        "magento",
+        "onbuy",
+        "m2e",
+        "onbuy connector",
+        "ecommerce",
+        "onbuy marketplace"
+    ],
+    "homepage" : "https://m2epro.com/",
+    "require" : {
+        "php" : ">=7.4",
+        "m2e/core": "^1.1.1"
+    },
+    "autoload" : {
+        "files" : [
+            "registration.php"
+        ],
+        "psr-4" : {
+            "M2E\\OnBuy\\" : ""
+        }
+    }
+}
