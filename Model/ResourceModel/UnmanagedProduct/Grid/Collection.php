@@ -56,6 +56,10 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     public function addFieldToFilter($field, $condition = null)
     {
+        if ($field === 'id') {
+            $field = 'main_table.id';
+        }
+
         if ($field === 'account') {
             $field = 'main_table.account_id';
         }

@@ -33,7 +33,7 @@ class Uninstall implements \Magento\Framework\Setup\UninstallInterface
     {
         $this->uninstallFactory
             ->create(
-                \M2E\Core\Helper\Module::IDENTIFIER,
+                \M2E\OnBuy\Helper\Module::IDENTIFIER,
                 $this->installTablesListResolver,
                 $this->configManager->getAdapter(),
                 $this->variablesDir->getAdapter(),

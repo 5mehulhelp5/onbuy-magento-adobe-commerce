@@ -14,10 +14,7 @@ class UpgradeCollection extends \M2E\Core\Model\Setup\AbstractUpgradeCollection
     protected function getSourceVersionUpgrades(): array
     {
         return [
-            //'from_version1' => [
-            //    'to' => '$version$',
-            //    'upgrade' => null or UpgradeConfig class name, \M2E\Core\Model\Setup\Upgrade\Entity\ConfigInterface
-            // ],
+            '1.0.0' => ['to' => '1.0.1', 'upgrade' => null],
         ];
     }
 }

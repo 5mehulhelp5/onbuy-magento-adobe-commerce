@@ -119,7 +119,7 @@ class Module implements \M2E\Core\Model\ModuleInterface
         /** @psalm-suppress RedundantPropertyInitializationCheck */
         if (!isset($this->adapter)) {
             $this->adapter = $this->adapterFactory->create(
-                \M2E\Core\Helper\Module::IDENTIFIER,
+                \M2E\OnBuy\Helper\Module::IDENTIFIER,
                 $this->registryManager->getAdapter(),
                 $this->configManager->getAdapter()
             );
