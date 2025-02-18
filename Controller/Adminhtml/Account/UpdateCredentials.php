@@ -73,8 +73,11 @@ class UpdateCredentials extends \M2E\OnBuy\Controller\Adminhtml\AbstractAccount
             $this->helperException->process($exception);
 
             $message = __(
-                'The OnBuy access obtaining is currently unavailable.<br/>Reason: %error_message',
-                ['error_message' => $exception->getMessage()],
+                'The %channel_title access obtaining is currently unavailable.<br/>Reason: %error_message',
+                [
+                    'error_message' => $exception->getMessage(),
+                    'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                ],
             );
 
             $this->messageManager->addError($message);

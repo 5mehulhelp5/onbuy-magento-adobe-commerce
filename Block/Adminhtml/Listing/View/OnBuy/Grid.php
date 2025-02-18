@@ -213,23 +213,33 @@ class Grid extends \M2E\OnBuy\Block\Adminhtml\Listing\View\AbstractGrid
         // Set mass-action
         // ---------------------------------------
 
+        $this->getMassactionBlock()->addItem('list', [
+            'label' => __('List Item(s) on OnBuy'),
+            'url' => '',
+        ], 'actions');
+
         $this->getMassactionBlock()->addItem('revise', [
-            'label' => __('Revise Item(s) on OnBuy'),
+            'label' => __('Revise Item(s) on ' . \M2E\OnBuy\Helper\Module::getChannelTitle()),
             'url' => '',
         ], 'actions');
 
         $this->getMassactionBlock()->addItem('relist', [
-            'label' => __('Relist Item(s) on OnBuy'),
+            'label' => __('Relist Item(s) on ' . \M2E\OnBuy\Helper\Module::getChannelTitle()),
             'url' => '',
         ], 'actions');
 
         $this->getMassactionBlock()->addItem('stop', [
-            'label' => __('Stop Item(s) on OnBuy'),
+            'label' => __('Stop Item(s) on ' . \M2E\OnBuy\Helper\Module::getChannelTitle()),
             'url' => '',
         ], 'actions');
 
         $this->getMassactionBlock()->addItem('stopAndRemove', [
-            'label' => __('Remove from OnBuy / Remove from Listing'),
+            'label' => __(
+                'Remove from %channel_title / Remove from Listing',
+                [
+                    'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                ]
+            ),
             'url' => '',
         ], 'actions');
 
@@ -396,6 +406,7 @@ HTML;
         $ignoreListings = \M2E\Core\Helper\Json::encode([$this->getListing()->getId()]);
 
         $this->jsUrl->addUrls([
+            'runListProducts' => $this->getUrl('*/listing/runListProducts'),
             'runRelistProducts' => $this->getUrl('*/listing/runRelistProducts'),
             'runReviseProducts' => $this->getUrl('*/listing/runReviseProducts'),
             'runStopProducts' => $this->getUrl('*/listing/runStopProducts'),
@@ -431,18 +442,50 @@ HTML;
         $taskCompletedErrorMessage = __('"%task_title%" task has completed with errors. ' .
             '<a target="_blank" href="%url%">View Log</a> for details.');
 
+        $channelTitle = \M2E\OnBuy\Helper\Module::getChannelTitle();
+
         $this->jsTranslator->addTranslations([
             'task_completed_message' => __('Task completed. Please wait ...'),
             'task_completed_success_message' => __('"%task_title%" task has completed.'),
             'task_completed_warning_message' => $taskCompletedWarningMessage,
             'task_completed_error_message' => $taskCompletedErrorMessage,
-            'sending_data_message' => __('Sending %product_title% Product(s) data on OnBuy.'),
+            'sending_data_message' => __(
+                'Sending %product_title% Product(s) data on %channel_title.',
+                [
+                    'channel_title' => $channelTitle,
+                ]
+            ),
             'view_full_product_log' => __('View Full Product Log.'),
-            'listing_selected_items_message' => __('Listing Selected Items On OnBuy'),
-            'revising_selected_items_message' => __('Revising Selected Items On OnBuy'),
-            'relisting_selected_items_message' => __('Relisting Selected Items On OnBuy'),
-            'stopping_selected_items_message' => __('Stopping Selected Items On OnBuy'),
-            'stopping_and_removing_selected_items_message' => __('Removing from OnBuy And Removing From Listing Selected Items'),
+            'listing_selected_items_message' => __(
+                'Listing Selected Items On %channel_title',
+                [
+                    'channel_title' => $channelTitle,
+                ]
+            ),
+            'revising_selected_items_message' => __(
+                'Revising Selected Items On %channel_title',
+                [
+                    'channel_title' => $channelTitle,
+                ]
+            ),
+            'relisting_selected_items_message' => __(
+                'Relisting Selected Items On %channel_title',
+                [
+                    'channel_title' => $channelTitle,
+                ]
+            ),
+            'stopping_selected_items_message' => __(
+                'Stopping Selected Items On %channel_title',
+                [
+                    'channel_title' => $channelTitle,
+                ]
+            ),
+            'stopping_and_removing_selected_items_message' => __(
+                'Removing from %channel_title And Removing From Listing Selected Items',
+                [
+                    'channel_title' => $channelTitle,
+                ]
+            ),
             'removing_selected_items_message' => __('Removing From Listing Selected Items'),
 
             'Please select the Products you want to perform the Action on.' =>

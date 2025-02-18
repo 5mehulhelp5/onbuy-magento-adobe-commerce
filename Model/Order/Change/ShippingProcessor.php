@@ -79,10 +79,11 @@ class ShippingProcessor
         \M2E\OnBuy\Model\Order\Change $change
     ): void {
         $order->addSuccessLog(
-            'Tracking number "%num%" for "%code%" has been sent to OnBuy.',
+            'Tracking number "%num%" for "%code%" has been sent to %channel_title%.',
             [
                 '!num' => $changeResult->trackingNumber,
                 '!code' => $changeResult->trackingTitle,
+                '!channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
             ]
         );
 

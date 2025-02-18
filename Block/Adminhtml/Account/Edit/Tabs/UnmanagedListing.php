@@ -36,11 +36,17 @@ class UnmanagedListing extends AbstractForm
             'onbuy_accounts_other_listings',
             self::HELP_BLOCK,
             [
-                'content' => __('<p>This tab of the Account settings contains main configurations ' .
+                'content' => __(
+                    '<p>This tab of the Account settings contains main configurations ' .
                     'for the Unmanaged Listing management. You can set preferences whether you would like to ' .
-                    'import Unmanaged Listings (Items that were Listed on OnBuy either directly on the ' .
-                    'channel or with the help of other than M2E OnBuy Connect tool), automatically link them ' .
-                    'to Magento Product, etc.</p>'),
+                    'import Unmanaged Listings (Items that were Listed on %channel_title either directly on the ' .
+                    'channel or with the help of other than %extension_title tool), automatically link them ' .
+                    'to Magento Product, etc.</p>',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                        'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                    ]
+                ),
             ]
         );
 
@@ -63,9 +69,15 @@ class UnmanagedListing extends AbstractForm
                     0 => __('No'),
                 ],
                 'value' => (int)$unmanagedListingSettings->isSyncEnabled(),
-                'tooltip' => __('Choose whether to import items that have been listed on OnBuy ' .
-                    'either directly or using a tool other than M2E OnBuy Connect. M2E OnBuy Connect will ' .
-                    'import only active OnBuy items.'),
+                'tooltip' => __(
+                    'Choose whether to import items that have been listed on %channel_title ' .
+                    'either directly or using a tool other than %extension_title. %extension_title will ' .
+                    'import only active %channel_title items.',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                        'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                    ]
+                ),
             ]
         );
 
@@ -82,8 +94,13 @@ class UnmanagedListing extends AbstractForm
                     0 => __('No'),
                 ],
                 'value' => (int)$unmanagedListingSettings->isMappingEnabled(),
-                'tooltip' => __('Choose whether imported OnBuy Listings should automatically ' .
-                    'link to a Product in your Magento Inventory.'),
+                'tooltip' => __(
+                    'Choose whether imported %channel_title Listings should automatically ' .
+                    'link to a Product in your Magento Inventory.',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ]
+                ),
             ]
         );
 
@@ -92,10 +109,15 @@ class UnmanagedListing extends AbstractForm
             [
                 'legend' => __('Magento Product Linking Settings'),
                 'collapsable' => true,
-                'tooltip' => __('<p>In this section you can provide settings for automatic Linking of the ' .
+                'tooltip' => __(
+                    '<p>In this section you can provide settings for automatic Linking of the ' .
                     'newly imported Unmanaged Listings to the appropriate Magento Products.</p><br>' .
-                    '<p>The imported Items are linked based on the correspondence between OnBuy Item ' .
-                    'values and Magento Product Attribute values. </p>'),
+                    '<p>The imported Items are linked based on the correspondence between %channel_title Item ' .
+                    'values and Magento Product Attribute values. </p>',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ]
+                ),
             ]
         );
 

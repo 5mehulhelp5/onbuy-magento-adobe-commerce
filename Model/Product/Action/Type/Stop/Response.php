@@ -43,11 +43,11 @@ class Response extends \M2E\OnBuy\Model\Product\Action\Type\AbstractResponse
         $this->productRepository->save($this->getProduct());
     }
 
-    public function processFail()
+    private function processFail(): void
     {
         $responseData = $this->getResponseData();
         foreach ($responseData['messages'] as $message) {
-            $this->getLogBuffer()->addFail($message['title']);
+            $this->getLogBuffer()->addFail($message['text']);
         }
     }
 

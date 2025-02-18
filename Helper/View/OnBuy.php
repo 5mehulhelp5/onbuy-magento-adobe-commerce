@@ -19,16 +19,6 @@ class OnBuy
 
     // ----------------------------------------
 
-    public static function getTitle(): string
-    {
-        return (string)__('OnBuy Integration');
-    }
-
-    public static function getMenuRootNodeLabel(): string
-    {
-        return self::getTitle();
-    }
-
     public static function getWizardInstallationNick(): string
     {
         return self::WIZARD_INSTALLATION_NICK;

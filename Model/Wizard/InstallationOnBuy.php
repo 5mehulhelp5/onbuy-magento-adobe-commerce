@@ -10,7 +10,7 @@ class InstallationOnBuy extends Wizard
     protected $steps = [
         'registration',
         'account',
-      //  'settings',
+        'settings',
         'listingTutorial',
     ];
 

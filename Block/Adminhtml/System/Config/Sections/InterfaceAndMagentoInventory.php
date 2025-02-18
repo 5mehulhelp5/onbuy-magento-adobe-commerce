@@ -36,7 +36,7 @@ class InterfaceAndMagentoInventory extends \M2E\OnBuy\Block\Adminhtml\System\Con
                     'Inventory, Price. Recommendations for the tracking direct database changes can also be ' .
                     'found below. Read the <a href="%url" target="_blank">article</a> for more details.</p><br>' .
                     '<p>Click <strong>Save Config</strong> if you make any changes.</p>',
-                    ['url' => 'https://docs-m2.m2epro.com'],
+                    ['url' => 'https://docs-m2.m2epro.com/docs/m2e-onbuy-global-settings/'],
                 ),
             ]
         );
@@ -76,9 +76,14 @@ class InterfaceAndMagentoInventory extends \M2E\OnBuy\Block\Adminhtml\System\Con
                     1 => __('Show'),
                 ],
                 'value' => $this->configurationHelper->getViewShowBlockNoticesMode(),
-                'tooltip' => __('<p>Choose whether you want the help information to be available at the top of ' .
-                    'each M2E OnBuy Connect Page.</p><br><p><strong>Please note</strong>, it does not disable the ' .
-                    'help-tips (the icons with the additional information next to the main options).</p>'),
+                'tooltip' => __(
+                    '<p>Choose whether you want the help information to be available at the top of ' .
+                    'each %extension_title Page.</p><br><p><strong>Please note</strong>, it does not disable the ' .
+                    'help-tips (the icons with the additional information next to the main options).</p>',
+                    [
+                        'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                    ]
+                ),
             ]
         );
 
@@ -111,9 +116,15 @@ class InterfaceAndMagentoInventory extends \M2E\OnBuy\Block\Adminhtml\System\Con
                     1 => __('Allow'),
                 ],
                 'value' => $this->configurationHelper->isEnableProductForceQtyMode(),
-                'tooltip' => __('Choose whether M2E OnBuy Connect is allowed to List Products with unlimited ' .
+                'tooltip' => __(
+                    'Choose whether %extension_title is allowed to List Products with unlimited ' .
                     'stock or that are temporarily out of stock.<br><b>Disallow</b> is the recommended setting ' .
-                    'for OnBuy Integration.'),
+                    'for %channel_title.',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                        'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                    ]
+                ),
             ]
         );
 
@@ -144,13 +155,18 @@ class InterfaceAndMagentoInventory extends \M2E\OnBuy\Block\Adminhtml\System\Con
                 ],
                 'value' => $this->configurationHelper
                     ->getMagentoAttributePriceTypeConvertingMode(),
-                'tooltip' => __('<p>Choose whether Magento Price Attribute values should be converted ' .
-                    'automatically. With this option enabled, M2E OnBuy Connect will provide currency conversion ' .
+                'tooltip' => __(
+                    '<p>Choose whether Magento Price Attribute values should be converted ' .
+                    'automatically. With this option enabled, %extension_title will provide currency conversion ' .
                     'based on Magento Currency Settings.</p><p><strong>For example</strong>, the Item Price is set ' .
                     'to be taken from Magento Price Attribute (e.g. 5 USD).<br>If this Item is listed ' .
                     'with a different Base Currency (e.g. GBP), the currency conversion is performed automatically ' .
                     'based on the set exchange rate (e.g. 1 USD = 0.82 GBP).<br>The Item will be available on Channel ' .
-                    'at the Price of 4.1 GBP.</p>'),
+                    'at the Price of 4.1 GBP.</p>',
+                    [
+                        'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                    ]
+                ),
             ]
         );
 

@@ -22,6 +22,13 @@ abstract class AbstractRealtime extends \M2E\OnBuy\Model\Product\Action\Manual\A
         $params['logs_action_id'] = $this->getLogActionId();
         foreach ($actions as $action) {
             switch ($this->getAction()) {
+                case \M2E\OnBuy\Model\Product::ACTION_LIST:
+                    $result = $this->actionDispatcher->processList(
+                        $action->getProduct(),
+                        $params,
+                        \M2E\OnBuy\Model\Product::STATUS_CHANGER_USER
+                    );
+                    break;
                 case \M2E\OnBuy\Model\Product::ACTION_REVISE:
                     $result = $this->actionDispatcher->processRevise(
                         $action->getProduct(),

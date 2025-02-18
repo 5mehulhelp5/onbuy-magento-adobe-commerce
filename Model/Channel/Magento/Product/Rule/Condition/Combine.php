@@ -24,7 +24,7 @@ class Combine extends \M2E\OnBuy\Model\Magento\Product\Rule\Condition\Combine
 
     protected function getCustomLabel(): string
     {
-        return (string)\__('OnBuy Connect Values');
+        return \M2E\OnBuy\Helper\Module::getExtensionTitle() . ' Values';
     }
 
     protected function getCustomOptions(): array

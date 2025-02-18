@@ -154,7 +154,12 @@
                             echo $block->__('Use Custom Settings') ?></a>
                         <?php
                         echo $block->getTooltipHtml(
-                            'Use this option if nonsignificant changes have to be made to this Policy while the set of settings will be applied only to the current M2E OnBuy Connect Listing.'
+                            strtr(
+                                'Use this option if nonsignificant changes have to be made to this Policy while the set of settings will be applied only to the current %extension_title Listing.',
+                                [
+                                    'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                                ]
+                            )
                         ); ?>
                     </div>
 

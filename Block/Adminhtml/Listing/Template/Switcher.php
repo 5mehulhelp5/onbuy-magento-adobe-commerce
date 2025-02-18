@@ -55,6 +55,9 @@ class Switcher extends AbstractBlock
             case \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_SYNCHRONIZATION:
                 $title = __('Synchronization');
                 break;
+            case \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_SHIPPING:
+                $title = __('Shipping');
+                break;
         }
 
         return $title;
@@ -165,6 +168,9 @@ class Switcher extends AbstractBlock
                 break;
             case \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_SYNCHRONIZATION:
                 $blockName = \M2E\OnBuy\Block\Adminhtml\Template\Synchronization\Edit\Form\Data::class;
+                break;
+            case \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_SHIPPING:
+                $blockName = \M2E\OnBuy\Block\Adminhtml\Template\Shipping\Edit\Form\Data::class;
                 break;
         }
 

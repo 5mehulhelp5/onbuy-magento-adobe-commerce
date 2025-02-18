@@ -49,7 +49,7 @@ class Response extends \M2E\OnBuy\Model\Product\Action\Type\Revise\Response
 
             $resultMessage = sprintf(
                 'Product failed to be relisted. Reason: %s',
-                $responseData['messages'][0]['title']
+                $responseData['messages'][0]['text']
             );
             $this->getLogBuffer()->addFail($resultMessage);
         }

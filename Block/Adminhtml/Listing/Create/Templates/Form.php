@@ -5,7 +5,9 @@ namespace M2E\OnBuy\Block\Adminhtml\Listing\Create\Templates;
 use M2E\OnBuy\Model\Listing;
 use M2E\OnBuy\Model\Policy\Manager as TemplateManager;
 use M2E\OnBuy\Model\ResourceModel\Policy\SellingFormat\CollectionFactory as SellingFormatCollectionFactory;
+use M2E\OnBuy\Model\ResourceModel\Policy\Shipping\CollectionFactory as ShippingCollectionFactory;
 use M2E\OnBuy\Model\ResourceModel\Policy\Synchronization\CollectionFactory as SynchronizationCollectionFactory;
+use M2E\OnBuy\Model\ResourceModel\Policy\Shipping as ShippingResource;
 
 class Form extends \M2E\OnBuy\Block\Adminhtml\Magento\Form\AbstractForm
 {
@@ -14,8 +16,10 @@ class Form extends \M2E\OnBuy\Block\Adminhtml\Magento\Form\AbstractForm
     private Listing\Repository $listingRepository;
     private SellingFormatCollectionFactory $sellingFormatCollectionFactory;
     private SynchronizationCollectionFactory $synchronizationCollectionFactory;
+    private ShippingCollectionFactory $shippingCollectionFactory;
 
     public function __construct(
+        ShippingCollectionFactory $shippingCollectionFactory,
         SellingFormatCollectionFactory $sellingFormatCollectionFactory,
         SynchronizationCollectionFactory $synchronizationCollectionFactory,
         \M2E\OnBuy\Model\Listing\Repository $listingRepository,
@@ -29,6 +33,7 @@ class Form extends \M2E\OnBuy\Block\Adminhtml\Magento\Form\AbstractForm
         $this->listingRepository = $listingRepository;
         $this->sellingFormatCollectionFactory = $sellingFormatCollectionFactory;
         $this->synchronizationCollectionFactory = $synchronizationCollectionFactory;
+        $this->shippingCollectionFactory = $shippingCollectionFactory;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -148,6 +153,40 @@ HTML
             ]
         );
 
+        $fieldset->addField(
+            'condition',
+            self::SELECT,
+            [
+                'name' => 'condition',
+                'label' => $this->__('Condition'),
+                'values' => $this->getConditionValues(),
+                    'value' => $formData['condition'],
+                'tooltip' => $this->__(
+                    <<<HTML
+                    <p>Specify the condition that best describes the current state of your product.</p><br>
+
+                    <p>By providing accurate information about the product condition, you improve the visibility
+                    of your listings, ensure fair pricing, and increase customer satisfaction.</p>
+HTML
+                ),
+                'required' => true,
+            ]
+        );
+
+        $fieldset->addField(
+            'condition_note',
+            'textarea',
+            [
+                'container_id' => 'condition_note',
+                'name' => 'condition_note',
+                'label' => $this->__('Condition Note'),
+                'maxlength' => 255,
+                'rows' => 5,
+                'value' => $formData['condition_note'],
+                'tooltip' => $this->__('Short Description of Item(s) Condition.'),
+            ]
+        );
+
         $fieldset = $form->addFieldset(
             'synchronization_settings',
             [
@@ -220,6 +259,77 @@ HTML
             ]
         );
 
+        $fieldset = $form->addFieldset(
+            'shipping_settings',
+            [
+                'legend' => __('Shipping'),
+                'collapsable' => false,
+            ]
+        );
+
+        $accountId = (int)$formData['account_id'];
+        $siteId = (int)$formData['site_id'];
+        $shippingTemplates = $this->getShippingTemplates($siteId);
+        $style = count($shippingTemplates) === 0 ? 'display: none' : '';
+
+        $shippingTemplatesValue = $formData['template_shipping_id'];
+
+        $templateShipping = $this->elementFactory->create(
+            'select',
+            [
+                'data' => [
+                    'html_id' => 'template_shipping_id',
+                    'name' => 'template_shipping_id',
+                    'style' => 'width: 50%;' . $style,
+                    'no_span' => true,
+                    'values' => array_merge(['' => ' '], $shippingTemplates),
+                    'value' => $shippingTemplatesValue,
+                    'required' => false,
+                ],
+            ]
+        );
+        $templateShipping->setForm($form);
+
+        $style = count($shippingTemplates) === 0 ? '' : 'display: none';
+        $fieldset->addField(
+            'template_shipping_container',
+            self::CUSTOM_CONTAINER,
+            [
+                'label' => __('Shipping Policy'),
+                'style' => 'line-height: 34px;display: initial;',
+                'field_extra_attributes' => 'style="margin-bottom: 5px"',
+                'required' => false,
+                'text' => <<<HTML
+    <span id="template_shipping_label" style="{$style}">
+        $noPoliciesAvailableText
+    </span>
+    {$templateShipping->toHtml()}
+HTML
+                ,
+                'after_element_html' => <<<HTML
+&nbsp;
+<span style="line-height: 30px;">
+    <span id="edit_shipping_template_link" style="color:#41362f">
+        <a href="javascript: void(0);" onclick="OnBuyListingSettingsObj.editTemplate(
+            '{$this->getEditUrl(TemplateManager::TEMPLATE_SHIPPING)}',
+            $('template_shipping_id').value,
+            OnBuyListingSettingsObj.newShippingTemplateCallback
+        );">
+            $viewText&nbsp;/&nbsp;$editText
+        </a>
+        <span>$orText</span>
+    </span>
+    <a id="add_shipping_template_link" href="javascript: void(0);"
+        onclick="OnBuyListingSettingsObj.addNewTemplate(
+        '{$this->getAddNewUrl( TemplateManager::TEMPLATE_SHIPPING, $accountId, $siteId)}',
+        OnBuyListingSettingsObj.newShippingTemplateCallback
+    );">$addNewText</a>
+</span>
+HTML
+                ,
+            ]
+        );
+
         $form->setUseContainer(true);
         $this->setForm($form);
 
@@ -228,6 +338,11 @@ HTML
 
     protected function _prepareLayout()
     {
+        $this->jsPhp->addConstants(
+            [
+                '\M2E\OnBuy\Model\Listing::CONDITION_NEW' => \M2E\OnBuy\Model\Listing::CONDITION_NEW,
+            ]
+        );
         $formData = $this->getListingData();
 
         $this->jsUrl->addUrls(
@@ -236,12 +351,13 @@ HTML
                 'getShippingTemplates' => $this->getUrl(
                     '*/general/modelGetAll',
                     [
-                        'model' => 'OnBuy_Template_Shipping',
+                        'model' => 'Policy_Shipping',
                         'id_field' => 'id',
                         'data_field' => 'title',
                         'sort_field' => 'title',
                         'sort_dir' => 'ASC',
-                        'is_custom_template' => 0,
+                        'account_id' => $formData['account_id'],
+                        'site_id' => $formData['site_id'],
                     ]
                 ),
                 'getReturnPolicyTemplates' => $this->getUrl(
@@ -301,6 +417,9 @@ JS
             'template_selling_format_id' => '',
             'template_description_id' => '',
             'template_synchronization_id' => '',
+            'template_shipping_id' => '',
+            'condition' => '',
+            'condition_note' => '',
         ];
     }
 
@@ -360,16 +479,42 @@ JS
         return $collection->getConnection()->fetchAssoc($collection->getSelect());
     }
 
-    protected function getAddNewUrl($nick)
+    protected function getShippingTemplates(int $storeId): array
     {
-        return $this->getUrl(
-            '*/policy/newAction',
-            [
-                'wizard' => $this->getRequest()->getParam('wizard'),
-                'nick' => $nick,
-                'close_on_save' => 1,
-            ]
-        );
+        $collection = $this->shippingCollectionFactory->create();
+        $collection->addFieldToFilter(ShippingResource::COLUMN_SITE_ID, ['eq' => $storeId]);
+        $collection->setOrder(ShippingResource::COLUMN_TITLE, \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
+
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)
+                   ->columns(
+                       [
+                           'value' => ShippingResource::COLUMN_ID,
+                           'label' => ShippingResource::COLUMN_TITLE,
+                       ]
+                   );
+
+        $result = $collection->toArray();
+
+        return $result['items'];
+    }
+
+    protected function getAddNewUrl($nick, int $accountId = null, int $siteId = null)
+    {
+        $params = [
+            'wizard' => $this->getRequest()->getParam('wizard'),
+            'nick' => $nick,
+            'close_on_save' => 1,
+        ];
+
+        if ($accountId !== null) {
+            $params['account_id'] = $accountId;
+        }
+
+        if ($siteId !== null) {
+            $params['site_id'] = $siteId;
+        }
+
+        return $this->getUrl('*/policy/newAction', $params);
     }
 
     protected function getEditUrl($nick)
@@ -382,5 +527,42 @@ JS
                 'close_on_save' => 1,
             ]
         );
+    }
+
+    /**
+     * @return array[]
+     */
+    private function getConditionValues(): array
+    {
+        return  [
+            [
+                'value' => Listing::CONDITION_NEW,
+                'label' => $this->__('New'),
+            ],
+            [
+                'value' => Listing::CONDITION_REFURBISHED_DIAMOND,
+                'label' => $this->__('Refurbished (Diamond)'),
+            ],
+            [
+                'value' => Listing::CONDITION_REFURBISHED_PLATINUM,
+                'label' => $this->__('Refurbished (Platinum)'),
+            ],
+            [
+                'value' => Listing::CONDITION_REFURBISHED_GOLD,
+                'label' => $this->__('Refurbished (Gold)'),
+            ],
+            [
+                'value' => Listing::CONDITION_REFURBISHED_SILVER,
+                'label' => $this->__('Refurbished (Silver)'),
+            ],
+            [
+                'value' => Listing::CONDITION_REFURBISHED_BRONZE,
+                'label' => $this->__('Refurbished (Bronze)'),
+            ],
+            [
+                'value' => Listing::CONDITION_REFURBISHED,
+                'label' => $this->__('Refurbished'),
+            ],
+        ];
     }
 }

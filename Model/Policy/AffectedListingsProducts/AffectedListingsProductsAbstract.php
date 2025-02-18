@@ -56,6 +56,10 @@ abstract class AffectedListingsProductsAbstract extends \M2E\OnBuy\Model\Policy\
             return \M2E\OnBuy\Model\ResourceModel\Listing::COLUMN_TEMPLATE_SYNCHRONIZATION_ID;
         }
 
+        if ($this->getTemplateNick() === \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_SHIPPING) {
+            return \M2E\OnBuy\Model\ResourceModel\Listing::COLUMN_TEMPLATE_SHIPPING_ID;
+        }
+
         throw new \M2E\OnBuy\Model\Exception\Logic('Unknown template ' . $this->getTemplateNick());
     }
 }

@@ -19,8 +19,10 @@ class DeleteService
     private \M2E\OnBuy\Model\Processing\DeleteService $processingDeleteService;
     private \M2E\OnBuy\Model\Site\Repository $siteRepository;
     private \M2E\OnBuy\Model\Order\DeleteService $deleteService;
+    private \M2E\OnBuy\Model\Policy\Shipping\Repository $templateShippingRepository;
 
     public function __construct(
+        \M2E\OnBuy\Model\Policy\Shipping\Repository $templateShippingRepository,
         Repository $accountRepository,
         \M2E\OnBuy\Model\Listing\DeleteService $listingDeleteService,
         \M2E\OnBuy\Model\Order\Log\Repository $orderLogRepository,
@@ -33,6 +35,7 @@ class DeleteService
         \M2E\OnBuy\Helper\Data\Cache\Permanent $cache,
         \M2E\OnBuy\Model\Order\DeleteService $deleteService
     ) {
+        $this->templateShippingRepository = $templateShippingRepository;
         $this->accountRepository = $accountRepository;
         $this->orderLogRepository = $orderLogRepository;
         $this->listingLogRepository = $listingLogRepository;
@@ -67,6 +70,8 @@ class DeleteService
 
             $this->unmanagedProductDeleteService->deleteUnmanagedByAccountId($accountId);
 
+            $this->templateShippingRepository->removeByAccountId($accountId);
+
             $this->removeListings($account);
 
             $this->deleteSites($account);
@@ -81,7 +86,7 @@ class DeleteService
     private function removeListings(\M2E\OnBuy\Model\Account $account): void
     {
         foreach ($this->listingRepository->findForAccount($account) as $listing) {
-            $this->listingDeleteService->process($listing);
+            $this->listingDeleteService->process($listing, true);
         }
     }
 

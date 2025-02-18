@@ -72,16 +72,20 @@ class ListRules extends AbstractTab
             [
                 'content' => __(
                     '<p><strong>List Action</strong> - this Action can be executed for each ' .
-                    'Item in M2E OnBuy Connect Listings which has <strong>Not Listed</strong> ' .
+                    'Item in %extension_title Listings which has <strong>Not Listed</strong> ' .
                     'Status and which Settings meet the List Condition. If an Item was not initially Listed for ' .
                     'some reason, automatic synchronization will attempt to list it again only if there is a ' .
                     'change of Product Status, Stock Availability or Quantity in Magento.</p><br>' .
-                    '<p><strong>Note:</strong> M2E OnBuy Connect Listings Synchronization must be enabled in ' .
-                    'Synchronization <strong>(OnBuy Integration > Configuration > Settings > Synchronization)' .
+                    '<p><strong>Note:</strong> %extension_title Listings Synchronization must be enabled in ' .
+                    'Synchronization <strong>(%channel_title > Configuration > Settings > Synchronization)' .
                     '</strong>. Otherwise, Synchronization Policy Rules will not take effect.</p><br>' .
                     '<p>More detailed information about how to work with this Page you can find ' .
                     '<a href="%url" target="_blank" class="external-link">here</a>.</p>',
-                    ['url' => 'https://docs-m2.m2epro.com'],
+                    [
+                        'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                        'url' => 'https://docs-m2.m2epro.com/docs/synchronization-policy-for-onbuy/'
+                    ],
                 ),
             ]
         );

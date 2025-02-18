@@ -4,23 +4,23 @@ namespace M2E\OnBuy\Model\ControlPanel\Inspection\Inspector;
 
 use M2E\OnBuy\Helper\Module\Cron;
 
-class ExtensionCron implements \M2E\OnBuy\Model\ControlPanel\Inspection\InspectorInterface
+class ExtensionCron implements \M2E\Core\Model\ControlPanel\Inspection\InspectorInterface
 {
     private \M2E\OnBuy\Helper\Module\Cron $moduleCron;
-    private \M2E\OnBuy\Model\ControlPanel\Inspection\Issue\Factory $issueFactory;
+    private \M2E\Core\Model\ControlPanel\Inspection\IssueFactory $issueFactory;
     private \M2E\OnBuy\Model\Config\Manager $config;
 
     public function __construct(
         \M2E\OnBuy\Model\Config\Manager $config,
         \M2E\OnBuy\Helper\Module\Cron $moduleCron,
-        \M2E\OnBuy\Model\ControlPanel\Inspection\Issue\Factory $issueFactory
+        \M2E\Core\Model\ControlPanel\Inspection\IssueFactory $issueFactory
     ) {
         $this->config = $config;
         $this->moduleCron = $moduleCron;
         $this->issueFactory = $issueFactory;
     }
 
-    public function process()
+    public function process(): array
     {
         $issues = [];
         $helper = $this->moduleCron;

@@ -70,7 +70,14 @@ class CancelProcessor
             $this->removeChange($change);
 
             if (empty($notSuccessMessages)) {
-                $order->addSuccessLog('Order is canceled. Status is updated on OnBuy.');
+                $order->addSuccessLog(
+                    strtr(
+                        'Order is canceled. Status is updated on channel_title.',
+                        [
+                            'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                        ]
+                    )
+                );
 
                 continue;
             }
@@ -78,8 +85,13 @@ class CancelProcessor
             foreach ($notSuccessMessages as $message) {
                 if ($message->isError()) {
                     $order->addErrorLog(
-                        'OnBuy order was not cancelled. Reason: %msg%',
-                        ['msg' => $message->getText()],
+                        strtr(
+                            'channel_title order was not cancelled. Reason: msg,',
+                            [
+                                'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                                'msg' => 'test error message',
+                            ]
+                        )
                     );
                 } else {
                     $order->addWarningLog($message->getText());

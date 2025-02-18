@@ -79,8 +79,9 @@ class Update
         if ($this->statusChanged) {
             $this->order->addSuccessLog(
                 sprintf(
-                    'Order status was updated to %s on OnBuy',
-                    \M2E\OnBuy\Model\Order::getStatusTitle($this->order->getStatus())
+                    'Order status was updated to %s on %s',
+                    \M2E\OnBuy\Model\Order::getStatusTitle($this->order->getStatus()),
+                    \M2E\OnBuy\Helper\Module::getChannelTitle()
                 )
             );
         }

@@ -11,17 +11,20 @@ class Complete extends \M2E\OnBuy\Controller\Adminhtml\AbstractListing
     private \M2E\OnBuy\Model\Listing\Wizard\ManagerFactory $wizardManagerFactory;
     private \M2E\OnBuy\Helper\Data\Session $sessionHelper;
     private \M2E\OnBuy\Model\Listing\Wizard\CompleteProcessor $completeProcessor;
+    private \M2E\OnBuy\Model\Listing\Wizard\Repository $wizardRepository;
 
     public function __construct(
         \M2E\OnBuy\Model\Listing\Wizard\ManagerFactory $wizardManagerFactory,
         \M2E\OnBuy\Model\Listing\Wizard\CompleteProcessor $completeProcessor,
-        \M2E\OnBuy\Helper\Data\Session $sessionHelper
+        \M2E\OnBuy\Helper\Data\Session $sessionHelper,
+        \M2E\OnBuy\Model\Listing\Wizard\Repository $wizardRepository
     ) {
         parent::__construct();
 
         $this->wizardManagerFactory = $wizardManagerFactory;
         $this->sessionHelper = $sessionHelper;
         $this->completeProcessor = $completeProcessor;
+        $this->wizardRepository = $wizardRepository;
     }
 
     public function execute()
@@ -33,6 +36,14 @@ class Complete extends \M2E\OnBuy\Controller\Adminhtml\AbstractListing
 
         $id = $this->getWizardIdFromRequest();
         $wizardManager = $this->wizardManagerFactory->createById($id);
+
+        if (!empty($this->wizardRepository->getNotValidWizardProductsIds($wizardManager->getWizardId()))) {
+            $this->getMessageManager()->addWarningMessage(
+                __(
+                    'Magento products that could not be matched with items on the OnBuy marketplace were not added to the Listing'
+                )
+            );
+        }
 
         $listingProducts = $this->completeProcessor->process($wizardManager);
 

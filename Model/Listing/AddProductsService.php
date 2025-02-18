@@ -34,20 +34,29 @@ class AddProductsService
 
     public function addProduct(
         \M2E\OnBuy\Model\Listing $listing,
-        int $magentoProductId,
+        \M2E\OnBuy\Model\Magento\Product $ourMagentoProduct,
+        ?string $opc,
+        ?string $url,
         int $initiator,
         ?\M2E\OnBuy\Model\UnmanagedProduct $unmanagedProduct = null
     ): ?Product {
-        $listingProduct = $this->findExistProduct($listing, $magentoProductId);
+        if (!$ourMagentoProduct->exists()) {
+            throw new \M2E\OnBuy\Model\Listing\Exception\MagentoProductNotFoundException(
+                'Magento product not found.',
+                ['magento_product_id' => $ourMagentoProduct->getProductId()]
+            );
+        }
+
+        $listingProduct = $this->findExistProduct($listing, $ourMagentoProduct->getProductId());
         if ($listingProduct !== null) {
             return null;
         }
 
-        $m2eMagentoProduct = $this->magentoProductFactory->createByProductId($magentoProductId);
-
         $listingProduct = $this->createProductService->create(
             $listing,
-            $m2eMagentoProduct,
+            $ourMagentoProduct,
+            $opc,
+            $url,
             $unmanagedProduct,
         );
 
@@ -104,11 +113,13 @@ class AddProductsService
             return null;
         }
 
-        $magentoProductId = $unmanagedProduct->getMagentoProductId();
+        $magentoProduct = $unmanagedProduct->getMagentoProduct();
 
         $listingProduct = $this->addProduct(
             $listing,
-            $magentoProductId,
+            $magentoProduct,
+            $unmanagedProduct->getOpc(),
+            $unmanagedProduct->getProductUrl(),
             $initiator,
             $unmanagedProduct,
         );

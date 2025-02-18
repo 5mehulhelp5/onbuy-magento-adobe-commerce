@@ -2,24 +2,18 @@
 
 namespace M2E\OnBuy\Controller\Adminhtml\ControlPanel\Inspection;
 
-use M2E\OnBuy\Controller\Adminhtml\ControlPanel\AbstractMain;
-
-class SetMagentoCoreSetupValue extends AbstractMain
+class SetMagentoCoreSetupValue extends \M2E\OnBuy\Controller\Adminhtml\ControlPanel\AbstractMain
 {
-    /** @var \Magento\Framework\Module\ModuleResource $moduleResource */
-    private $moduleResource;
-
-    /** @var \M2E\OnBuy\Helper\View\ControlPanel */
-    private $controlPanelHelper;
+    private \Magento\Framework\Module\ModuleResource $moduleResource;
+    private \M2E\OnBuy\Helper\View\ControlPanel $controlPanelHelper;
     private \M2E\OnBuy\Setup\UpgradeCollection $updateCollection;
 
     public function __construct(
         \Magento\Framework\Model\ResourceModel\Db\Context $dbContext,
         \M2E\OnBuy\Helper\View\ControlPanel $controlPanelHelper,
-        \M2E\OnBuy\Setup\UpgradeCollection $updateCollection,
-        \M2E\OnBuy\Model\Module $module
+        \M2E\OnBuy\Setup\UpgradeCollection $updateCollection
     ) {
-        parent::__construct($module);
+        parent::__construct();
         $this->moduleResource = new \Magento\Framework\Module\ModuleResource($dbContext);
         $this->controlPanelHelper = $controlPanelHelper;
         $this->updateCollection = $updateCollection;

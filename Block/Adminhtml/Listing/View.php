@@ -92,6 +92,26 @@ class View extends \M2E\OnBuy\Block\Adminhtml\Magento\Grid\AbstractContainer
         );
         // ---------------------------------------
 
+        $url = $this->getUrl(
+            '*/listing_wizard/create',
+            [
+                'listing_id' => $this->uiListingRuntimeStorage->getListing()->getId(),
+                'type' => \M2E\OnBuy\Model\Listing\Wizard::TYPE_GENERAL,
+            ]
+        );
+
+        $this->addButton(
+            'listing_product_wizard',
+            [
+                'id' => 'listing_product_wizard',
+                'label' => __('Add Products'),
+                'class' => 'add primary',
+                'onclick' => "setLocation('$url')",
+            ]
+        );
+
+        // ---------------------------------------
+
         $this->addGrid();
 
         return parent::_prepareLayout();

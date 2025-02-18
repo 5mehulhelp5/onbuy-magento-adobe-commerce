@@ -44,13 +44,17 @@ class StopRules extends AbstractTab
             self::HELP_BLOCK,
             [
                 'content' => __(
-                    'Set the Conditions when M2E OnBuy Connect should stop ' .
-                    'Listings on OnBuy.<br/><br/>If all Conditions are set to No or No Action then no ' .
-                    'OnBuy Items using this Synchronization Policy will be Stopped. If all Options are ' .
+                    'Set the Conditions when %extension_title should stop ' .
+                    'Listings on %channel_title.<br/><br/>If all Conditions are set to No or No Action then no ' .
+                    '%channel_title Items using this Synchronization Policy will be Stopped. If all Options are ' .
                     'enabled, then an Item will be Stopped if at least one of the Stop Conditions is met.<br/><br/>' .
                     'More detailed information about ability to work with this Page you can find ' .
                     '<a href="%url" target="_blank" class="external-link">here</a>.',
-                    ['url' => 'https://docs-m2.m2epro.com']
+                    [
+                        'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                        'url' => 'https://docs-m2.m2epro.com/docs/synchronization-policy-for-onbuy/'
+                    ]
                 ),
             ]
         );

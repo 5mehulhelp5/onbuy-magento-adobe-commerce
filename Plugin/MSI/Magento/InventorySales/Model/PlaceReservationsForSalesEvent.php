@@ -76,7 +76,7 @@ class PlaceReservationsForSalesEvent extends \M2E\OnBuy\Plugin\AbstractPlugin
         $stock = $this->getStockByChannel->execute($salesChannel);
 
         switch ($salesEvent->getType()) {
-            //region M2E OnBuy Reservation
+            //region M2E Reservation
             case Reserve::EVENT_TYPE_MAGENTO_RESERVATION_PLACED:
                 $resultMessage = [
                     'string' => 'Product Quantity was reserved from the "%stock_name%" Stock ' .

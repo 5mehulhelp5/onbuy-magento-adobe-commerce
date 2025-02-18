@@ -29,7 +29,12 @@ class Delete
 
         $this->updateMagentoOrderComment(
             $order,
-            (string)__('Custom Note for the corresponding OnBuy order was deleted.'),
+            (string)__(
+                'Custom Note for the corresponding %channel_title order was deleted.',
+                [
+                    'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                ],
+            ),
         );
     }
 }

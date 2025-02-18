@@ -107,8 +107,11 @@ class ReImportTask extends \M2E\OnBuy\Model\Cron\AbstractTask
                 $this->handleToDate($manager, $minToDate);
             } catch (\Throwable $exception) {
                 $message = (string)\__(
-                    'The "Upload Orders By User" Action for OnBuy Account "%account" was completed with error.',
-                    ['account' => $account->getTitle()],
+                    'The "Upload Orders By User" Action for %channel_title Account "%account" was completed with error.',
+                    [
+                        'account' => $account->getTitle(),
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ],
                 );
 
                 $this->processTaskAccountException($message, __FILE__, __LINE__);

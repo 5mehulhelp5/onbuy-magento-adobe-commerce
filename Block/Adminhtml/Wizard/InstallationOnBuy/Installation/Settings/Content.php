@@ -15,9 +15,15 @@ class Content extends AbstractForm
     protected function _prepareLayout()
     {
         $this->getLayout()->getBlock('wizard.help.block')->setContent(
-            __('In this section, you can configure the general settings for the interaction ' .
-                'between M2E OnBuy Connect and OnBuy.<br><br>Anytime you can change these ' .
-                'settings under <b>OnBuy > Configuration > General</b>.')
+            __(
+                'In this section, you can configure the general settings for the interaction ' .
+                'between %extension_title and %channel_title.<br><br>Anytime you can change these ' .
+                'settings under <b>%channel_title > Configuration > General</b>.',
+                [
+                    'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                    'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                ]
+            )
         );
 
         parent::_prepareLayout();

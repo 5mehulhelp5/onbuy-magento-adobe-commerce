@@ -86,7 +86,12 @@ class HandleOrder
     private function writeLogAboutCreate(\M2E\OnBuy\Model\Order $order): void
     {
         $order->addInfoLog(
-            'Magento order creation rules are met. M2E OnBuy will attempt to create Magento order.',
+            strtr(
+                'Magento order creation rules are met. M2E channel_title will attempt to create Magento order.',
+                [
+                    'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                ]
+            ),
             [],
             [],
             true

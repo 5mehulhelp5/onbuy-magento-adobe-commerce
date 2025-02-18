@@ -27,9 +27,13 @@ class General extends \M2E\OnBuy\Block\Adminhtml\Magento\Form\AbstractForm
         $form = $this->_formFactory->create();
 
         $content = __(
-            'This Page shows the Environment for your OnBuy Account and details of the ' .
-            'authorisation for M2E OnBuy Connect to connect to your OnBuy Account.<br/><br/> If your token has ' .
-            'expired or is not activated, click <b>Get Token</b>.<br/><br/>'
+            'This Page shows the Environment for your %channel_title Account and details of the ' .
+            'authorisation for %extension_title to connect to your %channel_title Account.<br/><br/> If your token has ' .
+            'expired or is not activated, click <b>Get Token</b>.<br/><br/>',
+            [
+                'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+            ]
         );
 
         $form->addField(
@@ -57,7 +61,12 @@ class General extends \M2E\OnBuy\Block\Adminhtml\Magento\Form\AbstractForm
                     'class' => 'OnBuy-account-title',
                     'label' => __('Title'),
                     'value' => $this->account->getTitle(),
-                    'tooltip' => __('Title or Identifier of OnBuy Account for your internal use.'),
+                    'tooltip' => __(
+                        'Title or Identifier of %channel_title Account for your internal use.',
+                        [
+                            'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                        ]
+                    ),
                 ],
             );
         }

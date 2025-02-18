@@ -42,6 +42,7 @@ class Tables
     public const TABLE_NAME_OPERATION_HISTORY = self::PREFIX . 'operation_history';
     public const TABLE_NAME_TEMPLATE_SELLING_FORMAT = self::PREFIX . 'template_selling_format';
     public const TABLE_NAME_TEMPLATE_SYNCHRONIZATION = self::PREFIX . 'template_synchronization';
+    public const TABLE_NAME_TEMPLATE_SHIPPING = self::PREFIX . 'template_shipping';
 
     public const TABLE_NAME_TAG = self::PREFIX . 'tag';
 
@@ -59,17 +60,62 @@ class Tables
      */
     public static function getAllTables(): array
     {
-        return array_keys(self::getTablesModels());
+        return array_keys(self::getTablesResourcesModels());
     }
 
-    public static function getTableModel(string $tableName): ?string
+    public static function getTableModel(string $tableName): string
     {
         $tablesModels = self::getTablesModels();
 
-        return $tablesModels[$tableName] ?? null;
+        return $tablesModels[$tableName];
+    }
+
+    public static function getTableResourceModel(string $tableName): string
+    {
+        $tablesModels = self::getTablesResourcesModels();
+
+        return $tablesModels[$tableName];
     }
 
     private static function getTablesModels(): array
+    {
+        return [
+            self::TABLE_NAME_ACCOUNT => \M2E\OnBuy\Model\Account::class,
+            self::TABLE_NAME_SITE => \M2E\OnBuy\Model\Site::class,
+            self::TABLE_NAME_LISTING => \M2E\OnBuy\Model\Listing::class,
+            self::TABLE_NAME_LISTING_LOG => \M2E\OnBuy\Model\Listing\Log::class,
+            self::TABLE_NAME_LISTING_WIZARD => \M2E\OnBuy\Model\Listing\Wizard::class,
+            self::TABLE_NAME_LISTING_WIZARD_STEP => \M2E\OnBuy\Model\Listing\Wizard\Step::class,
+            self::TABLE_NAME_LISTING_WIZARD_PRODUCT => \M2E\OnBuy\Model\Listing\Wizard\Product::class,
+            self::TABLE_NAME_PRODUCT => \M2E\OnBuy\Model\Product::class,
+            self::TABLE_NAME_PRODUCT_INSTRUCTION => \M2E\OnBuy\Model\Instruction::class,
+            self::TABLE_NAME_PRODUCT_SCHEDULED_ACTION => \M2E\OnBuy\Model\ScheduledAction::class,
+            self::TABLE_NAME_LOCK_ITEM => \M2E\OnBuy\Model\Lock\Item::class,
+            self::TABLE_NAME_LOCK_TRANSACTIONAL => \M2E\OnBuy\Model\Lock\Transactional::class,
+            self::TABLE_NAME_PROCESSING => \M2E\OnBuy\Model\Processing::class,
+            self::TABLE_NAME_PROCESSING_LOCK => \M2E\OnBuy\Model\Processing\Lock::class,
+            self::TABLE_NAME_PROCESSING_PARTIAL_DATA => \M2E\OnBuy\Model\Processing\PartialData::class,
+            self::TABLE_NAME_STOP_QUEUE => \M2E\OnBuy\Model\StopQueue::class,
+            self::TABLE_NAME_SYNCHRONIZATION_LOG => \M2E\OnBuy\Model\Synchronization\Log::class,
+            self::TABLE_NAME_SYSTEM_LOG => \M2E\OnBuy\Model\Log\System::class,
+            self::TABLE_NAME_OPERATION_HISTORY => \M2E\OnBuy\Model\OperationHistory::class,
+            self::TABLE_NAME_TEMPLATE_SELLING_FORMAT => \M2E\OnBuy\Model\Policy\SellingFormat::class,
+            self::TABLE_NAME_TEMPLATE_SYNCHRONIZATION => \M2E\OnBuy\Model\Policy\Synchronization::class,
+            self::TABLE_NAME_WIZARD => \M2E\OnBuy\Model\Wizard::class,
+            self::TABLE_NAME_TAG => \M2E\OnBuy\Model\Tag\Entity::class,
+            self::TABLE_NAME_PRODUCT_TAG_RELATION => \M2E\OnBuy\Model\Tag\ListingProduct\Relation::class,
+            self::TABLE_NAME_ORDER => \M2E\OnBuy\Model\Order::class,
+            self::TABLE_NAME_ORDER_ITEM => \M2E\OnBuy\Model\Order\Item::class,
+            self::TABLE_NAME_ORDER_LOG => \M2E\OnBuy\Model\Order\Log::class,
+            self::TABLE_NAME_ORDER_NOTE => \M2E\OnBuy\Model\Order\Note::class,
+            self::TABLE_NAME_ORDER_CHANGE => \M2E\OnBuy\Model\Order\Change::class,
+            self::TABLE_NAME_UNMANAGED_PRODUCT => \M2E\OnBuy\Model\UnmanagedProduct::class,
+            self::TABLE_NAME_INVENTORY_SYNC_RECEIVED_PRODUCT => \M2E\OnBuy\Model\InventorySync\ReceivedProduct::class,
+            self::TABLE_NAME_PRODUCT_LOCK => \M2E\OnBuy\Model\Product\Lock::class,
+        ];
+    }
+
+    private static function getTablesResourcesModels(): array
     {
         return [
             self::TABLE_NAME_ACCOUNT => \M2E\OnBuy\Model\ResourceModel\Account::class,
@@ -93,6 +139,7 @@ class Tables
             self::TABLE_NAME_OPERATION_HISTORY => \M2E\OnBuy\Model\ResourceModel\OperationHistory::class,
             self::TABLE_NAME_TEMPLATE_SELLING_FORMAT => \M2E\OnBuy\Model\ResourceModel\Policy\SellingFormat::class,
             self::TABLE_NAME_TEMPLATE_SYNCHRONIZATION => \M2E\OnBuy\Model\ResourceModel\Policy\Synchronization::class,
+            self::TABLE_NAME_TEMPLATE_SHIPPING => \M2E\OnBuy\Model\ResourceModel\Policy\Shipping::class,
             self::TABLE_NAME_WIZARD => \M2E\OnBuy\Model\ResourceModel\Wizard::class,
             self::TABLE_NAME_TAG => \M2E\OnBuy\Model\ResourceModel\Tag::class,
             self::TABLE_NAME_PRODUCT_TAG_RELATION => \M2E\OnBuy\Model\ResourceModel\Tag\ListingProduct\Relation::class,
@@ -103,6 +150,7 @@ class Tables
             self::TABLE_NAME_ORDER_CHANGE => \M2E\OnBuy\Model\ResourceModel\Order\Change::class,
             self::TABLE_NAME_UNMANAGED_PRODUCT => \M2E\OnBuy\Model\ResourceModel\UnmanagedProduct::class,
             self::TABLE_NAME_INVENTORY_SYNC_RECEIVED_PRODUCT => \M2E\OnBuy\Model\ResourceModel\InventorySync\ReceivedProduct::class,
+            self::TABLE_NAME_PRODUCT_LOCK => \M2E\OnBuy\Model\ResourceModel\Product\Lock::class
         ];
     }
 

@@ -40,8 +40,11 @@ class Edit extends \M2E\OnBuy\Controller\Adminhtml\AbstractListing
         );
         $this->getResultPage()->getConfig()->getTitle()->prepend(
             __(
-                'Edit M2E OnBuy Connect Listing "%listing_title" Settings',
-                ['listing_title' => $listing->getTitle()]
+                'Edit %extension_title Listing "%listing_title" Settings',
+                [
+                    'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                    'listing_title' => $listing->getTitle()
+                ]
             ),
         );
 

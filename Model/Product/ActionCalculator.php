@@ -31,9 +31,24 @@ class ActionCalculator
         return Action::createNothing($product);
     }
 
+    //@todo To add correct logic
     public function calculateToList(\M2E\OnBuy\Model\Product $product): Action
     {
-        return Action::createNothing($product);
+        if (
+            !$product->isListable()
+            || !$product->isStatusNotListed()
+        ) {
+            return Action::createNothing($product);
+        }
+
+        if (!$this->isNeedListProduct($product)) {
+            return Action::createNothing($product);
+        }
+
+        $configurator = new \M2E\OnBuy\Model\Product\Action\Configurator();
+        $configurator->enableAll();
+
+        return Action::createList($product, $configurator);
     }
 
     private function isNeedListProduct(\M2E\OnBuy\Model\Product $product): bool

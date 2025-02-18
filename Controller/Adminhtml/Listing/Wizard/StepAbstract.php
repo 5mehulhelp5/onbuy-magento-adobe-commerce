@@ -8,9 +8,9 @@ abstract class StepAbstract extends \M2E\OnBuy\Controller\Adminhtml\AbstractList
 {
     use WizardTrait;
 
-    private \M2E\OnBuy\Model\Listing\Wizard\ManagerFactory $wizardManagerFactory;
-    private \M2E\OnBuy\Model\Listing\Ui\RuntimeStorage $uiListingRuntimeStorage;
-    private \M2E\OnBuy\Model\Listing\Wizard\Ui\RuntimeStorage $uiWizardRuntimeStorage;
+    protected \M2E\OnBuy\Model\Listing\Wizard\ManagerFactory $wizardManagerFactory;
+    protected \M2E\OnBuy\Model\Listing\Ui\RuntimeStorage $uiListingRuntimeStorage;
+    protected \M2E\OnBuy\Model\Listing\Wizard\Ui\RuntimeStorage $uiWizardRuntimeStorage;
 
     public function __construct(
         \M2E\OnBuy\Model\Listing\Wizard\ManagerFactory $wizardManagerFactory,

@@ -10,7 +10,7 @@
 
             <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
                 <strong class="admin__collapsible-title">
-                    <span><?= __('OnBuy Order'); ?> #<?= $block->order->getChannelOrderId() ?></span>
+                    <span><?= __(\M2E\OnBuy\Helper\Module::getChannelTitle() . ' Order'); ?> #<?= $block->order->getChannelOrderId() ?></span>
                 </strong>
                 <div class="form-buttons"></div>
             </div>

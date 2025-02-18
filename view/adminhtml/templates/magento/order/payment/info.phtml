@@ -16,7 +16,7 @@
 
     <?php if ($block->getChannelOrderId() != '') : ?>
         <tr>
-            <td style="width: 200px;"><?= __('OnBuy Order ID') ?>:</td>
+            <td style="width: 200px;"><?= __(\M2E\OnBuy\Helper\Module::getChannelTitle() . ' Order ID') ?>:</td>
             <td><strong><?= $block->escapeHtml($block->getChannelOrderId()); ?></strong></td>
         </tr>
     <?php endif; ?>

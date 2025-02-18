@@ -14,6 +14,9 @@ class Listing extends ActiveRecord\AbstractModel
     public const COLUMN_TEMPLATE_DESCRIPTION_ID = 'template_description_id';
     public const COLUMN_TEMPLATE_SELLING_FORMAT_ID = 'template_selling_format_id';
     public const COLUMN_TEMPLATE_SYNCHRONIZATION_ID = 'template_synchronization_id';
+    public const COLUMN_TEMPLATE_SHIPPING_ID = 'template_shipping_id';
+    public const COLUMN_CONDITION = 'condition';
+    public const COLUMN_CONDITION_NOTE = 'condition_note';
     public const COLUMN_ADDITIONAL_DATA = 'additional_data';
     public const COLUMN_UPDATE_DATE = 'update_date';
     public const COLUMN_CREATE_DATE = 'create_date';

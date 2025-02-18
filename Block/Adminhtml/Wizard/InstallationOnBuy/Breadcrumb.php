@@ -20,8 +20,13 @@ class Breadcrumb extends \M2E\OnBuy\Block\Adminhtml\Widget\Breadcrumb
                 'description' => __('Account Onboarding'),
             ],
             [
-                'id' => 'listingTutorial',
+                'id' => 'settings',
                 'title' => __('Step 3'),
+                'description' => __('General Settings'),
+            ],
+            [
+                'id' => 'listingTutorial',
+                'title' => __('Step 4'),
                 'description' => __('First Listing Creation'),
             ],
         ]);

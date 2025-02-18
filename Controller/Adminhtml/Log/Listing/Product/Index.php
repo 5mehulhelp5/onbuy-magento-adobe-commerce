@@ -41,7 +41,13 @@ class Index extends \M2E\OnBuy\Controller\Adminhtml\Log\AbstractListing
             }
 
             $this->getResult()->getConfig()->getTitle()->prepend(
-                __('M2E OnBuy Connect Listing "%s" Log', ['s' => $listing->getTitle()]),
+                __(
+                    '%extension_title Listing "%s" Log',
+                    [
+                        's' => $listing->getTitle(),
+                        'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                    ]
+                ),
             );
         } elseif ($listingProductId) {
             $listingProduct = $this->listingProductRepository->find($listingProductId);
@@ -54,8 +60,14 @@ class Index extends \M2E\OnBuy\Controller\Adminhtml\Log\AbstractListing
 
             $this->getResult()->getConfig()->getTitle()->prepend(
                 __(
-                    'M2E OnBuy Connect Listing Product "%1" Log',
-                    $this->filterManager->truncate($listingProduct->getMagentoProduct()->getName(), ['length' => 28])
+                    '%extension_title Listing Product "%product_name" Log',
+                    [
+                        'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                        'product_name' => $this->filterManager->truncate(
+                            $listingProduct->getMagentoProduct()->getName(),
+                            ['length' => 28]
+                        )
+                    ]
                 )
             );
         } else {

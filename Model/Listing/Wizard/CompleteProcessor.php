@@ -9,20 +9,30 @@ class CompleteProcessor
     private \M2E\OnBuy\Model\Listing\AddProductsService $addProductsService;
     private \M2E\OnBuy\Model\UnmanagedProduct\Repository $listingOtherRepository;
     private \M2E\OnBuy\Model\UnmanagedProduct\DeleteService $unmanagedProductDeleteService;
+    private \M2E\OnBuy\Model\Listing\Wizard\Repository $wizardRepository;
+    private \M2E\OnBuy\Model\Magento\Product\CacheFactory $magentoProductFactory;
 
     public function __construct(
         \M2E\OnBuy\Model\Listing\AddProductsService $addProductsService,
         \M2E\OnBuy\Model\UnmanagedProduct\Repository $listingOtherRepository,
-        \M2E\OnBuy\Model\UnmanagedProduct\DeleteService $unmanagedProductDeleteService
+        \M2E\OnBuy\Model\UnmanagedProduct\DeleteService $unmanagedProductDeleteService,
+        \M2E\OnBuy\Model\Listing\Wizard\Repository $wizardRepository,
+        \M2E\OnBuy\Model\Magento\Product\CacheFactory $magentoProductFactory
     ) {
         $this->addProductsService = $addProductsService;
         $this->listingOtherRepository = $listingOtherRepository;
         $this->unmanagedProductDeleteService = $unmanagedProductDeleteService;
+        $this->wizardRepository = $wizardRepository;
+        $this->magentoProductFactory = $magentoProductFactory;
     }
 
     public function process(Manager $wizardManager): array
     {
         $listing = $wizardManager->getListing();
+
+        if (!$wizardManager->isEnabledCreateNewProductMode()) {
+            $this->markAsProcessNotValidProducts($wizardManager);
+        }
 
         $processedWizardProductIds = [];
         $listingProducts = [];
@@ -31,11 +41,19 @@ class CompleteProcessor
 
             $processedWizardProductIds[] = $wizardProduct->getId();
 
+            $magentoProduct = $this->magentoProductFactory->create()->setProductId($wizardProduct->getMagentoProductId());
+            if (!$magentoProduct->exists()) {
+                continue;
+            }
+
             if ($wizardManager->isWizardTypeGeneral()) {
+                $data = $wizardProduct->getChannelProductData();
                 $listingProduct = $this->addProductsService
                     ->addProduct(
                         $listing,
-                        $wizardProduct->getMagentoProductId(),
+                        $magentoProduct,
+                        $wizardProduct->getChannelProductId(),
+                        $data['url'],
                         \M2E\Core\Helper\Data::INITIATOR_USER,
                     );
             } elseif ($wizardManager->isWizardTypeUnmanaged()) {
@@ -75,5 +93,13 @@ class CompleteProcessor
         }
 
         return $listingProducts;
+    }
+
+    private function markAsProcessNotValidProducts(Manager $wizardManager): void
+    {
+        $ids = $this->wizardRepository->getNotValidWizardProductsIds($wizardManager->getWizardId());
+        if (!empty($ids)) {
+            $this->wizardRepository->markProductsAsCompleted($wizardManager->getWizard(), $ids);
+        }
     }
 }

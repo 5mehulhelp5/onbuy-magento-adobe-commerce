@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace M2E\OnBuy\Model\Listing;
 
 use M2E\OnBuy\Model\ResourceModel\Listing as ListingResource;
+use M2E\OnBuy\Model\ResourceModel\Product as ListingProductResource;
 
 class Repository
 {
@@ -14,17 +15,23 @@ class Repository
     private \M2E\OnBuy\Model\ResourceModel\Listing $listingResource;
     private \M2E\OnBuy\Model\ListingFactory $listingFactory;
     private \M2E\OnBuy\Helper\Data\Cache\Permanent $cache;
+    private \M2E\OnBuy\Model\ResourceModel\Product\Lock $productLockResource;
+    private ListingProductResource $productResource;
 
     public function __construct(
         \M2E\OnBuy\Model\ResourceModel\Listing\CollectionFactory $listingCollectionFactory,
         \M2E\OnBuy\Model\ResourceModel\Listing $listingResource,
         \M2E\OnBuy\Model\ListingFactory $listingFactory,
-        \M2E\OnBuy\Helper\Data\Cache\Permanent $cache
+        \M2E\OnBuy\Helper\Data\Cache\Permanent $cache,
+        \M2E\OnBuy\Model\ResourceModel\Product\Lock $productLockResource,
+        ListingProductResource $productResource
     ) {
         $this->listingCollectionFactory = $listingCollectionFactory;
         $this->listingResource = $listingResource;
         $this->listingFactory = $listingFactory;
         $this->cache = $cache;
+        $this->productLockResource = $productLockResource;
+        $this->productResource = $productResource;
     }
 
     public function getListingsCount(): int
@@ -104,5 +111,32 @@ class Repository
         $collection = $this->listingCollectionFactory->create();
 
         return array_values($collection->getItems());
+    }
+
+    public function hasProductsInSomeAction(\M2E\OnBuy\Model\Listing $listing): bool
+    {
+        $connection = $this->productResource->getConnection();
+
+        $productTable = $this->productResource->getMainTable();
+        $lockTable = $this->productLockResource->getMainTable();
+
+        $select = $connection->select()
+                             ->from(['p' => $productTable])
+                             ->join(
+                                 ['pl' => $lockTable],
+                                 sprintf(
+                                     'p.%s = pl.%s',
+                                     \M2E\OnBuy\Model\ResourceModel\Product::COLUMN_ID,
+                                     \M2E\OnBuy\Model\ResourceModel\Product\Lock::COLUMN_PRODUCT_ID,
+                                 ),
+                                 []
+                             )
+                             ->where(
+                                 sprintf('p.%s = ?', \M2E\OnBuy\Model\ResourceModel\Product::COLUMN_LISTING_ID),
+                                 $listing->getId()
+                             )
+                             ->limit(1);
+
+        return (bool) $connection->fetchOne($select);
     }
 }

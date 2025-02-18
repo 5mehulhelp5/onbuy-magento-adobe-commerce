@@ -21,6 +21,8 @@ class CreateService
     public function create(
         \M2E\OnBuy\Model\Listing $listing,
         \M2E\OnBuy\Model\Magento\Product $m2eMagentoProduct,
+        ?string $opc,
+        ?string $url,
         ?\M2E\OnBuy\Model\UnmanagedProduct $unmanagedProduct = null
     ): \M2E\OnBuy\Model\Product {
         $this->checkSupportedMagentoType($m2eMagentoProduct);
@@ -28,10 +30,15 @@ class CreateService
         $listingProduct = $this->listingProductFactory->create(
             $listing,
             $m2eMagentoProduct->getProductId(),
+            $opc
         );
 
         if ($unmanagedProduct !== null) {
             $listingProduct->fillFromUnmanagedProduct($unmanagedProduct);
+        }
+
+        if ($url !== null) {
+            $listingProduct->setProductLinkOnChannel($url);
         }
 
         $this->listingProductRepository->create($listingProduct);
@@ -55,7 +62,6 @@ class CreateService
 
     private function isSupportedMagentoProductType(\M2E\OnBuy\Model\Magento\Product $ourMagentoProduct): bool
     {
-        return $ourMagentoProduct->isSimpleType()
-            || $ourMagentoProduct->isConfigurableType();
+        return $ourMagentoProduct->isSimpleType();
     }
 }

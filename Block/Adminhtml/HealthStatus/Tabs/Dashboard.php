@@ -82,7 +82,7 @@ class Dashboard extends \M2E\OnBuy\Block\Adminhtml\Magento\Form\AbstractForm
 
         if ($this->latestPublicVersion) {
             $releaseNotesText = __('[release notes]');
-            $documentationArticleUrl = 'https://docs-m2.m2epro.com';
+            $documentationArticleUrl = 'https://docs-m2.m2epro.com/docs/m2e-onbuy-help-center/';
             $fieldSet->addField(
                 'latest_public_version',
                 'note',

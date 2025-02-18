@@ -22,13 +22,13 @@ abstract class AbstractInstallation extends \M2E\OnBuy\Controller\Adminhtml\Abst
         return \M2E\OnBuy\Helper\View\OnBuy::NICK;
     }
 
-    protected function getMenuRootNodeNick()
+    protected function getMenuRootNodeNick(): string
     {
         return \M2E\OnBuy\Helper\View\OnBuy::MENU_ROOT_NODE_NICK;
     }
 
-    protected function getMenuRootNodeLabel()
+    protected function getMenuRootNodeLabel(): string
     {
-        return \M2E\OnBuy\Helper\View\OnBuy::getMenuRootNodeLabel();
+        return \M2E\OnBuy\Helper\Module::getMenuRootNodeLabel();
     }
 }

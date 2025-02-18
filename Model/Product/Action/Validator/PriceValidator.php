@@ -10,7 +10,7 @@ class PriceValidator implements \M2E\OnBuy\Model\Product\Action\Validator\Valida
     {
         if ($product->getDataProvider()->getPrice()->getValue()->price === 0.0) {
             return (string)__(
-                'The Product Price cannot be 0. Please enter a valid Price greater than 0 to update your Product on the channel.'
+                'The Product Price must be greater than 0.',
             );
         }
 

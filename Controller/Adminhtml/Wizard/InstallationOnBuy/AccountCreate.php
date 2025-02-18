@@ -67,17 +67,21 @@ class AccountCreate extends Installation
                 || !$this->licenseService->get()->getInfo()->getIpIdentifier()->isValid()
             ) {
                 $error = __(
-                    'The OnBuy access obtaining is currently unavailable.<br/>Reason: %error_message
+                    'The %channel_title access obtaining is currently unavailable.<br/>Reason: %error_message
 </br>Go to the <a href="%url" target="_blank">License Page</a>.',
                     [
                         'error_message' => $throwable->getMessage(),
                         'url' => $this->configurationHelper->getLicenseUrl(['wizard' => 1]),
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
                     ],
                 );
             } else {
                 $error = __(
-                    'The OnBuy access obtaining is currently unavailable.<br/>Reason: %error_message',
-                    ['error_message' => $throwable->getMessage()]
+                    'The %channel_title access obtaining is currently unavailable.<br/>Reason: %error_message',
+                    [
+                        'error_message' => $throwable->getMessage(),
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ]
                 );
             }
 

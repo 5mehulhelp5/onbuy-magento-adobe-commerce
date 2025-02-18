@@ -70,8 +70,13 @@ class Edit extends \M2E\OnBuy\Block\Adminhtml\Magento\Form\AbstractContainer
         $saveConfirmation = '';
         if ($template->getId()) {
             $saveConfirmation = \M2E\Core\Helper\Data::escapeJs(
-                (string)__('<br/><b>Note:</b> All changes you have made will be automatically ' .
-                    'applied to all M2E OnBuy Connect Listings where this Policy is used.')
+                (string)__(
+                    '<br/><b>Note:</b> All changes you have made will be automatically ' .
+                    'applied to all %extension_title Listings where this Policy is used.',
+                    [
+                        'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                    ]
+                )
             );
         }
 
@@ -155,6 +160,9 @@ class Edit extends \M2E\OnBuy\Block\Adminhtml\Magento\Form\AbstractContainer
                 break;
             case \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_SYNCHRONIZATION:
                 $title = __('Synchronization');
+                break;
+            case \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_SHIPPING:
+                $title = __('Shipping');
                 break;
         }
 

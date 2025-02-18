@@ -125,7 +125,7 @@ class Grid extends AbstractGrid
         $this->addColumn(
             'channel_order_id',
             [
-                'header' => __('OnBuy Order #'),
+                'header' => __(\M2E\OnBuy\Helper\Module::getChannelTitle() . ' Order #'),
                 'align' => 'left',
                 'width' => '145px',
                 'index' => 'channel_order_id',

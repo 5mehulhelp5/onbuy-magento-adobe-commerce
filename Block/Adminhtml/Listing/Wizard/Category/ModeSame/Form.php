@@ -26,7 +26,10 @@ class Form extends \M2E\OnBuy\Block\Adminhtml\Magento\Form\AbstractForm
             'label',
             [
                 'value' => __(
-                    'You need to choose OnBuy Categories for Products in order to list them on OnBuy.',
+                    'You need to choose %channel_title Categories for Products in order to list them on %channel_title.',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ]
                 ),
                 'field_extra_attributes' =>
                     'id="categories_mode_block_title" style="font-weight: bold;font-size:18px;margin-bottom:0px"',
@@ -63,7 +66,12 @@ CSS,
                 ],
                 'value' => CategorySelectMode::MODE_SAME,
                 'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">' .
-                    __('Products will be Listed using the same OnBuy Category.') . '</div>',
+                    __(
+                        'Products will be Listed using the same %channel_title Category.',
+                        [
+                            'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                        ]
+                    ) . '</div>',
             ],
         );
 
@@ -81,7 +89,12 @@ CSS,
                 ],
                 'value' => CategorySelectMode::MODE_SAME,
                 'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">' .
-                    __('Set OnBuy Categories for each Product (or a group of Products) manually.') . '</div>',
+                    __(
+                        'Set %channel_title Categories for each Product (or a group of Products) manually.',
+                        [
+                            'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                        ]
+                    ) . '</div>',
             ],
         );
 

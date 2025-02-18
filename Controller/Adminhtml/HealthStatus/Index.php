@@ -50,7 +50,7 @@ class Index extends \M2E\OnBuy\Controller\Adminhtml\AbstractHealthStatus
         $this->addLeft($tabsBlock);
         $this->addContent($this->getLayout()->createBlock(\M2E\OnBuy\Block\Adminhtml\HealthStatus::class));
 
-        $this->setPageHelpLink('https://docs-m2.m2epro.com');
+        $this->setPageHelpLink('https://docs-m2.m2epro.com/docs/m2e-onbuy-help-center/');
 
         $this->getResult()->getConfig()->getTitle()->prepend(__('Help Center'));
         $this->getResult()->getConfig()->getTitle()->prepend(__('Health Status'));

@@ -246,7 +246,7 @@ class Order extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
     }
 
     /**
-     * Check whether the order has items, listed by M2E OnBuy (also true for linked Unmanaged listings)
+     * Check whether the order has items, listed by M2E (also true for linked Unmanaged listings)
      */
     public function hasListingProductItems(): bool
     {
@@ -569,15 +569,25 @@ class Order extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
 
         if (!$store->getConfig('payment/onbuypayment/active')) {
             throw new \M2E\OnBuy\Model\Exception(
-                'Payment method "M2E OnBuy Connect Payment" is disabled under
-                <i>Stores > Settings > Configuration > Sales > Payment Methods > M2E OnBuy Connect Payment.</i>'
+                strtr(
+                    'Payment method "extension_title Payment" is disabled under
+                <i>Stores > Settings > Configuration > Sales > Payment Methods > extension_title Payment.</i>',
+                    [
+                        'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                    ]
+                )
             );
         }
 
         if (!$store->getConfig('carriers/onbuyshipping/active')) {
             throw new \M2E\OnBuy\Model\Exception(
-                'Shipping method "M2E OnBuy Connect Shipping" is disabled under
-                <i>Stores > Settings > Configuration > Sales > Shipping Methods > M2E OnBuy Connect Shipping.</i>'
+                strtr(
+                    'Shipping method "extension_title Shipping" is disabled under
+                <i>Stores > Settings > Configuration > Sales > Shipping Methods > extension_title Shipping.</i>',
+                    [
+                        'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                    ]
+                )
             );
         }
     }

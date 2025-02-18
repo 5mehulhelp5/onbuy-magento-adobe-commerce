@@ -33,11 +33,21 @@ class RunStopAndRemove extends \M2E\OnBuy\Controller\Adminhtml\Listing\AbstractA
             ['result' => $result] = $this->actionService->runStopAndREmove($products);
             if ($result === 'success') {
                 $this->getMessageManager()->addSuccessMessage(
-                    __('"Removing from OnBuy And Removing From Listing Selected Items" task has completed.'),
+                    __(
+                        '"Removing from %channel_title And Removing From Listing Selected Items" task has completed.',
+                        [
+                            'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                        ]
+                    ),
                 );
             } else {
                 $this->getMessageManager()->addErrorMessage(
-                    __('"Removing from OnBuy And Removing From Listing Selected Items"as completed with errors.'),
+                    __(
+                        '"Removing from %channel_title And Removing From Listing Selected Items"as completed with errors.',
+                        [
+                            'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                        ]
+                    ),
                 );
             }
 
@@ -47,7 +57,12 @@ class RunStopAndRemove extends \M2E\OnBuy\Controller\Adminhtml\Listing\AbstractA
         $this->actionService->scheduleStopAndREmove($products);
 
         $this->getMessageManager()->addSuccessMessage(
-            __('"Removing from OnBuy And Removing From Listing Selected Items" task has completed.'),
+            __(
+                '"Removing from %channel_title And Removing From Listing Selected Items" task has completed.',
+                [
+                    'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                ]
+            ),
         );
 
         return $this->redirectToGrid();

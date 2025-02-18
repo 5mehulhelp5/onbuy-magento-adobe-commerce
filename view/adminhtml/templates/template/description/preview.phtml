@@ -12,7 +12,11 @@ echo $block->getLayout()->createBlock(\M2E\OnBuy\Block\Adminhtml\HelpBlock::clas
     'no_hide' => true,
     'title' => $block->__('Description Preview'),
     'content' => $block->__(
-        'If your description contains M2E OnBuy Connect Attributes, some of them such as Image URLs, Images, etc. might display for the previewing the value which is different from the actual one that will be sent to OnBuy.'
+        'If your description contains %extension_title Attributes, some of them such as Image URLs, Images, etc. might display for the previewing the value which is different from the actual one that will be sent to %channel_title.',
+        [
+            'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+            'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+        ]
     ),
 ])->toHtml() ?>
 

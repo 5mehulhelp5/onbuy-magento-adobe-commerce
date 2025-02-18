@@ -36,7 +36,7 @@ class ModuleAndChannels extends \M2E\OnBuy\Block\Adminhtml\System\Config\Section
                     '<p>Here you can manage the Module and Automatic Synchronization running,' .
                     'enable Channels you want to sell on. Read the ' .
                     '<a href="%url" target="_blank">article</a> for more details.</p>',
-                    ['url' => 'https://docs-m2.m2epro.com'],
+                    ['url' => 'https://docs-m2.m2epro.com/docs/m2e-onbuy-global-settings/'],
                 ),
             ]
         );

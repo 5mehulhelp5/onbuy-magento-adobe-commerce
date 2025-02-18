@@ -122,7 +122,7 @@ class View extends \M2E\OnBuy\Controller\Adminhtml\Listing\Wizard\StepAbstract
             return $this->getResult();
         }
 
-        $this->setPageHelpLink('https://docs-m2.m2epro.com');
+        $this->setPageHelpLink('https://docs-m2.m2epro.com/docs/create-m2e-onbuy-listing/');
 
         $this->getResultPage()
              ->getConfig()

@@ -37,16 +37,19 @@ class Order extends \M2E\OnBuy\Block\Adminhtml\Magento\Grid\AbstractContainer
     {
         if ($this->getRequest()->getParam('magento_order_failed')) {
             $message = __(
-                'This Log contains information about your recent OnBuy orders for ' .
+                'This Log contains information about your recent %channel_title orders for ' .
                 'which Magento orders were not created.<br/><br/>Find detailed info in ' .
                 '<a href="%url%" target="_blank">the article</a>.',
-                ['url' => 'https://docs-m2.m2epro.com']
+                [
+                    'url' => 'https://docs-m2.m2epro.com/docs/m2e-onbuy-logs-events/',
+                    'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                ]
             );
         } else {
             $message = __(
                 'This Log contains information about Order processing.<br/><br/>' .
                 'Find detailed info in <a href="%url" target="_blank">the article</a>.',
-                ['url' => 'https://docs-m2.m2epro.com']
+                ['url' => 'https://docs-m2.m2epro.com/docs/m2e-onbuy-logs-events/']
             );
         }
         $helpBlock = $this->getLayout()->createBlock(\M2E\OnBuy\Block\Adminhtml\HelpBlock::class)

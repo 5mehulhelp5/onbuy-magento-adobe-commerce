@@ -2,18 +2,15 @@
 
 namespace M2E\OnBuy\Model\ControlPanel\Inspection\Inspector;
 
-use M2E\OnBuy\Model\ControlPanel\Inspection\InspectorInterface;
-use M2E\OnBuy\Model\ControlPanel\Inspection\Issue\Factory as IssueFactory;
-
-class ShowModuleLoggers implements InspectorInterface
+class ShowModuleLoggers implements \M2E\Core\Model\ControlPanel\Inspection\InspectorInterface
 {
     private array $loggers = [];
 
-    private IssueFactory $issueFactory;
+    private \M2E\Core\Model\ControlPanel\Inspection\IssueFactory $issueFactory;
     private \M2E\Core\Helper\Client $clientHelper;
 
     public function __construct(
-        IssueFactory $issueFactory,
+        \M2E\Core\Model\ControlPanel\Inspection\IssueFactory $issueFactory,
         \M2E\Core\Helper\Client $clientHelper
     ) {
         $this->issueFactory = $issueFactory;
@@ -27,7 +24,12 @@ class ShowModuleLoggers implements InspectorInterface
 
         if (!empty($this->loggers)) {
             $issues[] = $this->issueFactory->create(
-                'OnBuy loggers were found in magento files',
+                strtr(
+                    'channel_title loggers were found in magento files',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ]
+                ),
                 $this->loggers,
             );
         }

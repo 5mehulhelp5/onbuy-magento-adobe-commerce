@@ -13,6 +13,7 @@ class Index extends \M2E\OnBuy\Controller\Adminhtml\AbstractListing
     private Listing\Repository $listingRepository;
     private \M2E\OnBuy\Helper\Module\Wizard $wizardHelper;
     private \M2E\OnBuy\Model\Listing\Wizard\Create $createModel;
+    private \M2E\OnBuy\Model\Policy\Manager $templateManager;
 
     public function __construct(
         \M2E\OnBuy\Model\Listing\Repository $listingRepository,
@@ -21,7 +22,8 @@ class Index extends \M2E\OnBuy\Controller\Adminhtml\AbstractListing
         \M2E\OnBuy\Model\Listing\LogService $listingLogService,
         Listing\Transferring $transferring,
         \M2E\OnBuy\Helper\Module\Wizard $wizardHelper,
-        \M2E\OnBuy\Model\Listing\Wizard\Create $createModel
+        \M2E\OnBuy\Model\Listing\Wizard\Create $createModel,
+        \M2E\OnBuy\Model\Policy\Manager $templateManager
     ) {
         parent::__construct();
         $this->transferring = $transferring;
@@ -31,6 +33,7 @@ class Index extends \M2E\OnBuy\Controller\Adminhtml\AbstractListing
         $this->listingRepository = $listingRepository;
         $this->wizardHelper = $wizardHelper;
         $this->createModel = $createModel;
+        $this->templateManager = $templateManager;
     }
 
     protected function _isAllowed()
@@ -61,7 +64,7 @@ class Index extends \M2E\OnBuy\Controller\Adminhtml\AbstractListing
         }
 
         $this->getResultPage()->getConfig()->getTitle()->prepend(\__('New Listing Creation'));
-        $this->setPageHelpLink('https://docs-m2.m2epro.com');
+        $this->setPageHelpLink('https://docs-m2.m2epro.com/docs/m2e-onbuy-listings/');
 
         return $this->getResult();
     }
@@ -84,8 +87,8 @@ class Index extends \M2E\OnBuy\Controller\Adminhtml\AbstractListing
             // clear session data if user came back to the first step and changed the marketplace
             // ---------------------------------------
             if (
-                $this->getSessionValue('shop_id')
-                && (int)$this->getSessionValue('shop_id') != (int)$post['shop_id']
+                $this->getSessionValue('site_id')
+                && (int)$this->getSessionValue('site_id') != (int)$post['site_id']
             ) {
                 $this->clearSession();
             }
@@ -158,25 +161,18 @@ class Index extends \M2E\OnBuy\Controller\Adminhtml\AbstractListing
                 return;
             }
 
-            $this->clearSession();
-
-            if ((bool)$this->getRequest()->getParam('wizard', false)) {
-                $this->setWizardStep('sourceMode');
-
-                $this->_redirect('*/wizard_installationOnBuy');
-
-                return;
-            }
+            $wizard = $this->createModel->process($listing, \M2E\OnBuy\Model\Listing\Wizard::TYPE_GENERAL);
 
             $this->_redirect(
-                '*/listing/index',
-                []
+                '*/listing_wizard/index',
+                [
+                    'id' => $wizard->getId()
+                ]
             );
 
             return;
         }
 
-        $this->setWizardStep('listingTemplates');
         $this->addContent(
             $this->getLayout()->createBlock(\M2E\OnBuy\Block\Adminhtml\Listing\Create\Templates::class)
         );
@@ -187,6 +183,16 @@ class Index extends \M2E\OnBuy\Controller\Adminhtml\AbstractListing
     private function createListing()
     {
         $data = $this->getSessionValue();
+
+        $templateNicks = $this->templateManager->getAllTemplates();
+
+        foreach ($templateNicks as $templateNick) {
+            $key = "template_{$templateNick}_id";
+            if (isset($data[$key]) && empty($data[$key])) {
+                $data[$key] = null;
+            }
+        }
+
         $model = $this->listingFactory->createEmpty();
         $model->addData($data);
         $this->listingRepository->save($model);

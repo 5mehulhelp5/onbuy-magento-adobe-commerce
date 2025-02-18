@@ -7,6 +7,7 @@ namespace M2E\OnBuy\Setup\InstallHandler;
 use M2E\OnBuy\Helper\Module\Database\Tables as TablesHelper;
 use M2E\OnBuy\Model\ResourceModel\Policy\SellingFormat as SellingFormatResource;
 use M2E\OnBuy\Model\ResourceModel\Policy\Synchronization as SynchronizationResource;
+use M2E\OnBuy\Model\ResourceModel\Policy\Shipping as ShippingResource;
 use Magento\Framework\DB\Ddl\Table;
 
 class PolicyHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
@@ -17,6 +18,7 @@ class PolicyHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
     {
         $this->installTemplateSellingFormatTable($setup);
         $this->installTemplateSynchronizationTable($setup);
+        $this->installTemplateShippingTable($setup);
     }
 
     private function installTemplateSellingFormatTable(\Magento\Framework\Setup\SetupInterface $setup): void
@@ -362,6 +364,68 @@ class PolicyHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
             ->addIndex(
                 'title',
                 SynchronizationResource::COLUMN_TITLE
+            )
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci')
+            ->setOption('row_format', 'dynamic');
+
+        $setup->getConnection()->createTable($table);
+    }
+
+    private function installTemplateShippingTable(\Magento\Framework\Setup\SetupInterface $setup): void
+    {
+        $tableName = $this->tablesHelper->getFullName(TablesHelper::TABLE_NAME_TEMPLATE_SHIPPING);
+
+        $table = $setup->getConnection()->newTable($tableName);
+
+        $table
+            ->addColumn(
+                ShippingResource::COLUMN_ID,
+                Table::TYPE_INTEGER,
+                null,
+                [
+                    'unsigned' => true,
+                    'primary' => true,
+                    'nullable' => false,
+                    'auto_increment' => true,
+                ]
+            )
+            ->addColumn(
+                ShippingResource::COLUMN_ACCOUNT_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                ShippingResource::COLUMN_SITE_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                ShippingResource::COLUMN_TITLE,
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                ShippingResource::COLUMN_DELIVERY_TEMPLATE_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                ShippingResource::COLUMN_UPDATE_DATE,
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null],
+            )
+            ->addColumn(
+                ShippingResource::COLUMN_CREATE_DATE,
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null],
             )
             ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')

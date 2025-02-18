@@ -21,6 +21,18 @@ class Tabs extends AbstractVerticalTabs
     protected function _prepareLayout()
     {
         $this->addTab(
+            'list_rules',
+            [
+                'label' => __('List Rules'),
+                'title' => __('List Rules'),
+                'content' => $this
+                    ->getLayout()
+                    ->createBlock(\M2E\OnBuy\Block\Adminhtml\Template\Synchronization\Edit\Form\Tabs\ListRules::class)
+                    ->toHtml(),
+            ]
+        );
+
+        $this->addTab(
             'revise_rules',
             [
                 'label' => __('Revise Rules'),

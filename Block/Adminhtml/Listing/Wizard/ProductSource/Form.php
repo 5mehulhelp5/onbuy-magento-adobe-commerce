@@ -23,10 +23,16 @@ class Form extends \M2E\OnBuy\Block\Adminhtml\Magento\Form\AbstractForm
             'source_help_block',
             self::HELP_BLOCK,
             [
-                'content' => __('<p>After an M2E OnBuy Connect listing is configured and created, ' .
+                'content' => __(
+                    '<p>After an %extension_title listing is configured and created, ' .
                     'Magento Products should be added into it. <br> The Products you add to the Listing will ' .
-                    'further be Listed on OnBuy.</p><br><p>There are several different options ' .
-                    'of how Magento products can be found/selected and added to the Listing.</p>'),
+                    'further be Listed on %channel_title.</p><br><p>There are several different options ' .
+                    'of how Magento products can be found/selected and added to the Listing.</p>',
+                    [
+                        'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ]
+                ),
             ]
         );
 

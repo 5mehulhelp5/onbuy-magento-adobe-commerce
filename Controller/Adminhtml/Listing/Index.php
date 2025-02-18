@@ -23,7 +23,7 @@ class Index extends \M2E\OnBuy\Controller\Adminhtml\AbstractListing
         $this->addContent($block);
 
         $this->getResultPage()->getConfig()->getTitle()->prepend(__('Items By Listing'));
-        $this->setPageHelpLink('https://docs-m2.m2epro.com');
+        $this->setPageHelpLink('https://docs-m2.m2epro.com/docs/m2e-onbuy-listings/');
 
         return $this->getResult();
     }

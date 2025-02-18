@@ -65,6 +65,25 @@ class DataProvider
         return $result;
     }
 
+    public function getDelivery(): DataProvider\Delivery\Result
+    {
+        if ($this->hasResult(DataProvider\DeliveryProvider::NICK)) {
+            /** @var DataProvider\Delivery\Result */
+            return $this->getResult(DataProvider\DeliveryProvider::NICK);
+        }
+
+        /** @var \M2E\OnBuy\Model\Product\DataProvider\DeliveryProvider $builder */
+        $builder = $this->getBuilder(\M2E\OnBuy\Model\Product\DataProvider\DeliveryProvider::NICK);
+
+        $value = $builder->getDeliveryTemplateId($this->product);
+
+        $result = DataProvider\Delivery\Result::success($value, $builder->getWarningMessages());
+
+        $this->addResult(DataProvider\DeliveryProvider::NICK, $result);
+
+        return $result;
+    }
+
     /**
      * @return string[]
      */

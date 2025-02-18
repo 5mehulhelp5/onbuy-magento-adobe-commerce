@@ -29,7 +29,13 @@ class Content extends AbstractForm
     protected function _prepareLayout()
     {
         $this->getLayout()->getBlock('wizard.help.block')->setContent(
-            (string)__('On this step, you should link your OnBuy Account with your M2E OnBuy Connect.<br/><br/>')
+            (string)__(
+                'On this step, you should link your %channel_title Account with your %extension_title.<br/><br/>',
+                [
+                    'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                ]
+            )
         );
 
         parent::_prepareLayout();
@@ -49,7 +55,12 @@ class Content extends AbstractForm
     {
         $this->jsTranslator->add(
             'An error during of account creation.',
-            __('The OnBuy token obtaining is currently unavailable. Please try again later.')
+            __(
+                'The %channel_title token obtaining is currently unavailable. Please try again later.',
+                [
+                    'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                ]
+            )
         );
 
         return parent::_beforeToHtml();

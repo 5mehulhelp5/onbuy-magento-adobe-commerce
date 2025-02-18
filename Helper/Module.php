@@ -80,4 +80,24 @@ class Module
     {
         return $this->coreModuleHelper->getBaseRelativeDirectory(self::IDENTIFIER);
     }
+
+    public static function getExtensionTitle(): string
+    {
+        return 'M2E OnBuy Connect';
+    }
+
+    public static function getChannelTitle(): string
+    {
+        return 'OnBuy';
+    }
+
+    public static function getChannelNick(): string
+    {
+        return 'onbuy';
+    }
+
+    public static function getMenuRootNodeLabel(): string
+    {
+        return (string)__('OnBuy');
+    }
 }

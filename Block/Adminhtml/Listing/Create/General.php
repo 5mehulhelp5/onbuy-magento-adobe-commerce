@@ -39,10 +39,15 @@ class General extends \M2E\OnBuy\Block\Adminhtml\Magento\Form\AbstractContainer
         $helpBlock = $this->getLayout()->createBlock(\M2E\OnBuy\Block\Adminhtml\HelpBlock::class);
         $helpBlock->addData(
             [
-                'content' => __('<p>It is necessary to select an OnBuy Account ' .
+                'content' => __(
+                    '<p>It is necessary to select an %channel_title Account ' .
                     '(existing or create a new one) as well as choose a Shop that you are going to sell ' .
                     'Magento Products on.</p><br><p>It is also important to specify a Store View in accordance with ' .
-                    'which Magento Attribute values will be used in the Listing settings.</p>'),
+                    'which Magento Attribute values will be used in the Listing settings.</p>',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ]
+                ),
                 'style' => 'margin-top: 30px',
             ]
         );

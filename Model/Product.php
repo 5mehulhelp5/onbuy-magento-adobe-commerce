@@ -36,6 +36,9 @@ class Product extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
     public const INSTRUCTION_TYPE_CHANNEL_PRICE_CHANGED = 'channel_price_changed';
     public const INSTRUCTION_TYPE_VARIANT_SKU_REMOVED = 'variant_sku_removed';
 
+    public const SEARCH_STATUS_NONE = 0;
+    public const SEARCH_STATUS_COMPLETED = 1;
+
     private \M2E\OnBuy\Model\Listing $listing;
     private \M2E\OnBuy\Model\Magento\Product\Cache $magentoProductModel;
     private \M2E\OnBuy\Model\Listing\Repository $listingRepository;
@@ -65,7 +68,7 @@ class Product extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
 
     // ----------------------------------------
 
-    public function create(Listing $listing, int $magentoProductId): self
+    public function create(Listing $listing, int $magentoProductId, ?string $opc): self
     {
         $this
             ->setListingId($listing->getId())
@@ -73,6 +76,10 @@ class Product extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
             ->setStatusNotListed(self::STATUS_CHANGER_USER);
 
         $this->initListing($listing);
+
+        if ($opc !== null) {
+            $this->setOpc($opc);
+        }
 
         return $this;
     }
@@ -336,6 +343,7 @@ class Product extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
 
     // ---------------------------------------
 
+    //@todo to revise conditions
     public function isListable(): bool
     {
         return (
@@ -371,7 +379,7 @@ class Product extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
 
     public function isRemovableFromChannel(): bool
     {
-        return !empty($this->getOpc());
+        return !empty($this->getOnlineSku());
     }
 
     /**
@@ -388,6 +396,14 @@ class Product extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
     public function getSynchronizationTemplate(): \M2E\OnBuy\Model\Policy\Synchronization
     {
         return $this->getListing()->getTemplateSynchronization();
+    }
+
+    /**
+     * @throws \M2E\OnBuy\Model\Exception\Logic
+     */
+    public function getShippingTemplate(): ?\M2E\OnBuy\Model\Policy\Shipping
+    {
+        return $this->getListing()->getTemplateShipping();
     }
 
     // ---------------------------------------
@@ -455,7 +471,7 @@ class Product extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
         return $this;
     }
 
-    private function setChannelProductId(int $productId): self
+    public function setChannelProductId(int $productId): self
     {
         $this->setData(ProductResource::COLUMN_CHANNEL_PRODUCT_ID, $productId);
 

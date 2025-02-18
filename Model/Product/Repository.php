@@ -21,6 +21,7 @@ class Repository
     private SiteResource $siteResource;
     /** @var \M2E\OnBuy\Model\ResourceModel\InventorySync\ReceivedProduct */
     private InventorySyncReceivedProductResource $inventorySyncReceivedProductResource;
+    private \M2E\OnBuy\Model\Listing\Wizard\ProductCollectionFactory $wizardProductCollectionFactory;
 
     public function __construct(
         \M2E\OnBuy\Model\ResourceModel\Listing $listingResource,
@@ -30,7 +31,8 @@ class Repository
         \M2E\OnBuy\Model\ProductFactory $productFactory,
         SiteResource $siteResource,
         \M2E\OnBuy\Model\Product\AffectedProduct\Finder $affectedProductFinder,
-        \M2E\OnBuy\Helper\Module\Database\Structure $dbStructureHelper
+        \M2E\OnBuy\Helper\Module\Database\Structure $dbStructureHelper,
+        \M2E\OnBuy\Model\Listing\Wizard\ProductCollectionFactory $wizardProductCollectionFactory
     ) {
         $this->productResource = $productResource;
         $this->productCollectionFactory = $productCollectionFactory;
@@ -40,6 +42,7 @@ class Repository
         $this->dbStructureHelper = $dbStructureHelper;
         $this->siteResource = $siteResource;
         $this->inventorySyncReceivedProductResource = $inventorySyncReceivedProductResource;
+        $this->wizardProductCollectionFactory = $wizardProductCollectionFactory;
     }
 
     public function create(\M2E\OnBuy\Model\Product $product): void
@@ -293,6 +296,34 @@ class Repository
         return array_values($collection->getItems());
     }
 
+    /**
+     * @param string[] $opcArray
+     *
+     * @return \M2E\OnBuy\Model\Product[]
+     */
+    public function findByOpcAccountSite(array $opcArray, int $accountId, int $siteId): array
+    {
+        $collection = $this->productCollectionFactory->create();
+        $collection
+            ->addFieldToFilter(
+                ProductResource::COLUMN_OPC,
+                ['in' => $opcArray],
+            )
+            ->join(
+                ['l' => $this->listingResource->getMainTable()],
+                sprintf(
+                    '`l`.%s = `main_table`.%s',
+                    ListingResource::COLUMN_ID,
+                    ProductResource::COLUMN_LISTING_ID,
+                ),
+                [],
+            )
+            ->addFieldToFilter(sprintf('l.%s', ListingResource::COLUMN_ACCOUNT_ID), $accountId)
+            ->addFieldToFilter(sprintf('l.%s', ListingResource::COLUMN_SITE_ID), $siteId);
+
+        return array_values($collection->getItems());
+    }
+
     public function getCountListedProductsForListing(\M2E\OnBuy\Model\Listing $listing): int
     {
         $collection = $this->productCollectionFactory->create();
@@ -524,5 +555,42 @@ class Repository
         $collection->getSelect()->limit($limit);
 
         return array_map('intval', $collection->getColumnValues('id'));
+    }
+
+    public function getStatisticForSearchChannelId(int $listingId, array $forProductIds): array
+    {
+        $collection = $this->wizardProductCollectionFactory->create();
+
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
+        $collection->getSelect()->columns(
+            [
+                'channel_product_id_search_status' => \M2E\OnBuy\Model\ResourceModel\Listing\Wizard\Product::COLUMN_CHANNEL_PRODUCT_ID_SEARCH_STATUS,
+                'count' => new \Zend_Db_Expr('COUNT(*)'),
+            ],
+        );
+        $collection->getSelect()->group(
+            \M2E\OnBuy\Model\ResourceModel\Listing\Wizard\Product::COLUMN_CHANNEL_PRODUCT_ID_SEARCH_STATUS,
+        );
+
+        $collection
+            ->addFieldToFilter(
+                \M2E\OnBuy\Model\ResourceModel\Listing\Wizard\Product::COLUMN_MAGENTO_PRODUCT_ID,
+                ['in' => $forProductIds],
+            )
+            ->addFieldToFilter(
+                \M2E\OnBuy\Model\ResourceModel\Listing\Wizard\Product::COLUMN_WIZARD_ID,
+                $listingId,
+            );
+
+        $select = (string)$collection->getSelect();
+
+        $data = $this->productResource->getConnection()
+                                             ->fetchPairs($select);
+        $result = [];
+        foreach ($data as $status => $count) {
+            $result[$status] = (int)$count;
+        }
+
+        return $result;
     }
 }

@@ -50,8 +50,11 @@ class Create extends \M2E\OnBuy\Controller\Adminhtml\AbstractAccount
             $account = $this->accountCreate->create($title, $sellerId, $consumerKey, $secretKey);
         } catch (\Throwable $e) {
             $message = (string)__(
-                'The OnBuy access obtaining is currently unavailable.<br/>Reason: %error_message',
-                ['error_message' => $e->getMessage()],
+                'The %channel_title access obtaining is currently unavailable.<br/>Reason: %error_message',
+                [
+                    'error_message' => $e->getMessage(),
+                    'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                ],
             );
 
             $this->messageManager->addError($message);

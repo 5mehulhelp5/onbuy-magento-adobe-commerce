@@ -45,8 +45,13 @@ class Log extends AbstractContainer
                 '',
                 [
                     'data' => [
-                        'content' => __('The Log includes information about synchronization ' .
-                            'of M2E OnBuy Connect Listings, Orders, Unmanaged Listings.'),
+                        'content' => __(
+                            'The Log includes information about synchronization ' .
+                            'of %extension_title Listings, Orders, Unmanaged Listings.',
+                            [
+                                'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                            ]
+                        ),
                     ],
                 ]
             );

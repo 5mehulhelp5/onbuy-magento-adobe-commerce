@@ -2,8 +2,20 @@
 
 namespace M2E\OnBuy\Block\Adminhtml\Listing\Create;
 
+use M2E\OnBuy\Model\Listing;
+
 class Templates extends \M2E\OnBuy\Block\Adminhtml\Magento\Form\AbstractContainer
 {
+    private \M2E\OnBuy\Helper\Data\Session $sessionDataHelper;
+    public function __construct(
+        \M2E\OnBuy\Helper\Data\Session $sessionDataHelper,
+        \M2E\OnBuy\Block\Adminhtml\Magento\Context\Widget $context,
+        array $data = []
+    ) {
+        $this->sessionDataHelper = $sessionDataHelper;
+        parent::__construct($context, $data);
+    }
+
     public function _construct()
     {
         parent::_construct();
@@ -34,7 +46,17 @@ class Templates extends \M2E\OnBuy\Block\Adminhtml\Magento\Form\AbstractContaine
             ]
         );
 
-        $nextStepBtnText = (string)__('Complete');
+        $nextStepBtnText = 'Next Step';
+
+        $sessionData = $this->sessionDataHelper->getValue(
+            Listing::CREATE_LISTING_SESSION_DATA
+        );
+        if (
+            isset($sessionData['creation_mode']) && $sessionData['creation_mode'] ===
+            \M2E\OnBuy\Helper\View::LISTING_CREATION_MODE_LISTING_ONLY
+        ) {
+            $nextStepBtnText = 'Complete';
+        }
 
         $url = $this->getUrl(
             '*/listing_create/index',
@@ -68,7 +90,7 @@ class Templates extends \M2E\OnBuy\Block\Adminhtml\Magento\Form\AbstractContaine
                     'The synch rules can be defined in the <b>Synchronization policy</b>. </p>' .
                     '<p>More details in ' .
                     '<a href="%url" target="_blank">our documentation</a>.</p>',
-                    ['url' => 'https://docs-m2.m2epro.com']
+                    ['url' => 'https://docs-m2.m2epro.com/docs/create-m2e-onbuy-listing/']
                 ),
                 'style' => 'margin-top: 30px',
             ]

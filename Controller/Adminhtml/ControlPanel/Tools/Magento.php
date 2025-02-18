@@ -2,10 +2,7 @@
 
 namespace M2E\OnBuy\Controller\Adminhtml\ControlPanel\Tools;
 
-use M2E\OnBuy\Controller\Adminhtml\Context;
-use M2E\OnBuy\Controller\Adminhtml\ControlPanel\AbstractCommand;
-
-class Magento extends AbstractCommand
+class Magento extends \M2E\OnBuy\Controller\Adminhtml\ControlPanel\AbstractCommand
 {
     private \Magento\Framework\Module\FullModuleList $fullModuleList;
     private \Magento\Framework\Module\ModuleList $moduleList;
@@ -16,7 +13,7 @@ class Magento extends AbstractCommand
     public function __construct(
         \M2E\OnBuy\Helper\View\ControlPanel $controlPanelHelper,
         \M2E\Core\Helper\Magento $magentoHelper,
-        Context $context,
+        \M2E\OnBuy\Controller\Adminhtml\Context $context,
         \Magento\Framework\Module\FullModuleList $fullModuleList,
         \Magento\Framework\Module\ModuleList $moduleList,
         \Magento\Framework\Module\PackageInfo $packageInfo,

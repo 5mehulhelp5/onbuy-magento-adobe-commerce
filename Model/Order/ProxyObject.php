@@ -445,7 +445,12 @@ class ProxyObject
         $shippingMethod = $this->order->getShippingService();
 
         return [
-            'carrier_title' => (string)__('OnBuy Delivery Option'),
+            'carrier_title' => (string)__(
+                '%channel_title Delivery Option',
+                [
+                    'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                ],
+            ),
             'shipping_method' => $shippingMethod . $additionalData,
             'shipping_price' => $this->getBaseShippingPrice(),
         ];

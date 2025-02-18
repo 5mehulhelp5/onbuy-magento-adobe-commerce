@@ -9,6 +9,7 @@ class Factory
     private const ALLOWED_BUILDERS = [
         PriceProvider::NICK => PriceProvider::class,
         QtyProvider::NICK => QtyProvider::class,
+        DeliveryProvider::NICK => DeliveryProvider::class,
     ];
 
     private \Magento\Framework\ObjectManagerInterface $objectManager;

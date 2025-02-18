@@ -44,15 +44,19 @@ class RelistRules extends AbstractTab
             self::HELP_BLOCK,
             [
                 'content' => __(
-                    '<p>If <strong>Relist Action</strong> is enabled, M2E OnBuy Connect ' .
-                    'will relist Items that have been stopped or finished on OnBuy if they meet the ' .
+                    '<p>If <strong>Relist Action</strong> is enabled, %extension_title ' .
+                    'will relist Items that have been stopped or finished on %channel_title if they meet the ' .
                     'Conditions you set. (Relist Action will not list Items that have not been Listed yet)</p><br>' .
                     '<p>If the automatic relisting doesn\'t work (usually because of the errors returned ' .
-                    'from OnBuy), M2E OnBuy Connect will attempt to list the Item again only if there is ' .
+                    'from %channel_title), %extension_title will attempt to list the Item again only if there is ' .
                     "a change of Product Status, Stock Availability or Quantity in Magento.</p><br>" .
                     '<p>More detailed information about how to work with this Page you can find ' .
                     '<a href="%url" target="_blank" class="external-link">here</a>.</p>',
-                    ['url' => 'https://docs-m2.m2epro.com'],
+                    [
+                        'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                        'url' => 'https://docs-m2.m2epro.com/docs/synchronization-policy-for-onbuy/'
+                    ],
                 ),
             ]
         );

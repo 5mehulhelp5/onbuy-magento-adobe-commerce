@@ -117,6 +117,25 @@ class Repository
     }
 
     /**
+     * @param string[] $opcArray
+     *
+     * @return \M2E\OnBuy\Model\UnmanagedProduct[]
+     */
+    public function findByOpcAccountSite(array $opcArray, int $accountId, int $siteId): array
+    {
+        $collection = $this->collectionUnmanagedFactory->create();
+        $collection
+            ->addFieldToFilter(
+                UnmanagedProductResource::COLUMN_OPC,
+                ['in' => $opcArray],
+            )
+            ->addFieldToFilter(UnmanagedProductResource::COLUMN_ACCOUNT_ID, ['eq' => $accountId])
+            ->addFieldToFilter(UnmanagedProductResource::COLUMN_SITE_ID, ['eq' => $siteId]);
+
+        return array_values($collection->getItems());
+    }
+
+    /**
      * @param int $accountId
      *
      * @return void

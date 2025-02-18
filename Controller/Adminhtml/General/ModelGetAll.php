@@ -7,7 +7,8 @@ class ModelGetAll extends \M2E\OnBuy\Controller\Adminhtml\AbstractGeneral
     public function execute()
     {
         $model = $this->getRequest()->getParam('model', '');
-        $shopId = $this->getRequest()->getParam('shop_id', '');
+        $accountId = (int)$this->getRequest()->getParam('account_id', '');
+        $siteId = $this->getRequest()->getParam('site_id', '');
         $isCustomTemplate = $this->getRequest()->getParam('is_custom_template', null);
 
         $idField = $this->getRequest()->getParam('id_field', 'id');
@@ -23,7 +24,11 @@ class ModelGetAll extends \M2E\OnBuy\Controller\Adminhtml\AbstractGeneral
 
         $collection = $this->activeRecordFactory->getObject($model)->getCollection();
 
-        $shopId != '' && $collection->addFieldToFilter('shop_id', $shopId);
+        if ($accountId !== 0) {
+            $collection->addFieldToFilter('account_id', $accountId);
+        }
+
+        $siteId != '' && $collection->addFieldToFilter('site_id', $siteId);
         $isCustomTemplate != null && $collection->addFieldToFilter('is_custom_template', $isCustomTemplate);
 
         $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)

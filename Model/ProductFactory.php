@@ -18,10 +18,10 @@ class ProductFactory
         return $this->objectManager->create(Product::class);
     }
 
-    public function create(\M2E\OnBuy\Model\Listing $listing, int $magentoProductId): Product
+    public function create(\M2E\OnBuy\Model\Listing $listing, int $magentoProductId, ?string $opc): Product
     {
         $obj = $this->createEmpty();
-        $obj->create($listing, $magentoProductId);
+        $obj->create($listing, $magentoProductId, $opc);
 
         return $obj;
     }

@@ -71,9 +71,13 @@ class Form extends \M2E\OnBuy\Block\Adminhtml\Magento\Form\AbstractForm
                 'required' => true,
                 'class' => 'OnBuy-listing-title',
                 'tooltip' => __(
-                    'Create a descriptive and meaningful Title for your M2E OnBuy Connect ' .
-                    'Listing. <br/> This is used for reference within M2E OnBuy Connect and will not appear on ' .
-                    'your OnBuy Listings.'
+                    'Create a descriptive and meaningful Title for your %extension_title ' .
+                    'Listing. <br/> This is used for reference within %extension_title and will not appear on ' .
+                    'your %channel_title Listings.',
+                    [
+                        'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ]
                 ),
             ]
         );
@@ -81,7 +85,7 @@ class Form extends \M2E\OnBuy\Block\Adminhtml\Magento\Form\AbstractForm
         $fieldset = $form->addFieldset(
             'onbuy_settings_fieldset',
             [
-                'legend' => __('OnBuy Settings'),
+                'legend' => __(\M2E\OnBuy\Helper\Module::getChannelTitle() . ' Settings'),
                 'collapsable' => false,
             ]
         );
@@ -170,7 +174,10 @@ HTML
                 'value' => $siteValue ?? $sitesData['active_site_id'],
                 'values' => $sitesData['sites'],
                 'tooltip' => __(
-                    'Choose the Site you want to list on using this M2E OnBuy Listing.'
+                    'Choose the Site you want to list on using this M2E %channel_title Listing.',
+                    [
+                    'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ]
                 ),
                 'field_extra_attributes' => 'style="margin-bottom: 0px"',
             ]
@@ -195,9 +202,12 @@ HTML
                 'required' => true,
                 'has_empty_option' => true,
                 'tooltip' => __(
-                    'Choose the Magento Store View you want to use for this M2E OnBuy Connect ' .
+                    'Choose the Magento Store View you want to use for this %extension_title ' .
                     'Listing. Please remember that Attribute values from the selected Store View will ' .
-                    'be used in the Listing.'
+                    'be used in the Listing.',
+                    [
+                        'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                    ]
                 ),
                 'display_default_store_mode' => StoreSwitcher::DISPLAY_DEFAULT_STORE_MODE_DOWN,
             ]

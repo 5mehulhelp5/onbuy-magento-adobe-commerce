@@ -48,7 +48,12 @@ class View extends \M2E\OnBuy\Plugin\AbstractPlugin
         $interceptor->addButton(
             'go_to_onbuy_order',
             [
-                'label' => __('Show OnBuy Order'),
+                'label' => __(
+                    'Show %channel_title Order',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ],
+                ),
                 'onclick' => "setLocation('$buttonUrl')",
             ],
             0,

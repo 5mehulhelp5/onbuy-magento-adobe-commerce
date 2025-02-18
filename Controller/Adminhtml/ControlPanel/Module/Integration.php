@@ -2,39 +2,29 @@
 
 namespace M2E\OnBuy\Controller\Adminhtml\ControlPanel\Module;
 
-use M2E\OnBuy\Controller\Adminhtml\Context;
-use M2E\OnBuy\Controller\Adminhtml\ControlPanel\AbstractCommand;
-use M2E\OnBuy\Model\Product\Action\Type;
-
-class Integration extends AbstractCommand
+class Integration extends \M2E\OnBuy\Controller\Adminhtml\ControlPanel\AbstractCommand
 {
     private \Magento\Framework\Data\Form\FormKey $formKey;
-    private \M2E\OnBuy\Model\Account\Create $accountCreate;
-    /** @var \M2E\OnBuy\Model\Product\Action\Type\Revise\RequestFactory */
     private \M2E\OnBuy\Model\Product\Action\Type\Revise\RequestFactory $reviseRequestFactory;
-    /** @var \M2E\OnBuy\Model\Product\Action\Type\Relist\RequestFactory */
     private \M2E\OnBuy\Model\Product\Action\Type\Relist\RequestFactory $relistRequestFactory;
     private \M2E\OnBuy\Model\Product\Repository $productRepository;
     private \M2E\OnBuy\Model\Product\ActionCalculator $actionCalculator;
-    /** @var \M2E\OnBuy\Model\Product\Action\Type\Stop\RequestFactory */
     private \M2E\OnBuy\Model\Product\Action\Type\Stop\RequestFactory $stopRequestFactory;
     private \M2E\OnBuy\Model\Product\Action\LogBufferFactory $logBufferFactory;
 
     public function __construct(
         \Magento\Framework\Data\Form\FormKey $formKey,
         \M2E\OnBuy\Helper\View\ControlPanel $controlPanelHelper,
-        \M2E\OnBuy\Model\Account\Create $accountCreate,
         \M2E\OnBuy\Model\Product\Action\Type\Revise\RequestFactory $reviseRequestFactory,
         \M2E\OnBuy\Model\Product\Action\Type\Relist\RequestFactory $relistRequestFactory,
         \M2E\OnBuy\Model\Product\Action\Type\Stop\RequestFactory $stopRequestFactory,
         \M2E\OnBuy\Model\Product\Repository $productRepository,
         \M2E\OnBuy\Model\Product\ActionCalculator $actionCalculator,
         \M2E\OnBuy\Model\Product\Action\LogBufferFactory $logBufferFactory,
-        Context $context
+        \M2E\OnBuy\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($controlPanelHelper, $context);
         $this->formKey = $formKey;
-        $this->accountCreate = $accountCreate;
         $this->reviseRequestFactory = $reviseRequestFactory;
         $this->relistRequestFactory = $relistRequestFactory;
         $this->productRepository = $productRepository;
@@ -66,7 +56,10 @@ class Integration extends AbstractCommand
                         \M2E\OnBuy\Model\Product::STATUS_CHANGER_USER,
                     );
 
-                    $html .= '<div style="margin: 20px 0">' . $this->printProductInfo($listingProduct, $action) . '</div>';
+                    $html .= '<div style="margin: 20px 0">' . $this->printProductInfo(
+                        $listingProduct,
+                        $action
+                    ) . '</div>';
                 }
             } catch (\Throwable $exception) {
                 $html .= sprintf(

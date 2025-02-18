@@ -4,7 +4,6 @@ namespace M2E\OnBuy\Model\HealthStatus\Notification\Email;
 
 class Sender
 {
-    private const FROM_NAME = 'M2E OnBuy Connect Health Status';
     private const TEMPLATE_PATH = 'onbuy_health_status_notification_email_template';
 
     /** @var \Magento\Framework\Translate\Inline\StateInterface */
@@ -49,7 +48,7 @@ class Sender
 
             ])
             ->setFrom([
-                'name' => self::FROM_NAME,
+                'name' =>  \M2E\OnBuy\Helper\Module::getExtensionTitle() . ' Health Status',
                 'email' => $this->getAdminUserEmail(),
             ])
             ->addTo($this->healthStatusSettings->getEmail(), 'Magento Administrator')

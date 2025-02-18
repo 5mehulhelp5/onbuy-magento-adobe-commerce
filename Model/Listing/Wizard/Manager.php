@@ -52,6 +52,16 @@ class Manager
         return (int)$this->wizard->getId();
     }
 
+    public function getWizard(): \M2E\OnBuy\Model\Listing\Wizard
+    {
+        /** @psalm-suppress RedundantPropertyInitializationCheck */
+        if (!isset($this->wizard)) {
+            $this->wizard = $this->repository->get($this->getWizardId());
+        }
+
+        return $this->wizard;
+    }
+
     public function isWizardTypeGeneral(): bool
     {
         return $this->getWizardType() === \M2E\OnBuy\Model\Listing\Wizard::TYPE_GENERAL;
@@ -200,6 +210,11 @@ class Manager
 
     // ----------------------------------------
 
+    public function isEnabledCreateNewProductMode(): bool
+    {
+        return false;
+    }
+
     public function setStepData(string $stepNick, array $data): void
     {
         $step = $this->findStepEntity($stepNick);
@@ -279,6 +294,7 @@ class Manager
 
         $product = $this->productFactory->create()
                                         ->init($this->wizard, $unmanagedProduct->getMagentoProductId())
+                                        ->setChannelProductId($unmanagedProduct->getOpc())
                                         ->setUnmanagedProductId($unmanagedProduct->getId());
 
         $this->repository->saveProduct($product);
@@ -296,12 +312,35 @@ class Manager
         return $this->repository->findProductByMagentoId($magentoProductId, $this->wizard);
     }
 
+    public function findProductsForSearchChannelId(int $limit): array
+    {
+        return $this->repository->findProductsForSearchChannelId($this->wizard, $limit);
+    }
+
     /**
      * @return \M2E\OnBuy\Model\Listing\Wizard\Product[]
      */
     public function getProducts(): array
     {
         return $this->repository->findAllProducts($this->wizard);
+    }
+
+    /**
+     * @return int[]|null
+     */
+    public function getProductsIds(): ?array
+    {
+        $wizardProducts = $this->getProducts();
+        if (empty($wizardProducts)) {
+            return null;
+        }
+
+        $ids = [];
+        foreach ($wizardProducts as $product) {
+            $ids[] = $product->getMagentoProductId();
+        }
+
+        return $ids;
     }
 
     /**

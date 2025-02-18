@@ -15,6 +15,10 @@ class DefinitionsCollection
     public const ACTION_LIST = 'list';
 
     private const MAP = [
+        self::ACTION_LIST => [
+            'start' => ActionType\ListAction\ProcessStart::class,
+            'end' => ActionType\ListAction\ProcessEnd::class,
+        ],
         self::ACTION_REVISE => [
             'start' => ActionType\Revise\ProcessStart::class,
             'end' => ActionType\Revise\ProcessEnd::class,

@@ -84,6 +84,24 @@ class ListingHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
                 ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
+                ListingResource::COLUMN_TEMPLATE_SHIPPING_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'default' => null],
+            )
+            ->addColumn(
+                ListingResource::COLUMN_CONDITION,
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                ListingResource::COLUMN_CONDITION_NOTE,
+                Table::TYPE_TEXT,
+                255,
+                ['default' => null]
+            )
+            ->addColumn(
                 ListingResource::COLUMN_ADDITIONAL_DATA,
                 Table::TYPE_TEXT,
                 \M2E\Core\Model\ResourceModel\Setup::LONG_COLUMN_SIZE,
@@ -107,6 +125,7 @@ class ListingHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
             ->addIndex('template_description_id', ListingResource::COLUMN_TEMPLATE_DESCRIPTION_ID)
             ->addIndex('template_selling_format_id', ListingResource::COLUMN_TEMPLATE_SELLING_FORMAT_ID)
             ->addIndex('template_synchronization_id', ListingResource::COLUMN_TEMPLATE_SYNCHRONIZATION_ID)
+            ->addIndex('template_shipping_id', ListingResource::COLUMN_TEMPLATE_SHIPPING_ID)
             ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci')
@@ -308,6 +327,24 @@ class ListingHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
                 ['unsigned' => true, 'nullable' => true],
             )
             ->addColumn(
+                ListingWizardProductResource::COLUMN_CHANNEL_PRODUCT_ID,
+                Table::TYPE_TEXT,
+                50,
+                ['default' => null]
+            )
+            ->addColumn(
+                ListingWizardProductResource::COLUMN_CHANNEL_PRODUCT_ID_SEARCH_STATUS,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0],
+            )
+            ->addColumn(
+                ListingWizardProductResource::COLUMN_CHANNEL_PRODUCT_DATA,
+                Table::TYPE_TEXT,
+                \M2E\Core\Model\ResourceModel\Setup::LONG_COLUMN_SIZE,
+                ['default' => null]
+            )
+            ->addColumn(
                 ListingWizardProductResource::COLUMN_IS_PROCESSED,
                 Table::TYPE_SMALLINT,
                 null,
@@ -316,6 +353,8 @@ class ListingHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
             ->addIndex('wizard_id', ListingWizardProductResource::COLUMN_WIZARD_ID)
             ->addIndex('category_id', ListingWizardProductResource::COLUMN_CATEGORY_ID)
             ->addIndex('is_processed', ListingWizardProductResource::COLUMN_IS_PROCESSED)
+            ->addIndex('channel_product_id', ListingWizardProductResource::COLUMN_CHANNEL_PRODUCT_ID)
+            ->addIndex('channel_product_id_search_status', ListingWizardProductResource::COLUMN_CHANNEL_PRODUCT_ID_SEARCH_STATUS)
             ->addIndex(
                 'wizard_id_magento_product_id',
                 [

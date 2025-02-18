@@ -7,6 +7,8 @@ namespace M2E\OnBuy\Controller\Adminhtml\Product\Action;
 class ActionService
 {
     private \M2E\OnBuy\Model\Listing\LogService $listingLogService;
+    private \M2E\OnBuy\Model\Product\Action\Manual\Realtime\ListAction $realtimeListAction;
+    private \M2E\OnBuy\Model\Product\Action\Manual\Schedule\ListAction $scheduledListAction;
     private \M2E\OnBuy\Model\Product\Action\Manual\Realtime\ReviseAction $realtimeReviseAction;
     private \M2E\OnBuy\Model\Product\Action\Manual\Schedule\ReviseAction $scheduledReviseAction;
     private \M2E\OnBuy\Model\Product\Action\Manual\Realtime\RelistAction $realtimeRelistAction;
@@ -18,6 +20,8 @@ class ActionService
 
     public function __construct(
         \M2E\OnBuy\Model\Listing\LogService                                 $listingLogService,
+        \M2E\OnBuy\Model\Product\Action\Manual\Realtime\ListAction          $realtimeListAction,
+        \M2E\OnBuy\Model\Product\Action\Manual\Schedule\ListAction          $scheduledListAction,
         \M2E\OnBuy\Model\Product\Action\Manual\Realtime\ReviseAction        $realtimeReviseAction,
         \M2E\OnBuy\Model\Product\Action\Manual\Schedule\ReviseAction        $scheduledReviseAction,
         \M2E\OnBuy\Model\Product\Action\Manual\Realtime\RelistAction        $realtimeRelistAction,
@@ -28,6 +32,8 @@ class ActionService
         \M2E\OnBuy\Model\Product\Action\Manual\Schedule\StopAndRemoveAction $scheduledStopAndRemoveAction
     ) {
         $this->listingLogService = $listingLogService;
+        $this->realtimeListAction = $realtimeListAction;
+        $this->scheduledListAction = $scheduledListAction;
         $this->realtimeReviseAction = $realtimeReviseAction;
         $this->scheduledReviseAction = $scheduledReviseAction;
         $this->realtimeRelistAction = $realtimeRelistAction;
@@ -39,6 +45,16 @@ class ActionService
     }
 
     // ----------------------------------------
+
+    public function runList(array $products): array
+    {
+        return $this->processRealtime($products, $this->realtimeListAction, []);
+    }
+
+    public function scheduleList(array $products): array
+    {
+        return $this->createScheduleAction($products, $this->scheduledListAction, []);
+    }
 
     public function runRevise(array $products): array
     {

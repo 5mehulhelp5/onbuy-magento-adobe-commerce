@@ -37,8 +37,13 @@ class ShipmentService
 
         if (!$order->canUpdateShippingStatus()) {
             $order->addErrorLog(
-                "Shipping details could not be sent to the Channel. " .
-                "Reason: Order status on OnBuy is already marked as 'Shipped'."
+                strtr(
+                    "Shipping details could not be sent to the Channel. " .
+                    "Reason: Order status on channel_title is already marked as 'Shipped'.",
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ]
+                )
             );
 
             return self::HANDLE_RESULT_SKIPPED;

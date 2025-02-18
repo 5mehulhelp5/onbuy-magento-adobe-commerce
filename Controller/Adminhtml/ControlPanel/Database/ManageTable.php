@@ -10,18 +10,15 @@ class ManageTable extends AbstractTable
 
     public function __construct(
         \M2E\OnBuy\Helper\View\ControlPanel $controlPanelHelper,
-        \M2E\OnBuy\Helper\Module $moduleHelper,
-        \M2E\OnBuy\Model\ControlPanel\Database\TableModelFactory $databaseTableFactory,
-        \M2E\OnBuy\Model\Module $module,
+        \M2E\Core\Model\ControlPanel\Database\TableModelFactory $databaseTableFactory,
         \M2E\OnBuy\Helper\Data\Cache\Permanent $cache
     ) {
-        parent::__construct($moduleHelper, $databaseTableFactory, $module, $cache);
+        parent::__construct($databaseTableFactory, $cache);
         $this->controlPanelHelper = $controlPanelHelper;
     }
 
     public function execute()
     {
-        $this->init();
         $table = $this->getRequest()->getParam('table');
 
         if ($table === null) {
@@ -30,7 +27,7 @@ class ManageTable extends AbstractTable
 
         $this->addContent(
             $this->getLayout()->createBlock(
-                \M2E\OnBuy\Block\Adminhtml\ControlPanel\Tabs\Database\Table::class,
+                \M2E\Core\Block\Adminhtml\ControlPanel\Tab\Database\Table::class,
                 '',
                 ['tableName' => $table],
             ),

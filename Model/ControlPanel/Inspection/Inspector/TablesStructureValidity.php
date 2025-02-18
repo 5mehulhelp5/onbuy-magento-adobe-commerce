@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace M2E\OnBuy\Model\ControlPanel\Inspection\Inspector;
 
-use M2E\OnBuy\Model\ControlPanel\Inspection\FixerInterface;
-use M2E\OnBuy\Model\ControlPanel\Inspection\InspectorInterface;
-use M2E\OnBuy\Model\ControlPanel\Inspection\Issue\Factory as IssueFactory;
+use M2E\Core\Model\ControlPanel\Inspection\FixerInterface;
+use M2E\Core\Model\ControlPanel\Inspection\InspectorInterface;
 use Magento\Backend\Model\UrlInterface;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Data\Form\FormKey;
@@ -30,7 +29,7 @@ class TablesStructureValidity implements InspectorInterface, FixerInterface
     private UrlInterface $urlBuilder;
     private ResourceConnection $resourceConnection;
     private FormKey $formKey;
-    private IssueFactory $issueFactory;
+    private \M2E\Core\Model\ControlPanel\Inspection\IssueFactory $issueFactory;
     private \M2E\OnBuy\Helper\Module\Database\Structure $databaseHelper;
     private \M2E\OnBuy\Model\Connector\Client\Single $serverClient;
     private \M2E\Core\Helper\Magento $magentoHelper;
@@ -39,7 +38,7 @@ class TablesStructureValidity implements InspectorInterface, FixerInterface
         UrlInterface $urlBuilder,
         ResourceConnection $resourceConnection,
         FormKey $formKey,
-        IssueFactory $issueFactory,
+        \M2E\Core\Model\ControlPanel\Inspection\IssueFactory $issueFactory,
         \M2E\OnBuy\Helper\Module\Database\Structure $databaseHelper,
         \M2E\OnBuy\Model\Connector\Client\Single $serverClient,
         \M2E\Core\Helper\Magento $magentoHelper
@@ -66,7 +65,14 @@ class TablesStructureValidity implements InspectorInterface, FixerInterface
         }
 
         if (!isset($diff['diff'])) {
-            $issues[] = $this->issueFactory->create('No info for this OnBuy version');
+            $issues[] = $this->issueFactory->create(
+                strtr(
+                    'No info for this channel_title version',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ]
+                )
+            );
 
             return $issues;
         }
@@ -83,8 +89,9 @@ class TablesStructureValidity implements InspectorInterface, FixerInterface
 
     private function getDiff(): array
     {
-        $tablesInfo = \M2E\Core\Helper\Json::encode($this->databaseHelper->getModuleTablesInfo());
-        $command = new \M2E\OnBuy\Model\Connector\Command\System\Tables\GetDiffCommand($tablesInfo);
+        $command = new \M2E\Core\Model\Server\Connector\System\TablesGetDiffCommand(
+            $this->databaseHelper->getModuleTablesInfo()
+        );
         /** @var \M2E\Core\Model\Connector\Response $response */
         $response = $this->serverClient->process($command);
 
@@ -163,7 +170,7 @@ HTML;
         return $html;
     }
 
-    public function fix($data)
+    public function fix(array $data): void
     {
         switch ($data['repair_mode']) {
             case self::FIX_COLUMN:

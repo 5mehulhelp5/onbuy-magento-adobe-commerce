@@ -1,15 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace M2E\OnBuy\Controller\Adminhtml\ControlPanel\Inspection;
 
-use M2E\OnBuy\Controller\Adminhtml\ControlPanel\AbstractMain;
-use M2E\OnBuy\Helper\Module;
-use Magento\Backend\App\Action;
-
-/**
- * Class \M2E\OnBuy\Controller\Adminhtml\ControlPanel\Inspection\PhpInfo
- */
-class PhpInfo extends AbstractMain
+class PhpInfo extends \M2E\OnBuy\Controller\Adminhtml\ControlPanel\AbstractMain
 {
     public function execute()
     {

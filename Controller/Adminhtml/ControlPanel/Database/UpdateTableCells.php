@@ -2,9 +2,6 @@
 
 namespace M2E\OnBuy\Controller\Adminhtml\ControlPanel\Database;
 
-/**
- * Class \M2E\OnBuy\Controller\Adminhtml\ControlPanel\Database\UpdateTableCells
- */
 class UpdateTableCells extends AbstractTable
 {
     public function execute()

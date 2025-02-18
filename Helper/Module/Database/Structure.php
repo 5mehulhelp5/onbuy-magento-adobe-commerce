@@ -68,7 +68,7 @@ class Structure
 
     public function getIdColumn(string $table): string
     {
-        $tableModel = \M2E\OnBuy\Helper\Module\Database\Tables::getTableModel($table);
+        $tableModel = \M2E\OnBuy\Helper\Module\Database\Tables::getTableResourceModel($table);
         $tableModel = $this->objectManager->get($tableModel);
 
         return $tableModel->getIdFieldName();

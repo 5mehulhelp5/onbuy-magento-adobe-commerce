@@ -99,7 +99,10 @@ class CreateLicense extends \M2E\OnBuy\Controller\Adminhtml\Wizard\AbstractRegis
             $this->exceptionHelper->process($e);
 
             $message = __(
-                'License Creation is failed. Please contact M2E OnBuy Support for resolution.'
+                'License Creation is failed. Please contact M2E %channel_title Support for resolution.',
+                [
+                    'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                ]
             );
 
             $this->setJsonContent([

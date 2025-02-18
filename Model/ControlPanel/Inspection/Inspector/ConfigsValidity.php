@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace M2E\OnBuy\Model\ControlPanel\Inspection\Inspector;
 
-use M2E\OnBuy\Model\ControlPanel\Inspection\InspectorInterface;
-use M2E\OnBuy\Model\ControlPanel\Inspection\Issue\Factory as IssueFactory;
+use M2E\Core\Model\ControlPanel\Inspection\IssueFactory;
 use Magento\Backend\Model\UrlInterface;
 
-class ConfigsValidity implements InspectorInterface
+class ConfigsValidity implements \M2E\Core\Model\ControlPanel\Inspection\InspectorInterface
 {
     private UrlInterface $urlBuilder;
     private IssueFactory $issueFactory;
     private \M2E\Core\Model\Config\Repository $configRepository;
-
     private \M2E\OnBuy\Model\Connector\Client\Single $serverClient;
 
     public function __construct(
@@ -44,7 +42,14 @@ class ConfigsValidity implements InspectorInterface
             !isset($responseData['configs_info']['config'])
             || !is_array($responseData['configs_info']['config'])
         ) {
-            $issues[] = $this->issueFactory->create('No info for this OnBuy version');
+            $issues[] = $this->issueFactory->create(
+                strtr(
+                    'No info for this channel_title version',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ]
+                )
+            );
 
             return $issues;
         }
@@ -63,7 +68,7 @@ class ConfigsValidity implements InspectorInterface
 
     private function getDiff(): array
     {
-        $command = new \M2E\OnBuy\Model\Connector\Command\System\Config\GetInfoCommand();
+        $command = new \M2E\Core\Model\Server\Connector\System\ConfigsGetInfoCommand();
         /** @var \M2E\Core\Model\Connector\Response $response */
         $response = $this->serverClient->process($command);
 

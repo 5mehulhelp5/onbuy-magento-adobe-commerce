@@ -181,7 +181,12 @@ class Updater extends \Magento\Framework\DataObject
 
         !is_array($comments) && $comments = [$comments];
 
-        $header = '<br/><b><u>' . __('M2E OnBuy Connect Notes') . ':</u></b><br/><br/>';
+        $header = '<br/><b><u>' . __(
+            '%extension_title Notes',
+            [
+                'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+            ]
+        ) . ':</u></b><br/><br/>';
         $comments = implode('<br/><br/>', $comments);
 
         $this->magentoOrder->addCommentToStatusHistory($header . $comments);

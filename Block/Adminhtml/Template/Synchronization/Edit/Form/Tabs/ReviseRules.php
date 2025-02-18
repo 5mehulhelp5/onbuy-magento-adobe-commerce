@@ -34,34 +34,19 @@ class ReviseRules extends AbstractTab
         $form = $this->_formFactory->create();
 
         $form->addField(
-            'synchronization_id',
-            'hidden',
-            [
-                'name' => 'synchronization[id]',
-                'value' => (!$this->isCustom() && isset($formData['id'])) ? (int)$formData['id'] : '',
-            ]
-        );
-
-        $form->addField(
-            'synchronization_title',
-            'hidden',
-            [
-                'name' => 'synchronization[title]',
-                'value' => $this->getTitle(),
-            ]
-        );
-
-        $form->addField(
             'template_synchronization_form_data_revise',
             self::HELP_BLOCK,
             [
                 'content' => __(
                     '<p>Specify which Channel data should be automatically revised ' .
-                    'by M2E OnBuy Connect.</p><br> <p>Selected Item Properties will be automatically updated based ' .
+                    'by %extension_title.</p><br> <p>Selected Item Properties will be automatically updated based ' .
                     'on the changes in related Magento Attributes or Policy Templates.</p><br>' .
                     '<p>More detailed information on how to work with this Page can be found ' .
                     '<a href="%url" target="_blank" class="external-link">here</a>.</p>',
-                    ['url' => 'https://docs-m2.m2epro.com'],
+                    [
+                        'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                        'url' => 'https://docs-m2.m2epro.com/docs/synchronization-policy-for-onbuy/'
+                    ],
                 ),
             ]
         );

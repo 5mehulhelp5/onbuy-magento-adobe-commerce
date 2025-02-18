@@ -25,7 +25,7 @@ abstract class TypeSwitcher extends \M2E\OnBuy\Block\Adminhtml\Switcher
             'mode' => [
                 'value' => [
                     [
-                        'label' => __('M2E OnBuy Connect'),
+                        'label' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
                         'value' => self::LISTING_TYPE_M2E,
                     ],
                     [

@@ -479,4 +479,65 @@ class Repository
             $connection->insertOnDuplicate($tableName, $preparedData, ['category_id', 'is_processed']);
         }
     }
+
+    public function findProductsForSearchChannelId(\M2E\OnBuy\Model\Listing\Wizard $wizard, int $limit): array
+    {
+        $productCollection = $this->productCollectionFactory->create();
+        $productCollection
+            ->addFieldToFilter(
+                WizardProductResource::COLUMN_WIZARD_ID,
+                ['eq' => $wizard->getId()],
+            )
+            ->addFieldToFilter(
+                WizardProductResource::COLUMN_CHANNEL_PRODUCT_ID_SEARCH_STATUS,
+                ['eq' => \M2E\OnBuy\Model\Listing\Wizard\Product::SEARCH_STATUS_NONE],
+            )
+            ->setPageSize($limit);
+
+        $result = [];
+        foreach ($productCollection->getItems() as $product) {
+            $product->initWizard($wizard);
+
+            $result[] = $product;
+        }
+
+        return $result;
+    }
+
+    public function resetSearchChannelIdForAllProducts(int $wizardId): void
+    {
+        $this->wizardProductResource
+            ->getConnection()
+            ->update(
+                $this->wizardProductResource->getMainTable(),
+                [
+                    WizardProductResource::COLUMN_CHANNEL_PRODUCT_ID_SEARCH_STATUS => \M2E\OnBuy\Model\Listing\Wizard\Product::SEARCH_STATUS_NONE,
+                    WizardProductResource::COLUMN_CHANNEL_PRODUCT_ID => null,
+                ],
+                [
+                    sprintf('%s = %d', WizardProductResource::COLUMN_WIZARD_ID, $wizardId),
+                ],
+            );
+    }
+
+    public function getNotValidWizardProductsIds(int $wizardId): array
+    {
+        $productCollection = $this->productCollectionFactory->create();
+        $productCollection
+            ->addFieldToFilter(
+                WizardProductResource::COLUMN_WIZARD_ID,
+                $wizardId,
+            )
+            ->addFieldToFilter(
+                WizardProductResource::COLUMN_CHANNEL_PRODUCT_ID,
+                ['null' => true],
+            );
+
+        $result = [];
+        foreach ($productCollection->getItems() as $product) {
+            $result[] = $product->getId();
+        }
+
+        return $result;
+    }
 }

@@ -37,10 +37,38 @@ define([
             $('template_synchronization_id').simulate('change');
 
             $('template_synchronization_id').observe('change', function () {
+                if ($('template_synchronization_id').value) {
+                    $('edit_synchronization_template_link').show();
+                } else {
+                    $('edit_synchronization_template_link').hide();
+                }
+            });
+            $('template_synchronization_id').simulate('change');
+
+            $('condition').observe('change', this.condition_change)
+                    .simulate('change');
+
+            $('template_synchronization_id').observe('change', function () {
                 OnBuyListingSettingsObj.hideEmptyOption(this);
             });
             if ($('template_synchronization_id').value) {
                 $('template_synchronization_id').simulate('change');
+            }
+
+            $('template_shipping_id').observe('change', function () {
+                if ($('template_shipping_id').value) {
+                    $('edit_shipping_template_link').show();
+                } else {
+                    $('edit_shipping_template_link').hide();
+                }
+            });
+            $('template_shipping_id').simulate('change');
+
+            $('template_shipping_id').observe('change', function () {
+                OnBuyListingSettingsObj.hideEmptyOption(this);
+            });
+            if ($('template_shipping_id').value) {
+                $('template_shipping_id').simulate('change');
             }
         },
 
@@ -201,8 +229,33 @@ define([
                 noteEl && $('template_synchronization_note').hide();
                 $('template_synchronization_label').show();
             }
-        }
+        },
 
+        newShippingTemplateCallback: function () {
+            var noteEl = $('template_shipping_note');
+
+            OnBuyListingSettingsObj.reload(OnBuy.url.get('getShippingTemplates'), 'template_shipping_id');
+            if ($('template_shipping_id').children.length > 0) {
+                $('template_shipping_id').show();
+                noteEl && $('template_shipping_note').show();
+                $('template_shipping_label').hide();
+            } else {
+                $('template_shipping_id').hide();
+                noteEl && $('template_shipping_note').hide();
+                $('template_shipping_label').show();
+            }
+        },
+
+        condition_change: function () {
+            var conditionValue = $('condition').value,
+                    conditionNote = $('condition_note')
+
+            conditionNote.show();
+
+            if (conditionValue === OnBuy.php.constant('\\M2E\\OnBuy\\Model\\Listing::CONDITION_NEW')) {
+                conditionNote.hide();
+            }
+        },
         // ---------------------------------------
     });
 });

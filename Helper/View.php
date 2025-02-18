@@ -41,10 +41,6 @@ class View
             return null;
         }
 
-        if (stripos($controllerName, \M2E\OnBuy\Helper\View\ControlPanel::NICK) !== false) {
-            return \M2E\OnBuy\Helper\View\ControlPanel::NICK;
-        }
-
         if (stripos($controllerName, 'system_config') !== false) {
             return \M2E\OnBuy\Helper\View\Configuration::NICK;
         }

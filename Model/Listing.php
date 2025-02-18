@@ -24,17 +24,27 @@ class Listing extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
     public const INSTRUCTION_TYPE_CHANGE_LISTING_STORE_VIEW = 'change_listing_store_view';
     public const INSTRUCTION_INITIATOR_CHANGED_LISTING_STORE_VIEW = 'changed_listing_store_view';
 
+    public const CONDITION_NEW = 'new';
+    public const CONDITION_REFURBISHED_DIAMOND = 'diamond';
+    public const CONDITION_REFURBISHED_PLATINUM = 'platinum';
+    public const CONDITION_REFURBISHED_GOLD = 'gold';
+    public const CONDITION_REFURBISHED_SILVER = 'silver';
+    public const CONDITION_REFURBISHED_BRONZE = 'bronze';
+    public const CONDITION_REFURBISHED = 'refurbished-ungraded';
+
     public const CREATE_LISTING_SESSION_DATA = 'onbuy_listing_create';
 
     private \M2E\OnBuy\Model\Account $account;
     private \M2E\OnBuy\Model\Site $site;
     private \M2E\OnBuy\Model\Policy\SellingFormat $templateSellingFormat;
     private \M2E\OnBuy\Model\Policy\Synchronization $templateSynchronization;
+    private \M2E\OnBuy\Model\Policy\Shipping $templateShipping;
     private \M2E\OnBuy\Model\Site\Repository $siteRepository;
     private \M2E\OnBuy\Model\Product\Repository $listingProductRepository;
     private \M2E\OnBuy\Model\Account\Repository $accountRepository;
     private \M2E\OnBuy\Model\Policy\SellingFormat\Repository $sellingFormatTemplateRepository;
     private \M2E\OnBuy\Model\Policy\Synchronization\Repository $synchronizationTemplateRepository;
+    private \M2E\OnBuy\Model\Policy\Shipping\Repository $shippingTemplateRepository;
 
     public function __construct(
         \M2E\OnBuy\Model\Product\Repository $listingProductRepository,
@@ -42,6 +52,7 @@ class Listing extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
         \M2E\OnBuy\Model\Site\Repository $siteRepository,
         \M2E\OnBuy\Model\Policy\SellingFormat\Repository $sellingFormatTemplateRepository,
         \M2E\OnBuy\Model\Policy\Synchronization\Repository $synchronizationTemplateRepository,
+        \M2E\OnBuy\Model\Policy\Shipping\Repository $shippingTemplateRepository,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
@@ -59,6 +70,7 @@ class Listing extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
         $this->accountRepository = $accountRepository;
         $this->sellingFormatTemplateRepository = $sellingFormatTemplateRepository;
         $this->synchronizationTemplateRepository = $synchronizationTemplateRepository;
+        $this->shippingTemplateRepository = $shippingTemplateRepository;
         $this->siteRepository = $siteRepository;
     }
 
@@ -125,6 +137,28 @@ class Listing extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
         }
 
         return $this->templateSynchronization;
+    }
+
+    /**
+     * @throws \M2E\OnBuy\Model\Exception\Logic
+     */
+    public function getTemplateShipping(): ?Policy\Shipping
+    {
+        if ($this->getTemplateShippingId() === null) {
+            return null;
+        }
+        /** @psalm-suppress RedundantPropertyInitializationCheck */
+        if (!isset($this->templateShipping)) {
+            $this->templateShipping = $this->shippingTemplateRepository
+                ->get($this->getTemplateShippingId());
+        }
+
+        return $this->templateShipping;
+    }
+
+    public function hasTemplateShipping(): bool
+    {
+        return !empty($this->getTemplateShippingId());
     }
 
     public function getTitle(): string
@@ -195,6 +229,40 @@ class Listing extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
     public function getTemplateSynchronizationId(): int
     {
         return (int)$this->getData(ListingResource::COLUMN_TEMPLATE_SYNCHRONIZATION_ID);
+    }
+
+    public function getCondition(): string
+    {
+        return $this->getData(ListingResource::COLUMN_CONDITION);
+    }
+
+    public function setCondition(string $condition): void
+    {
+        $this->setData(ListingResource::COLUMN_CONDITION, $condition);
+    }
+
+    public function getConditionNote(): string
+    {
+        return (string)$this->getData(ListingResource::COLUMN_CONDITION_NOTE);
+    }
+
+    public function setConditionNote(string $conditionNote): void
+    {
+        $this->setData(ListingResource::COLUMN_CONDITION_NOTE, $conditionNote);
+    }
+    public function setTemplateShippingId(?int $shippingTemplateId): void
+    {
+        $this->setData(ListingResource::COLUMN_TEMPLATE_SHIPPING_ID, $shippingTemplateId);
+    }
+
+    public function getTemplateShippingId(): ?int
+    {
+        $value = $this->getData(ListingResource::COLUMN_TEMPLATE_SHIPPING_ID);
+        if (empty($value)) {
+            return null;
+        }
+
+        return (int) $value;
     }
 
     // ---------------------------------------

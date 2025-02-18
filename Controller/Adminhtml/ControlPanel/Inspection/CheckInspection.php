@@ -2,33 +2,24 @@
 
 namespace M2E\OnBuy\Controller\Adminhtml\ControlPanel\Inspection;
 
-use M2E\OnBuy\Controller\Adminhtml\ControlPanel\AbstractMain;
-use M2E\OnBuy\Model\ControlPanel\Inspection\Repository;
-use M2E\OnBuy\Model\ControlPanel\Inspection\Processor;
-
-class CheckInspection extends AbstractMain
+class CheckInspection extends \M2E\OnBuy\Controller\Adminhtml\ControlPanel\AbstractMain
 {
-    private Processor $processor;
-    private Repository $repository;
-
-    //########################################
+    private \M2E\Core\Model\ControlPanel\Inspection\Processor $processor;
+    private \M2E\Core\Model\ControlPanel\CurrentExtensionResolver $currentExtensionResolver;
 
     public function __construct(
-        Repository $repository,
-        Processor $processor,
-        \M2E\OnBuy\Model\Module $module
+        \M2E\Core\Model\ControlPanel\CurrentExtensionResolver $currentExtensionResolver,
+        \M2E\Core\Model\ControlPanel\Inspection\Processor $processor
     ) {
-        parent::__construct($module);
-        $this->repository = $repository;
+        parent::__construct();
         $this->processor = $processor;
+        $this->currentExtensionResolver = $currentExtensionResolver;
     }
 
     public function execute()
     {
-        $inspectionTitle = $this->getRequest()->getParam('title');
-
-        $definition = $this->repository->getDefinition($inspectionTitle);
-        $result = $this->processor->process($definition);
+        $currentExtension = $this->currentExtensionResolver->get();
+        $result = $this->processor->process($currentExtension, $this->getRequest()->getParam('title'));
 
         $isSuccess = true;
         $metadata = '';

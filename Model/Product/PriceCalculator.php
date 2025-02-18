@@ -305,6 +305,7 @@ class PriceCalculator
                     $this->getListing()->getStoreId()
                 );
             }
+            //@todo to check and refactor
         } elseif ($this->isSourceModeTier()) {
             if ($this->getMagentoProduct()->isGroupedType()) {
                 $value = $this->getGroupedTierValue($this->getMagentoProduct());

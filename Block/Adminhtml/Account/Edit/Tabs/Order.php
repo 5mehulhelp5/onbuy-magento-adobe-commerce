@@ -51,23 +51,34 @@ class Order extends AbstractForm
             'onbuy_accounts_orders',
             self::HELP_BLOCK,
             [
-                'content' => __('<p>Specify how M2E OnBuy Connect should manage the Orders imported ' .
-                    'from OnBuy.</p><br/><p>You are able to configure the different rules of ' .
+                'content' => __(
+                    '<p>Specify how %extension_title should manage the Orders imported ' .
+                    'from %channel_title.</p><br/><p>You are able to configure the different rules of ' .
                     '<strong>Magento Order Creation</strong> considering whether the Item was listed via ' .
-                    'M2E OnBuy Connect or by some other software.</p><br/> <p>Once OnBuy Order is ' .
+                    '%extension_title or by some other software.</p><br/> <p>Once %channel_title Order is ' .
                     'imported, the <strong>Reserve Quantity</strong> feature will hold the Stock if Magento Order ' .
                     'could not be created immediately in accordance with provided settings.</p><br/>' .
                     '<p>Besides, you can configure the <strong>Tax, Order Number</strong> ' .
                     'and <strong>Order Status Mapping</strong> Settings for your Magento Orders as well as ' .
-                    'specify the automatic creation of invoices and shipment notifications.</p>'),
+                    'specify the automatic creation of invoices and shipment notifications.</p>',
+                    [
+                        'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ]
+                ),
             ]
         );
 
-        //region Product Is Listed By M2E OnBuy
+        //region Product Is Listed By M2E
         $fieldset = $form->addFieldset(
             'listed_by_m2e',
             [
-                'legend' => __('Product Is Listed By M2E OnBuy Connect'),
+                'legend' => __(
+                    'Product Is Listed By %extension_title',
+                    [
+                        'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                    ]
+                ),
                 'collapsable' => false,
             ]
         );
@@ -83,8 +94,14 @@ class Order extends AbstractForm
                     0 => __('No'),
                 ],
                 'value' => (int)$orderSettings->isListingEnabled(),
-                'tooltip' => __('Choose whether a Magento Order should be created if an OnBuy ' .
-                    'Order is received for an OnBuy Item Listed using M2E OnBuy Connect.'),
+                'tooltip' => __(
+                    'Choose whether a Magento Order should be created if an %channel_title ' .
+                    'Order is received for an %channel_title Item Listed using %extension_title.',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                        'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                    ]
+                ),
             ]
         );
 
@@ -100,8 +117,13 @@ class Order extends AbstractForm
                     OrderSettings::LISTINGS_STORE_MODE_CUSTOM => __('Choose Store View Manually'),
                 ],
                 'value' => $orderSettings->getListingStoreMode(),
-                'tooltip' => __('Choose to specify the Magento Store View here or to keep the ' .
-                    'Magento Store View used in the M2E OnBuy Connect Listing.'),
+                'tooltip' => __(
+                    'Choose to specify the Magento Store View here or to keep the ' .
+                    'Magento Store View used in the %extension_title Listing.',
+                    [
+                        'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                    ]
+                ),
             ]
         );
 
@@ -142,8 +164,12 @@ class Order extends AbstractForm
                 ],
                 'value' => (int)$orderSettings->isUnmanagedListingEnabled(),
                 'tooltip' => __(
-                    'Choose whether a Magento Order should be created if an OnBuy Order is received
-for an item that does <b>not</b> belong to the M2E OnBuy Connect Listing.'
+                    'Choose whether a Magento Order should be created if an %channel_title Order is received
+for an item that does <b>not</b> belong to the %extension_title Listing.',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                        'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                    ]
                 ),
             ]
         );
@@ -179,10 +205,15 @@ for an item that does <b>not</b> belong to the M2E OnBuy Connect Listing.'
                 'value' => $orderSettings->getUnmanagedListingProductMode(),
                 'tooltip' => $tooltip
                     . '<span id="magento_orders_listings_other_product_mode_note">'
-                    . __('<br/><b>Note:</b> M2E OnBuy Connect will create only Simple Magento Products. For ' .
+                    . __(
+                        '<br/><b>Note:</b> %extension_title will create only Simple Magento Products. For ' .
                         'Channel variational items it will create a Simple Product for each variation. Please note ' .
                         'that the Create Product and Order option is not meant for the creation of full-fledged ' .
-                        'products in your Magento catalog.')
+                        'products in your Magento catalog.',
+                        [
+                            'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                        ]
+                    )
                     . '</span>',
             ]
         );
@@ -229,7 +260,12 @@ for an item that does <b>not</b> belong to the M2E OnBuy Connect Listing.'
                 'label' => __('Product Tax Class'),
                 'values' => $values,
                 'value' => $orderSettings->getUnmanagedListingProductTaxClassId(),
-                'tooltip' => __('Tax Class which will be used for Products created by M2E OnBuy Connect.'),
+                'tooltip' => __(
+                    'Tax Class which will be used for Products created by %extension_title.',
+                    [
+                        'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                    ]
+                ),
             ]
         );
         //endregion
@@ -251,12 +287,17 @@ for an item that does <b>not</b> belong to the M2E OnBuy Connect Listing.'
                 'label' => __('Source'),
                 'values' => [
                     OrderSettings::NUMBER_SOURCE_MAGENTO => __('Magento'),
-                    OrderSettings::NUMBER_SOURCE_CHANNEL => __('OnBuy'),
+                    OrderSettings::NUMBER_SOURCE_CHANNEL => __(\M2E\OnBuy\Helper\Module::getChannelTitle()),
                 ],
                 'value' => $orderSettings->getMagentoOrderNumberSource(),
-                'tooltip' => __('If source is set to Magento, Magento Order numbers are created basing ' .
-                    'on your Magento Settings. If source is set to OnBuy, Magento Order numbers are the same ' .
-                    'as OnBuy Order numbers.'),
+                'tooltip' => __(
+                    'If source is set to Magento, Magento Order numbers are created basing ' .
+                    'on your Magento Settings. If source is set to %channel_title, Magento Order numbers are the same ' .
+                    'as %channel_title Order numbers.',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ],
+                ),
             ]
         );
 
@@ -343,13 +384,18 @@ for an item that does <b>not</b> belong to the M2E OnBuy Connect Listing.'
                     OrderSettings::CUSTOMER_MODE_NEW => __('Create New'),
                 ],
                 'value' => $orderSettings->getCustomerMode(),
-                'tooltip' => __('<b>Guest Account:</b> Magento Guest Checkout Option must be enabled to ' .
+                'tooltip' => __(
+                    '<b>Guest Account:</b> Magento Guest Checkout Option must be enabled to ' .
                     'use this Option. Use the default Guest Account. Do not create a Customer Account.<br/><br/>' .
                     '<b>Predefined Customer:</b> Use a specific Customer for all Orders. You should specify the ' .
                     'Magento Customer ID to use.<br/><br/>' .
                     '<b>Create New:</b> Create a new Customer in Magento for the Order. If an existing ' .
                     'Magento Customer has the same email address as the email address used for the ' .
-                    'OnBuy Order, the Order will be assigned to that Customer instead.'),
+                    '%channel_title Order, the Order will be assigned to that Customer instead.',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ]
+                ),
             ]
         );
 
@@ -451,6 +497,34 @@ for an item that does <b>not</b> belong to the M2E OnBuy Connect Listing.'
         );
         //endregion
 
+        //region Refund & Cancellation
+        $fieldset = $form->addFieldset(
+            'magento_block_onbuy_accounts_magento_orders_cancellation',
+            [
+                'legend' => __('Refund & Cancellation'),
+                'collapsable' => true,
+            ]
+        );
+
+        $fieldset->addField(
+            'magento_orders_cancel_mode',
+            'select',
+            [
+                'container_id' => 'magento_orders_cancel_container',
+                'name' => 'magento_orders_settings[order_cancel_on_channel][mode]',
+                'label' => __('Cancel/Refund OnBuy Orders'),
+                'values' => [
+                    OrderSettings::CANCEL_ON_CHANNEL_NO => __('No'),
+                    OrderSettings::CANCEL_ON_CHANNEL_YES => __('Yes'),
+                ],
+                'value' => $orderSettings->getOrderCancelOrRefundOnChannelMode(),
+                'tooltip' => __(
+                    'Enable to cancel OnBuy orders and automatically update their statuses on the Channel.',
+                ),
+            ]
+        );
+        //endregion
+
         //region Order Creation Rules
         $fieldset = $form->addFieldset(
             'magento_block_onbuy_accounts_magento_orders_rules',
@@ -494,8 +568,14 @@ for an item that does <b>not</b> belong to the M2E OnBuy Connect Listing.'
                 'label' => __('Reserve Quantity'),
                 'values' => $values,
                 'value' => $orderSettings->getQtyReservationDays(),
-                'tooltip' => __('Choose for how long M2E OnBuy Connect should reserve Magento Product quantity ' .
-                    'per OnBuy Order until Magento Order is created.'),
+                'tooltip' => __(
+                    'Choose for how long %extension_title should reserve Magento Product quantity ' .
+                    'per %channel_title Order until Magento Order is created.',
+                    [
+                        'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ]
+                ),
             ]
         );
         //endregion
@@ -517,9 +597,9 @@ for an item that does <b>not</b> belong to the M2E OnBuy Connect Listing.'
                 'label' => __('Tax Source'),
                 'values' => [
                     OrderSettings::TAX_MODE_NONE => __('None'),
-                    OrderSettings::TAX_MODE_CHANNEL => __('OnBuy'),
+                    OrderSettings::TAX_MODE_CHANNEL => __(\M2E\OnBuy\Helper\Module::getChannelTitle()),
                     OrderSettings::TAX_MODE_MAGENTO => __('Magento'),
-                    OrderSettings::TAX_MODE_MIXED => __('OnBuy & Magento'),
+                    OrderSettings::TAX_MODE_MIXED => __(\M2E\OnBuy\Helper\Module::getChannelTitle() . ' & Magento'),
                 ],
                 'value' => $orderSettings->getTaxMode(),
                 'tooltip' => __(
@@ -550,8 +630,11 @@ for an item that does <b>not</b> belong to the M2E OnBuy Connect Listing.'
                 ],
                 'value' => $orderSettings->getStatusMappingMode(),
                 'tooltip' => __(
-                    'Configure the mapping between OnBuy and Magento order statuses.
-                    Magento order statuses will automatically update according to these settings.'
+                    'Configure the mapping between %channel_title and Magento order statuses.
+                    Magento order statuses will automatically update according to these settings.',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle()
+                    ]
                 ),
             ]
         );

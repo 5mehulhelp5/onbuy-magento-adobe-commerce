@@ -35,7 +35,7 @@ class Magento extends AbstractRunner
     protected function beforeStart(): void
     {
         /*
-         * Magento can execute OnBuy cron multiple times in same php process.
+         * Magento can execute Extension cron multiple times in same php process.
          * It can cause problems with items that were cached in first execution.
          */
         // ---------------------------------------

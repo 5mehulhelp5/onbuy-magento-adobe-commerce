@@ -10,6 +10,8 @@ class StepDeclarationCollectionFactory
 {
     public const STEP_SELECT_PRODUCT_SOURCE = 'products-source';
     public const STEP_SELECT_PRODUCTS = 'select-products';
+    public const STEP_SETTINGS_IDENTIFIER = 'settings-identifier';
+    public const STEP_SEARCH_PRODUCTS_CHANNEL_ID = 'search-products-channel-id';
     public const STEP_SELECT_CATEGORY_MODE = 'category-mode';
     public const STEP_SELECT_CATEGORY = 'select-category';
     public const STEP_REVIEW = 'review';
@@ -27,14 +29,14 @@ class StepDeclarationCollectionFactory
                 'back_handler' => \M2E\OnBuy\Model\Listing\Wizard\Step\BackHandler\Products::class,
             ],
             [
-                'nick' => self::STEP_SELECT_CATEGORY_MODE,
-                'route' => '*/listing_wizard_category/modeView',
-                'back_handler' => null,
+                'nick' => self::STEP_SETTINGS_IDENTIFIER,
+                'route' => '*/listing_wizard_settings/view',
+                'back_handler' => \M2E\OnBuy\Model\Listing\Wizard\Step\BackHandler\Products::class
             ],
             [
-                'nick' => self::STEP_SELECT_CATEGORY,
-                'route' => '*/listing_wizard_category/view',
-                'back_handler' => null,
+                'nick' => self::STEP_SEARCH_PRODUCTS_CHANNEL_ID,
+                'route' => '*/listing_wizard_search/view',
+                'back_handler' => \M2E\OnBuy\Model\Listing\Wizard\Step\BackHandler\SearchChannelId::class,
             ],
             [
                 'nick' => self::STEP_REVIEW,

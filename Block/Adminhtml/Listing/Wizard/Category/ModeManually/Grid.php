@@ -138,7 +138,7 @@ class Grid extends \M2E\OnBuy\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         $this->addColumn('category', [
-            'header' => __('OnBuy Category'),
+            'header' => __(\M2E\OnBuy\Helper\Module::getChannelTitle() . ' Category'),
             'align' => 'left',
             'width' => '*',
             'index' => 'category',

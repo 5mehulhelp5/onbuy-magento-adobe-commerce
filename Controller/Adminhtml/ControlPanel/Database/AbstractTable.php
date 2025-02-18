@@ -1,32 +1,24 @@
 <?php
 
-declare(strict_types=1);
-
 namespace M2E\OnBuy\Controller\Adminhtml\ControlPanel\Database;
 
-use M2E\OnBuy\Controller\Adminhtml\ControlPanel\AbstractMain;
-
-abstract class AbstractTable extends AbstractMain
+abstract class AbstractTable extends \M2E\OnBuy\Controller\Adminhtml\ControlPanel\AbstractMain
 {
-    private \M2E\OnBuy\Model\ControlPanel\Database\TableModelFactory $databaseTableFactory;
+    private \M2E\Core\Model\ControlPanel\Database\TableModelFactory $databaseTableFactory;
     private \M2E\OnBuy\Helper\Data\Cache\Permanent $cache;
 
     public function __construct(
-        \M2E\OnBuy\Helper\Module $moduleHelper,
-        \M2E\OnBuy\Model\ControlPanel\Database\TableModelFactory $databaseTableFactory,
-        \M2E\OnBuy\Model\Module $module,
+        \M2E\Core\Model\ControlPanel\Database\TableModelFactory $databaseTableFactory,
         \M2E\OnBuy\Helper\Data\Cache\Permanent $cache
     ) {
-        parent::__construct($module);
+        parent::__construct();
         $this->databaseTableFactory = $databaseTableFactory;
         $this->cache = $cache;
     }
 
-    protected function getTableModel(): \M2E\OnBuy\Model\ControlPanel\Database\TableModel
+    protected function getTableModel(): \M2E\Core\Model\ControlPanel\Database\TableModel
     {
-        $tableName = $this->getRequest()->getParam('table');
-
-        return $this->databaseTableFactory->create($tableName);
+        return $this->databaseTableFactory->createFromRequest();
     }
 
     protected function prepareCellsValuesArray(): array

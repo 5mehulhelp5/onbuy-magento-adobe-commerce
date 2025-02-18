@@ -8,6 +8,7 @@ use M2E\OnBuy\Model\ResourceModel\ScheduledAction\CollectionFactory as Scheduled
 
 class Processor
 {
+    private const LIST_PRIORITY = 25;
     private const REVISE_QTY_PRIORITY = 500;
     private const REVISE_PRICE_PRIORITY = 250;
     private const RELIST_PRIORITY = 125;
@@ -64,6 +65,9 @@ class Processor
             $listingProduct->setActionConfigurator($scheduledAction->getConfigurator());
 
             switch ($scheduledAction->getActionType()) {
+                case \M2E\OnBuy\Model\Product::ACTION_LIST:
+                    $this->actionDispatcher->processList($listingProduct, $params, $statusChanger);
+                    break;
                 case \M2E\OnBuy\Model\Product::ACTION_REVISE:
                     $this->actionDispatcher->processRevise($listingProduct, $params, $statusChanger);
                     break;
@@ -106,6 +110,7 @@ class Processor
         $connection = $this->resourceConnection->getConnection();
 
         $unionSelect = $connection->select()->union([
+            $this->getListScheduledActionsPreparedCollection()->getSelect(),
             $this->getRevisePriceScheduledActionsPreparedCollection()->getSelect(),
             $this->getReviseQtyScheduledActionsPreparedCollection()->getSelect(),
             $this->getRelistScheduledActionsPreparedCollection()->getSelect(),
@@ -130,6 +135,16 @@ class Processor
         }
 
         return $this->scheduledActionRepository->getByIds($scheduledActionsIds);
+    }
+
+    private function getListScheduledActionsPreparedCollection(): ScheduledActionCollection
+    {
+        $collection = $this->scheduledActionRepository->createCollectionForFindByActionType(
+            self::LIST_PRIORITY,
+            \M2E\OnBuy\Model\Product::ACTION_LIST
+        );
+
+        return $collection;
     }
 
     private function getReviseQtyScheduledActionsPreparedCollection(): ScheduledActionCollection

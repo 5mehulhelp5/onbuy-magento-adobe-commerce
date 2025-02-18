@@ -184,9 +184,12 @@ abstract class AbstractBase extends Action
 
         if ($moduleHelper->isDisabled()) {
             $message = __(
-                'M2E OnBuy Connect is disabled. Inventory and Order synchronization is not running. ' .
+                '%extension_title is disabled. Inventory and Order synchronization is not running. ' .
                 'The Module interface is unavailable.<br>' .
-                'You can enable the Module under <i>Stores > Settings > Configuration > M2E OnBuy Connect > Module</i>.'
+                'You can enable the Module under <i>Stores > Settings > Configuration > %extension_title > Module</i>.',
+                [
+                    'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                ]
             );
             $this->getMessageManager()->addNotice($message);
 
@@ -279,7 +282,7 @@ abstract class AbstractBase extends Action
 
         $this->resultPage->getConfig()->getTitle()->set(
             __(
-                \M2E\OnBuy\Helper\View\OnBuy::getTitle()
+                \M2E\OnBuy\Helper\Module::getChannelTitle()
             )
         );
 

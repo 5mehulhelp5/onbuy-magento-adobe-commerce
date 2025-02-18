@@ -27,7 +27,12 @@ class MessageBuilder
      */
     public function getHeader(): string
     {
-        return (string)__('M2E OnBuy Connect Health Status Notification');
+        return (string)__(
+            '%extension_title Health Status Notification',
+            [
+                'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+            ]
+        );
     }
 
     /**
@@ -36,10 +41,13 @@ class MessageBuilder
     public function getMessage(): string
     {
         return (string)__(
-            'Something went wrong with your M2E OnBuy Connect running and some actions from ' .
+            'Something went wrong with your %extension_title running and some actions from ' .
             'your side are required. You can find detailed information in ' .
-            '<a target="_blank" href="%url">M2E OnBuy Connect Health Status Center</a>.',
-            ['url' => $this->urlBuilder->getUrl('m2e_onbuy/healthStatus/index')]
+            '<a target="_blank" href="%url">%extension_title Health Status Center</a>.',
+            [
+                'url' => $this->urlBuilder->getUrl('m2e_onbuy/healthStatus/index'),
+                'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+            ]
         );
     }
 }

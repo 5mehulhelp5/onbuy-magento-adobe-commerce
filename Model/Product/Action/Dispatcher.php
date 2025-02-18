@@ -38,6 +38,52 @@ class Dispatcher
      *
      * @return \M2E\Core\Helper\Data::STATUS_SUCCESS | \M2E\Core\Helper\Data::STATUS_ERROR
      */
+    public function processList(\M2E\OnBuy\Model\Product $product, array $params, int $statusChanger): int
+    {
+        $logsActionId = $this->getLogActionId($params);
+        $params += ['logs_action_id' => $logsActionId];
+
+        $this->removeTags($product);
+
+        try {
+            $processor = $this->processorAsyncFactory->createProcessStart(
+                AsyncActions::ACTION_LIST,
+                $product,
+                $this->getActionConfigurator($product),
+                $statusChanger,
+                $logsActionId,
+                \M2E\OnBuy\Model\Listing\Log::ACTION_LIST_PRODUCT,
+                $params,
+            );
+
+            $result = $processor->process();
+            if ($result === \M2E\Core\Helper\Data::STATUS_ERROR) {
+                $this->tagBuffer->addTag($product, $this->tagFactory->createWithHasErrorCode());
+                $this->tagBuffer->flush();
+            }
+
+            return $result;
+        } catch (\Throwable $exception) {
+            $this->logListingProductException(
+                $product,
+                $exception,
+                \M2E\OnBuy\Model\Product::ACTION_LIST,
+                $statusChanger,
+                $logsActionId
+            );
+            $this->exceptionHelper->process($exception);
+
+            return \M2E\Core\Helper\Data::STATUS_ERROR;
+        }
+    }
+
+    /**
+     * @param \M2E\OnBuy\Model\Product $product
+     * @param array $params
+     * @param int $statusChanger
+     *
+     * @return \M2E\Core\Helper\Data::STATUS_SUCCESS | \M2E\Core\Helper\Data::STATUS_ERROR
+     */
     public function processRevise(\M2E\OnBuy\Model\Product $product, array $params, int $statusChanger): int
     {
         $logsActionId = $this->getLogActionId($params);

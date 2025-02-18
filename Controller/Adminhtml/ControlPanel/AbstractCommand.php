@@ -4,8 +4,7 @@ namespace M2E\OnBuy\Controller\Adminhtml\ControlPanel;
 
 abstract class AbstractCommand extends \M2E\OnBuy\Controller\Adminhtml\AbstractBase
 {
-    /** @var \M2E\OnBuy\Helper\View\ControlPanel */
-    protected $controlPanelHelper;
+    protected \M2E\OnBuy\Helper\View\ControlPanel $controlPanelHelper;
 
     public function __construct(
         \M2E\OnBuy\Helper\View\ControlPanel $controlPanelHelper,

@@ -8,13 +8,20 @@ use M2E\OnBuy\Model\ResourceModel\Listing\Wizard\Product as WizardProductResourc
 
 class Product extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
 {
+    public const SEARCH_STATUS_NONE = 0;
+    public const SEARCH_STATUS_COMPLETED = 1;
+
+    protected ?\M2E\OnBuy\Model\Magento\Product\Cache $magentoProductModel = null;
+
     private \M2E\OnBuy\Model\Listing\Wizard $wizard;
 
     /** @var \M2E\OnBuy\Model\Listing\Wizard\Repository */
     private Repository $repository;
+    private \M2E\OnBuy\Model\Magento\Product\CacheFactory $magentoProductFactory;
 
     public function __construct(
         Repository $repository,
+        \M2E\OnBuy\Model\Magento\Product\CacheFactory $magentoProductFactory,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
@@ -23,6 +30,7 @@ class Product extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
     ) {
         parent::__construct($context, $registry, $resource, $resourceCollection, $data);
         $this->repository = $repository;
+        $this->magentoProductFactory = $magentoProductFactory;
     }
 
     public function _construct(): void
@@ -112,5 +120,62 @@ class Product extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
         $this->setData(WizardProductResource::COLUMN_IS_PROCESSED, 1);
 
         return $this;
+    }
+
+    public function getChannelProductId(): string
+    {
+        return (string)$this->getData(WizardProductResource::COLUMN_CHANNEL_PRODUCT_ID);
+    }
+
+    public function setChannelProductId(string $channelProductId): self
+    {
+        $this->setData(WizardProductResource::COLUMN_CHANNEL_PRODUCT_ID, $channelProductId);
+        $this->markChannelIdIsSearched();
+
+        return $this;
+    }
+
+    public function markChannelIdIsSearched(): self
+    {
+        $this->setData(WizardProductResource::COLUMN_CHANNEL_PRODUCT_ID_SEARCH_STATUS, self::SEARCH_STATUS_COMPLETED);
+
+        return $this;
+    }
+
+    public function setChannelProductData(array $data): self
+    {
+        $this->setData(WizardProductResource::COLUMN_CHANNEL_PRODUCT_DATA, json_encode($data));
+
+        return $this;
+    }
+
+    public function getChannelProductData(): array
+    {
+        $data = $this->getData(WizardProductResource::COLUMN_CHANNEL_PRODUCT_DATA);
+
+        if (empty($data)) {
+            return [];
+        }
+
+        return json_decode($data, true);
+    }
+
+    public function getMagentoProduct(): \M2E\OnBuy\Model\Magento\Product\Cache
+    {
+        if ($this->magentoProductModel === null) {
+            $this->magentoProductModel = $this->magentoProductFactory->create();
+            $this->magentoProductModel->setProductId($this->getMagentoProductId());
+        }
+
+        return $this->prepareMagentoProduct($this->magentoProductModel);
+    }
+
+    protected function prepareMagentoProduct(
+        \M2E\OnBuy\Model\Magento\Product\Cache $instance
+    ): \M2E\OnBuy\Model\Magento\Product\Cache {
+        $instance->setStoreId($this->getWizard()->getListing()->getStoreId());
+        $instance->setStatisticId($this->getId());
+
+        return $instance;
     }
 }

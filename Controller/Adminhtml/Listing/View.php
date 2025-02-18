@@ -88,15 +88,18 @@ class View extends \M2E\OnBuy\Controller\Adminhtml\AbstractListing
         $this->setRuleData('onbuy_rule_view_listing', $listing);
         // ---------------------------------------
 
-        $this->setPageHelpLink('https://docs-m2.m2epro.com');
+        $this->setPageHelpLink('https://docs-m2.m2epro.com/docs/m2e-onbuy-listings/');
 
         $this->getResultPage()
              ->getConfig()
              ->getTitle()
              ->prepend(
                  (string)__(
-                     'M2E OnBuy Connect Listing "%listing_title"',
-                     ['listing_title' => $listing->getTitle()]
+                     '%extension_title Listing "%listing_title"',
+                     [
+                         'listing_title' => $listing->getTitle(),
+                         'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                     ]
                  )
              );
 

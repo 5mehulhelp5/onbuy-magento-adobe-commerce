@@ -10,9 +10,12 @@ class MsiNotificationPopup extends AbstractBlock
     {
         $jsMessage = \M2E\Core\Helper\Data::escapeJs(
             (string)__(
-                'Magento Inventory (MSI) is enabled. M2E OnBuy Connect will update your product ' .
+                'Magento Inventory (MSI) is enabled. %extension_title will update your product ' .
                 'quantity based on Product Salable QTY. Read more <a target="_blank" href="%url">here</a>.',
-                ['url' => 'https://help.m2epro.com/support/solutions/articles/9000218949'],
+                [
+                    'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                    'url' => 'https://help.m2epro.com/support/solutions/articles/9000218949',
+                ],
             )
         );
         $this->js->addOnReadyJs(
