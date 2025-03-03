@@ -13,8 +13,16 @@ class ManagerFactory
         $this->objectManager = $objectManager;
     }
 
-    public function create(\M2E\OnBuy\Model\Account $account): Manager
-    {
-        return $this->objectManager->create(Manager::class, ['account' => $account]);
+    public function create(
+        \M2E\OnBuy\Model\Account $account,
+        \M2E\OnBuy\Model\Site $site
+    ): Manager {
+        return $this->objectManager->create(
+            Manager::class,
+            [
+                'account' => $account,
+                'site' => $site
+            ]
+        );
     }
 }

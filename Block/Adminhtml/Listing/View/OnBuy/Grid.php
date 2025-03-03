@@ -107,8 +107,6 @@ class Grid extends \M2E\OnBuy\Block\Adminhtml\Listing\View\AbstractGrid
             )
         );
 
-        $collection->getSelect()->group('lp.id');
-
         $this->setCollection($collection);
 
         return parent::_prepareCollection();

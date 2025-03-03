@@ -9,6 +9,7 @@ class Grid extends \M2E\OnBuy\Block\Adminhtml\Listing\Wizard\AbstractGrid
     private \Magento\Store\Model\WebsiteFactory $websiteFactory;
 
     public function __construct(
+        \M2E\OnBuy\Model\ResourceModel\Listing $listingResource,
         \M2E\OnBuy\Model\ResourceModel\Product $productResource,
         \M2E\OnBuy\Model\Listing\Wizard\Ui\RuntimeStorage $uiWizardRuntimeStorage,
         \M2E\OnBuy\Model\Listing\Ui\RuntimeStorage $uiListingRuntimeStorage,
@@ -27,6 +28,7 @@ class Grid extends \M2E\OnBuy\Block\Adminhtml\Listing\Wizard\AbstractGrid
     ) {
         $this->websiteFactory = $websiteFactory;
         parent::__construct(
+            $listingResource,
             $productResource,
             $uiWizardRuntimeStorage,
             $uiListingRuntimeStorage,

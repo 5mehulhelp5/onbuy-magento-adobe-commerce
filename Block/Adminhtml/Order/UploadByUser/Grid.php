@@ -19,6 +19,7 @@ class Grid extends \M2E\OnBuy\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->customCollectionFactory = $customCollectionFactory;
         $this->uploadByUserManagerFactory = $reimportManagerFactory;
         $this->accountRepository = $accountRepository;
+
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -38,23 +39,25 @@ class Grid extends \M2E\OnBuy\Block\Adminhtml\Magento\Grid\AbstractGrid
         $collection = $this->customCollectionFactory->create();
 
         foreach ($this->accountRepository->getAll() as $account) {
-            $manager = $this->uploadByUserManagerFactory->create($account);
+            $accountTitle = $account->getTitle();
 
-            $item = new \Magento\Framework\DataObject(
-                [
-                    'title' => $account->getTitle(),
-                    'identifier' => $manager->getIdentifier(),
-                    'from_date' => $manager->getFromDate() !== null
-                        ? $manager->getFromDate()->format('Y-m-d H:i:s')
-                        : null,
-                    'to_date' => $manager->getToDate() !== null
-                        ? $manager->getToDate()->format('Y-m-d H:i:s')
-                        : null,
-                    '_manager_' => $manager,
-                    '_account_' => $account,
-                ]
-            );
-            $collection->addItem($item);
+            foreach ($account->getSites() as $site) {
+                $manager = $this->uploadByUserManagerFactory->create($account, $site);
+
+                $item = new \Magento\Framework\DataObject(
+                    [
+                        'title' => $accountTitle,
+                        'site' => $site->getName(),
+                        'site_id' => $site->getId(),
+                        'from_date' => $manager->getFromDate() !== null
+                            ? $manager->getFromDate()->format('Y-m-d H:i:s')
+                            : null,
+                        '_manager_' => $manager,
+                        '_account_' => $account,
+                    ]
+                );
+                $collection->addItem($item);
+            }
         }
 
         $this->setCollection($collection);
@@ -77,6 +80,18 @@ class Grid extends \M2E\OnBuy\Block\Adminhtml\Magento\Grid\AbstractGrid
         );
 
         $this->addColumn(
+            'site',
+            [
+                'header' => __('Site'),
+                'align' => 'left',
+                'width' => '300px',
+                'type' => 'text',
+                'sortable' => false,
+                'index' => 'site',
+            ]
+        );
+
+        $this->addColumn(
             'from_date',
             [
                 'header' => __('From Date'),
@@ -85,20 +100,6 @@ class Grid extends \M2E\OnBuy\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'index' => 'from_date',
                 'sortable' => false,
                 'type' => 'datetime',
-                'format' => \IntlDateFormatter::MEDIUM,
-                'frame_callback' => [$this, 'callbackColumnDate'],
-            ]
-        );
-
-        $this->addColumn(
-            'to_date',
-            [
-                'header' => __('To Date'),
-                'align' => 'left',
-                'width' => '200px',
-                'index' => 'to_date',
-                'type' => 'datetime',
-                'sortable' => false,
                 'format' => \IntlDateFormatter::MEDIUM,
                 'frame_callback' => [$this, 'callbackColumnDate'],
             ]
@@ -119,7 +120,7 @@ class Grid extends \M2E\OnBuy\Block\Adminhtml\Magento\Grid\AbstractGrid
         return parent::_prepareColumns();
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function callbackColumnDate($value, $row, $column, $isExport)
     {
@@ -132,26 +133,29 @@ class Grid extends \M2E\OnBuy\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         /** @var \M2E\OnBuy\Model\Account $account */
         $account = $row['_account_'];
+        $siteId = $row['site_id'];
+
+        $inputId = "{$account->getId()}_{$siteId}";
 
         return <<<HTML
 <script>
-
 require([
     'mage/calendar'
 ], function () {
-    jQuery('#{$account->getId()}_{$column->getIndex()}').calendar({
+    jQuery('#{$inputId}').calendar({
         showsTime: true,
         dateFormat: "yy-mm-dd",
         timeFormat: 'HH:mm:00',
         showButtonPanel: false
     })
 })
-
 </script>
 
-<form id="{$account->getId()}_{$column->getIndex()}_form">
-    <input type="text" id="{$account->getId()}_{$column->getIndex()}" name="{$account->getId()}_{$column->getIndex()}"
-           class="input-text admin__control-text required-entry validate-date" />
+<form id="{$inputId}_form" class="datetime-form">
+    <input type="text"
+           id="{$inputId}"
+           name="{$inputId}"
+           class="input-text admin__control-text required-entry validate-datetime" />
 </form>
 HTML;
     }
@@ -163,6 +167,7 @@ HTML;
 
         /** @var \M2E\OnBuy\Model\Account $account */
         $account = $row['_account_'];
+        $siteId = $row['site_id'];
 
         $data = [
             'label' => $manager->isEnabled()
@@ -170,8 +175,8 @@ HTML;
                 : __('Reimport'),
 
             'onclick' => $manager->isEnabled()
-                ? "UploadByUserObj.resetUpload({$account->getId()})"
-                : "UploadByUserObj.configureUpload({$account->getId()})",
+                ? "UploadByUserObj.resetUpload({$account->getId()}, {$siteId})"
+                : "UploadByUserObj.configureUpload({$account->getId()}, {$siteId})",
 
             'class' => 'action primary',
         ];
@@ -197,5 +202,10 @@ HTML;
     public function getRowUrl($item)
     {
         return '';
+    }
+
+    public function getGridUrl()
+    {
+        return $this->getUrl('*/order_uploadByUser/getPopupGrid');
     }
 }

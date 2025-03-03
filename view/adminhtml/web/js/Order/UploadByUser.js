@@ -1,7 +1,8 @@
 define([
+    'mage/translate',
     'Magento_Ui/js/modal/modal',
     'M2ECore/Plugin/Messages'
-], function (modal, MessageObj) {
+], function ($t, modal, MessageObj) {
 
     window.UploadByUser = Class.create(Common, {
 
@@ -33,11 +34,11 @@ define([
                     modalBlock.update(transport.responseText);
 
                     var popup = jQuery(modalBlock).modal({
-                        title: OnBuy.translator.translate('Order Reimport'),
+                        title: $t('Order Reimport'),
                         type: 'popup',
                         modalClass: 'width-100',
                         buttons: [{
-                            text: OnBuy.translator.translate('Close'),
+                            text: $t('Close'),
                             class: 'action-secondary action-dismiss',
                             click: function () {
                                 this.closePopup();
@@ -63,11 +64,12 @@ define([
 
         //----------------------------------------
 
-        resetUpload: function (accountId) {
+        resetUpload: function (accountId, siteId) {
             new Ajax.Request(OnBuy.url.get('order_uploadByUser/reset'), {
                 method: 'post',
                 parameters: {
-                    account_id: accountId
+                    account_id: accountId,
+                    site_id: siteId
                 },
                 onSuccess: function (transport) {
                     var json = this.processJsonResponse(transport.responseText);
@@ -78,21 +80,17 @@ define([
                     this.reloadGrid();
 
                     if (json.result) {
-                        this.messageManager.addSuccess(OnBuy.translator.translate('Order importing is canceled.'));
+                        this.messageManager.addSuccess($t('Order importing is canceled.'));
                     }
                 }.bind(this)
             });
         },
 
-        configureUpload: function (accountId) {
-            var fromId = accountId + '_from_date',
-                    toId = accountId + '_to_date';
+        configureUpload: function (accountId, siteId) {
+            var fromId = accountId + '_' + siteId;
 
             this.initFormValidation('#' + fromId + '_form');
-            this.initFormValidation('#' + toId + '_form');
-            if (!jQuery('#' + fromId + '_form').valid() ||
-                    !jQuery('#' + toId + '_form').valid()
-            ) {
+            if (!jQuery('#' + fromId + '_form').valid()) {
                 return;
             }
 
@@ -100,8 +98,8 @@ define([
                 method: 'post',
                 parameters: {
                     account_id: accountId,
-                    from_date: $(fromId).value,
-                    to_date: $(toId).value
+                    site_id: siteId,
+                    from_date: $(fromId).value
                 },
                 onSuccess: function (transport) {
                     var json = this.processJsonResponse(transport.responseText);
@@ -112,7 +110,7 @@ define([
                     this.reloadGrid();
 
                     if (json.result) {
-                        this.messageManager.addSuccess(OnBuy.translator.translate('Order importing in progress.'));
+                        this.messageManager.addSuccess($t('Order importing in progress.'));
                     }
                 }.bind(this)
             });

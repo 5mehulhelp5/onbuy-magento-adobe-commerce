@@ -60,20 +60,19 @@ class ReImportTask extends \M2E\OnBuy\Model\Cron\AbstractTask
     protected function performActions(): void
     {
         foreach ($this->accountRepository->getAll() as $account) {
-            $manager = $this->reimportManager->create($account);
-            if (!$manager->isEnabled()) {
-                continue;
-            }
-
             try {
-                $minToDate = null;
-
-                /** @var \DateTimeImmutable $fromTime */
-                $fromTime = $manager->getCurrentFromDate() ?? $manager->getFromDate();
-
-                /** @var \DateTimeImmutable $toTime */
-                $toTime = $manager->getToDate();
                 foreach ($account->getSites() as $site) {
+                    $manager = $this->reimportManager->create($account, $site);
+                    if (!$manager->isEnabled()) {
+                        continue;
+                    }
+
+                    /** @var \DateTimeImmutable $toTime */
+                    $toTime = $manager->getToDate();
+
+                    /** @var \DateTimeImmutable $fromTime */
+                    $fromTime = $manager->getCurrentFromDate() ?? $manager->getFromDate();
+
                     $response = $this->receiveOrderProcessor->process(
                         $account,
                         $site,
@@ -83,11 +82,9 @@ class ReImportTask extends \M2E\OnBuy\Model\Cron\AbstractTask
 
                     $this->processResponseMessages($response->getMessageCollection());
 
-                    if ($minToDate === null) {
-                        $minToDate = $response->getMaxDateInResult();
-                    } elseif ($minToDate->getTimestamp() > $response->getMaxDateInResult()->getTimestamp()) {
-                        $minToDate = $response->getMaxDateInResult();
-                    }
+                    $maxDateInResult = $response->getMaxDateInResult();
+
+                    $this->handleToDate($manager, $maxDateInResult);
 
                     if (empty($response->getOrders())) {
                         continue;
@@ -103,8 +100,6 @@ class ReImportTask extends \M2E\OnBuy\Model\Cron\AbstractTask
                         true
                     );
                 }
-
-                $this->handleToDate($manager, $minToDate);
             } catch (\Throwable $exception) {
                 $message = (string)\__(
                     'The "Upload Orders By User" Action for %channel_title Account "%account" was completed with error.',
@@ -140,14 +135,12 @@ class ReImportTask extends \M2E\OnBuy\Model\Cron\AbstractTask
 
     private function handleToDate(
         \M2E\OnBuy\Model\Order\ReImport\Manager $manager,
-        \DateTimeImmutable $toDate
+        \DateTimeImmutable $maxDateInResult
     ): void {
-        if ($toDate->getTimestamp() >= $manager->getToDate()->getTimestamp()) {
+        if ($maxDateInResult->getTimestamp() >= $manager->getToDate()->getTimestamp()) {
             $manager->clear();
-
-            return;
+        } else {
+            $manager->setCurrentFromDate($maxDateInResult);
         }
-
-        $manager->setCurrentFromDate($toDate);
     }
 }

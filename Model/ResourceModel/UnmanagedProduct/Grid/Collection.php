@@ -68,8 +68,26 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
             $field = 'site.site_id';
         }
 
+        if ($field === 'linked') {
+            $this->buildFilterByLinked($condition);
+
+            return $this;
+        }
+
         parent::addFieldToFilter($field, $condition);
 
         return $this;
+    }
+
+    private function buildFilterByLinked($condition): void
+    {
+        $conditionValue = (int)$condition['eq'];
+        $column = \M2E\OnBuy\Model\ResourceModel\UnmanagedProduct::COLUMN_MAGENTO_PRODUCT_ID;
+
+        if ($conditionValue === \M2E\OnBuy\Ui\Select\YesNoAnyOption::OPTION_YES) {
+            $this->getSelect()->where(sprintf('main_table.%s IS NOT NULL', $column));
+        } elseif ($conditionValue === \M2E\OnBuy\Ui\Select\YesNoAnyOption::OPTION_NO) {
+            $this->getSelect()->where(sprintf('main_table.%s IS NULL', $column));
+        }
     }
 }

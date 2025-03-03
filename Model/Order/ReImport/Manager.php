@@ -11,10 +11,11 @@ class Manager
 
     public function __construct(
         \M2E\OnBuy\Model\Account $account,
+        \M2E\OnBuy\Model\Site $site,
         \M2E\OnBuy\Model\Registry\Manager $registryManager
     ) {
         $this->registryManager = $registryManager;
-        $this->identifier = $account->getIdentifier();
+        $this->identifier = "{$account->getIdentifier()}_{$site->getSiteId()}";
     }
 
     public function getIdentifier(): string
@@ -24,8 +25,7 @@ class Manager
 
     public function isEnabled(): bool
     {
-        return $this->getFromDate() !== null
-            && $this->getToDate() !== null;
+        return $this->getFromDate() !== null;
     }
 
     public function getFromDate(): ?\DateTimeImmutable

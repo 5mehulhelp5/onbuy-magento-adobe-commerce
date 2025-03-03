@@ -9,7 +9,7 @@ use M2E\OnBuy\Model\Product\Action\Logger;
 
 trait ActionLoggerTrait
 {
-    /** @var \M2E\OnBuy\Model\Response\Message[] */
+    /** @var \M2E\Core\Model\Response\Message[] */
     private array $storedActionLogMessages = [];
     private Logger $actionLogger;
     private LogBuffer $logBuffer;
@@ -21,19 +21,19 @@ trait ActionLoggerTrait
         }
     }
 
-    protected function addActionLogMessage(\M2E\OnBuy\Model\Response\Message $message): void
+    protected function addActionLogMessage(\M2E\Core\Model\Response\Message $message): void
     {
         $this->storedActionLogMessages[] = $message;
     }
 
     protected function addActionErrorLog(string $message): void
     {
-        $this->addActionLogMessage(\M2E\OnBuy\Model\Response\Message::createError($message));
+        $this->addActionLogMessage(\M2E\Core\Model\Response\Message::createError($message));
     }
 
     protected function addActionWarningLog(string $message): void
     {
-        $this->addActionLogMessage(\M2E\OnBuy\Model\Response\Message::createWarning($message));
+        $this->addActionLogMessage(\M2E\Core\Model\Response\Message::createWarning($message));
     }
 
     protected function getActionLogger(): Logger
@@ -64,7 +64,7 @@ trait ActionLoggerTrait
     {
         foreach ($this->logBuffer->getLogs() as $messageData) {
             $this->addActionLogMessage(
-                \M2E\OnBuy\Model\Response\Message::create(
+                \M2E\Core\Model\Response\Message::create(
                     $messageData->getMessage(),
                     $messageData->getSeverity()
                 ),
