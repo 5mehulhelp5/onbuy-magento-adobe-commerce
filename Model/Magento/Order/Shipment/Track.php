@@ -46,30 +46,33 @@ class Track
 
         $tracks = [];
         foreach ($trackingDetails as $trackingDetail) {
-            $trackNumber = (string)$trackingDetail['tracking_number'];
-            $shipment = $this->findShipmentWithoutTrack($shipments, $trackNumber);
+            /** @var \M2E\OnBuy\Model\Order\Item $orderItem */
+            foreach ($trackingDetail['order_items'] as $orderItem) {
+                $trackNumber = (string)$trackingDetail['tracking_number'];
+                $shipment = $this->findShipmentWithoutTrack($shipments, $trackNumber, $orderItem);
 
-            if ($shipment === null) {
-                return [];
+                if ($shipment === null) {
+                    return [];
+                }
+
+                // Sometimes Magento returns an array instead of Collection by a call of $shipment->getTracksCollection()
+                if (
+                    $shipment->hasData(ShipmentInterface::TRACKS)
+                    && !($shipment->getData(ShipmentInterface::TRACKS) instanceof TrackCollection)
+                ) {
+                    $shipment->unsetData(ShipmentInterface::TRACKS);
+                }
+
+                $track = $this->shipmentTrackFactory->create();
+                $track->setNumber($trackingDetail['tracking_number']);
+                $track->setTitle($trackingDetail['supplier_name']);
+                $track->setCarrierCode($trackingDetail['supplier_name']);
+
+                $shipment->addTrack($track)
+                         ->save();
+
+                $tracks[] = $track;
             }
-
-            // Sometimes Magento returns an array instead of Collection by a call of $shipment->getTracksCollection()
-            if (
-                $shipment->hasData(ShipmentInterface::TRACKS)
-                && !($shipment->getData(ShipmentInterface::TRACKS) instanceof TrackCollection)
-            ) {
-                $shipment->unsetData(ShipmentInterface::TRACKS);
-            }
-
-            $track = $this->shipmentTrackFactory->create();
-            $track->setNumber($trackingDetail['tracking_number']);
-            $track->setTitle($trackingDetail['supplier_name']);
-            $track->setCarrierCode($trackingDetail['supplier_name']);
-
-            $shipment->addTrack($track)
-                     ->save();
-
-            $tracks[] = $track;
         }
 
         return $tracks;
@@ -95,13 +98,26 @@ class Track
     /**
      * @param \Magento\Sales\Model\Order\Shipment[] $shipments
      * @param string $trackNumber
+     * @param \M2E\OnBuy\Model\Order\Item $orderItem
      *
      * @return \Magento\Sales\Model\Order\Shipment|null
      */
-    private function findShipmentWithoutTrack(array $shipments, string $trackNumber): ?\Magento\Sales\Model\Order\Shipment
-    {
-        $shipmentWithoutTracks = [];
+    private function findShipmentWithoutTrack(
+        array $shipments,
+        string $trackNumber,
+        \M2E\OnBuy\Model\Order\Item $orderItem
+    ): ?\Magento\Sales\Model\Order\Shipment {
+        $shipmentsNew = [];
         foreach ($shipments as $shipment) {
+            foreach ($shipment->getItems() as $shipmentItem) {
+                if ((int)$shipmentItem->getProductId() === $orderItem->getMagentoProductId()) {
+                    $shipmentsNew[] = $shipment;
+                }
+            }
+        }
+
+        $shipmentWithoutTracks = [];
+        foreach ($shipmentsNew as $shipment) {
             if ($this->isTrackNumberExistInShipment($trackNumber, $shipment)) {
                 continue;
             }

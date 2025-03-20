@@ -370,10 +370,10 @@ abstract class AbstractMain extends AbstractBase
     {
         /** @var \M2E\OnBuy\Helper\Module $moduleHelper */
         $moduleHelper = $this->_objectManager->get(\M2E\OnBuy\Helper\Module::class);
-        /** @var \M2E\OnBuy\Helper\Module\Cron $moduleCronHelper */
-        $moduleCronHelper = $this->_objectManager->get(\M2E\OnBuy\Helper\Module\Cron::class);
+        /** @var \M2E\OnBuy\Model\Cron\Config $cronConfig */
+        $cronConfig = $this->_objectManager->get(\M2E\OnBuy\Model\Cron\Config::class);
 
-        if (!$moduleCronHelper->isModeEnabled()) {
+        if (!$cronConfig->isEnabled()) {
             $this->getMessageManager()->addWarning(
                 __(
                     'Automatic Synchronization is disabled. You can enable it under ' .
@@ -389,9 +389,11 @@ abstract class AbstractMain extends AbstractBase
             return;
         }
 
+        /** @var \M2E\OnBuy\Model\Cron\Manager $cronManager */
+        $cronManager = $this->_objectManager->get(\M2E\OnBuy\Model\Cron\Manager::class);
         if (
             $moduleHelper->isReadyToWork()
-            && $moduleCronHelper->isLastRunMoreThan(1, true)
+            && $cronManager->isCronLastRunMoreThan(3600)
         ) {
             $message = __(
                 'Attention! AUTOMATIC Synchronization is not running at the moment.' .

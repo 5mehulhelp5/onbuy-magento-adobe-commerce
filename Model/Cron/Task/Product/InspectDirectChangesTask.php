@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace M2E\OnBuy\Model\Cron\Task\Product;
 
-class InspectDirectChangesTask extends \M2E\OnBuy\Model\Cron\AbstractTask
+class InspectDirectChangesTask implements
+    \M2E\Core\Model\Cron\TaskHandlerInterface,
+    \M2E\Core\Model\Cron\Task\PossibleRunInterface
 {
     public const NICK = 'product/inspect_direct_changes';
 
@@ -13,46 +15,18 @@ class InspectDirectChangesTask extends \M2E\OnBuy\Model\Cron\AbstractTask
 
     public function __construct(
         \M2E\OnBuy\Model\Product\InspectDirectChanges\Config $config,
-        \M2E\OnBuy\Model\Product\InspectDirectChanges $inspectDirectChanges,
-        \M2E\OnBuy\Model\Cron\Manager $cronManager,
-        \M2E\OnBuy\Model\Synchronization\LogService $syncLogger,
-        \M2E\OnBuy\Helper\Data $helperData,
-        \Magento\Framework\Event\Manager $eventManager,
-        \M2E\OnBuy\Model\ActiveRecord\Factory $activeRecordFactory,
-        \M2E\OnBuy\Model\Cron\TaskRepository $taskRepo,
-        \Magento\Framework\App\ResourceConnection $resource
+        \M2E\OnBuy\Model\Product\InspectDirectChanges $inspectDirectChanges
     ) {
-        parent::__construct(
-            $cronManager,
-            $syncLogger,
-            $helperData,
-            $eventManager,
-            $activeRecordFactory,
-            $taskRepo,
-            $resource,
-        );
-
         $this->config = $config;
         $this->inspectDirectChanges = $inspectDirectChanges;
     }
 
-    protected function getNick(): string
+    public function isPossibleToRun(): bool
     {
-        return self::NICK;
+        return $this->config->isEnableProductInspectorMode();
     }
 
-    public function isPossibleToRun()
-    {
-        if (
-            !$this->config->isEnableProductInspectorMode()
-        ) {
-            return false;
-        }
-
-        return parent::isPossibleToRun();
-    }
-
-    protected function performActions(): void
+    public function process($context): void
     {
         $this->inspectDirectChanges->process();
     }

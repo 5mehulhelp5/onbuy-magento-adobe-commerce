@@ -25,7 +25,7 @@ class Create
 
     public function process(\M2E\OnBuy\Model\Product $product): void
     {
-        if (!$product->isStoppable()) {
+        if (!$product->isRemovableFromChannel()) {
             return;
         }
 

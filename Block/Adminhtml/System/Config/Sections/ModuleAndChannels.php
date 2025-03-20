@@ -4,21 +4,19 @@ namespace M2E\OnBuy\Block\Adminhtml\System\Config\Sections;
 
 class ModuleAndChannels extends \M2E\OnBuy\Block\Adminhtml\System\Config\Sections
 {
-    /** @var \M2E\OnBuy\Helper\Module\Cron */
-    private $cronHelper;
-    /** @var \M2E\OnBuy\Helper\Module */
-    private $moduleHelper;
+    private \M2E\OnBuy\Helper\Module $moduleHelper;
+    private \M2E\OnBuy\Model\Cron\Config $cronConfig;
 
     public function __construct(
         \M2E\OnBuy\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
-        \M2E\OnBuy\Helper\Module\Cron $cronHelper,
         \M2E\OnBuy\Helper\Module $moduleHelper,
+        \M2E\OnBuy\Model\Cron\Config $cronConfig,
         array $data = []
     ) {
-        $this->cronHelper = $cronHelper;
         $this->moduleHelper = $moduleHelper;
+        $this->cronConfig = $cronConfig;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -49,7 +47,7 @@ class ModuleAndChannels extends \M2E\OnBuy\Block\Adminhtml\System\Config\Section
             ]
         );
 
-        $isCronEnabled = (int)$this->cronHelper->isModeEnabled();
+        $isCronEnabled = (int)$this->cronConfig->isEnabled();
         $isModuleEnabled = (int)!$this->moduleHelper->isDisabled();
 
         if ($isModuleEnabled) {

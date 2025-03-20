@@ -10,12 +10,10 @@ class Before extends AbstractAddUpdate
     private \M2E\OnBuy\Model\Magento\Product\ChangeAttributeTrackerFactory $changeAttributeTrackerFactory;
     private ?\M2E\OnBuy\Observer\Product\AddUpdate\Before\Proxy $proxy = null;
     public static array $proxyStorage = [];
-    private \M2E\OnBuy\Helper\Magento\Product $magentoProductHelper;
 
     public function __construct(
         \M2E\OnBuy\Model\Product\Repository $listingProductRepository,
         \M2E\OnBuy\Model\Magento\Product\ChangeAttributeTrackerFactory $changeAttributeTrackerFactory,
-        \M2E\OnBuy\Helper\Magento\Product $magentoProductHelper,
         \M2E\OnBuy\Observer\Product\AddUpdate\Before\ProxyFactory $proxyFactory,
         \Magento\Catalog\Model\ProductFactory $productFactory,
         \M2E\OnBuy\Model\Magento\ProductFactory $ourMagentoProductFactory
@@ -28,7 +26,6 @@ class Before extends AbstractAddUpdate
 
         $this->proxyFactory = $proxyFactory;
         $this->changeAttributeTrackerFactory = $changeAttributeTrackerFactory;
-        $this->magentoProductHelper = $magentoProductHelper;
     }
 
     public function beforeProcess(): void
@@ -68,8 +65,6 @@ class Before extends AbstractAddUpdate
         $this->getProxy()->setData('special_price', (float)$this->getProduct()->getSpecialPrice());
         $this->getProxy()->setData('special_price_from_date', $this->getProduct()->getSpecialFromDate());
         $this->getProxy()->setData('special_price_to_date', $this->getProduct()->getSpecialToDate());
-        $this->getProxy()->setData('tier_price', $this->getProduct()->getTierPrice());
-        $this->getProxy()->setData('default_qty', $this->getDefaultQty());
 
         $this->getProxy()->setAttributes($this->getTrackingAttributesWithValues());
     }
@@ -112,20 +107,6 @@ class Before extends AbstractAddUpdate
         }
 
         self::$proxyStorage[$key] = $this->getProxy();
-    }
-
-    protected function getDefaultQty()
-    {
-        if (!$this->magentoProductHelper->isGroupedType($this->getProduct()->getTypeId())) {
-            return [];
-        }
-
-        $values = [];
-        foreach ($this->getProduct()->getTypeInstance()->getAssociatedProducts($this->getProduct()) as $childProduct) {
-            $values[$childProduct->getSku()] = $childProduct->getQty();
-        }
-
-        return $values;
     }
 
     /**

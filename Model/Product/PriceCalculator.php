@@ -2,7 +2,7 @@
 
 namespace M2E\OnBuy\Model\Product;
 
-use M2E\OnBuy\Helper\Magento\Attribute;
+use M2E\Core\Helper\Magento\Attribute;
 use M2E\OnBuy\Model\Exception\Logic;
 use M2E\OnBuy\Model\Listing;
 use M2E\OnBuy\Model\Magento\Product;

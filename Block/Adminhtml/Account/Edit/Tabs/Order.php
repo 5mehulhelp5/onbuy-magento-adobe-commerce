@@ -523,6 +523,20 @@ for an item that does <b>not</b> belong to the %extension_title Listing.',
                 ),
             ]
         );
+
+        $fieldset->addField(
+            'magento_orders_create_creditmemo_if_order_cancelled',
+            'select',
+            [
+                'name' => 'magento_orders_settings[create_creditmemo_if_order_cancelled][mode]',
+                'label' => __('Automatically create Credit Memo when Order is cancelled'),
+                'values' => [
+                    OrderSettings::CREATE_CREDIT_MEMO_IF_ORDER_CANCELLED_YES => __('Yes'),
+                    OrderSettings::CREATE_CREDIT_MEMO_IF_ORDER_CANCELLED_NO => __('No'),
+                ],
+                'value' => $orderSettings->getCreateCreditMemoIfOrderCancelledMode(),
+            ]
+        );
         //endregion
 
         //region Order Creation Rules

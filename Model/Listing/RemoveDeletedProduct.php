@@ -54,7 +54,7 @@ class RemoveDeletedProduct
                 $message = (string)__('Item was deleted from Magento and stopped on the Channel.');
             }
 
-            if ($listingProduct->isStoppable()) {
+            if ($listingProduct->isRemovableFromChannel()) {
                 $this->stopQueueService->add($listingProduct);
             }
 

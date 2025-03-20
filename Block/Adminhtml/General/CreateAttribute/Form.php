@@ -3,7 +3,7 @@
 namespace M2E\OnBuy\Block\Adminhtml\General\CreateAttribute;
 
 use M2E\OnBuy\Block\Adminhtml\Magento\Form\AbstractForm;
-use M2E\OnBuy\Model\Magento\Attribute\Builder as AttributeBuilder;
+use M2E\Core\Model\Magento\Attribute\Builder as AttributeBuilder;
 
 class Form extends AbstractForm
 {

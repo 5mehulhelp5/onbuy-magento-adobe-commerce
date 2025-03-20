@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace M2E\OnBuy\Model\Cron\Task\Order;
 
-class ReImportTask extends \M2E\OnBuy\Model\Cron\AbstractTask
+class ReImportTask implements \M2E\Core\Model\Cron\TaskHandlerInterface
 {
     public const NICK = 'order/re_import';
 
@@ -13,30 +13,15 @@ class ReImportTask extends \M2E\OnBuy\Model\Cron\AbstractTask
     private \M2E\OnBuy\Model\Channel\Order\RetrieveProcessor $receiveOrderProcessor;
     private \M2E\OnBuy\Model\Order\MagentoProcessor $orderMagentoProcessor;
     private \M2E\OnBuy\Model\Order\UpdateFromChannelFactory $updateFromChannelFactory;
+    private \M2E\OnBuy\Model\Synchronization\LogService $syncLog;
 
     public function __construct(
         \M2E\OnBuy\Model\Account\Repository $accountRepository,
         \M2E\OnBuy\Model\Channel\Order\RetrieveProcessor $receiveOrderProcessor,
         \M2E\OnBuy\Model\Order\ReImport\ManagerFactory $reimportManager,
         \M2E\OnBuy\Model\Order\MagentoProcessor $orderMagentoProcessor,
-        \M2E\OnBuy\Model\Order\UpdateFromChannelFactory $updateFromChannelFactory,
-        \M2E\OnBuy\Model\Cron\Manager $cronManager,
-        \M2E\OnBuy\Model\Synchronization\LogService $syncLogger,
-        \M2E\OnBuy\Helper\Data $helperData,
-        \Magento\Framework\Event\Manager $eventManager,
-        \M2E\OnBuy\Model\ActiveRecord\Factory $activeRecordFactory,
-        \M2E\OnBuy\Model\Cron\TaskRepository $taskRepo,
-        \Magento\Framework\App\ResourceConnection $resource
+        \M2E\OnBuy\Model\Order\UpdateFromChannelFactory $updateFromChannelFactory
     ) {
-        parent::__construct(
-            $cronManager,
-            $syncLogger,
-            $helperData,
-            $eventManager,
-            $activeRecordFactory,
-            $taskRepo,
-            $resource,
-        );
         $this->reimportManager = $reimportManager;
         $this->accountRepository = $accountRepository;
         $this->receiveOrderProcessor = $receiveOrderProcessor;
@@ -44,21 +29,16 @@ class ReImportTask extends \M2E\OnBuy\Model\Cron\AbstractTask
         $this->updateFromChannelFactory = $updateFromChannelFactory;
     }
 
-    protected function getNick(): string
+    /**
+     * @param \M2E\OnBuy\Model\Cron\TaskContext $context
+     *
+     * @return void
+     */
+    public function process($context): void
     {
-        return self::NICK;
-    }
+        $this->syncLog = $context->getSynchronizationLog();
+        $this->syncLog->setTask(\M2E\OnBuy\Model\Synchronization\Log::TASK_ORDERS);
 
-    protected function getSynchronizationLog(): \M2E\OnBuy\Model\Synchronization\LogService
-    {
-        $synchronizationLog = parent::getSynchronizationLog();
-        $synchronizationLog->setTask(\M2E\OnBuy\Model\Synchronization\Log::TASK_ORDERS);
-
-        return $synchronizationLog;
-    }
-
-    protected function performActions(): void
-    {
         foreach ($this->accountRepository->getAll() as $account) {
             try {
                 foreach ($account->getSites() as $site) {
@@ -109,8 +89,8 @@ class ReImportTask extends \M2E\OnBuy\Model\Cron\AbstractTask
                     ],
                 );
 
-                $this->processTaskAccountException($message, __FILE__, __LINE__);
-                $this->processTaskException($exception);
+                $context->getExceptionHandler()->processTaskAccountException($message, __FILE__, __LINE__);
+                $context->getExceptionHandler()->processTaskException($exception);
             }
         }
     }
@@ -127,8 +107,7 @@ class ReImportTask extends \M2E\OnBuy\Model\Cron\AbstractTask
                 ? \M2E\OnBuy\Model\Log\AbstractModel::TYPE_ERROR
                 : \M2E\OnBuy\Model\Log\AbstractModel::TYPE_WARNING;
 
-            $this
-                ->getSynchronizationLog()
+            $this->syncLog
                 ->add((string)__($message->getText()), $logType);
         }
     }

@@ -32,7 +32,7 @@ class OperationHistory extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
         $this->_init(OperationHistoryResource::class);
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @param self|string|int $value
@@ -58,9 +58,6 @@ class OperationHistory extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
         return $this->object;
     }
 
-    /**
-     * @throws \M2E\OnBuy\Model\Exception\Logic
-     */
     public function getParentObject(string $nick = null): ?self
     {
         if ($this->getObject()->getData(OperationHistoryResource::COLUMN_PARENT_ID) === null) {
@@ -86,16 +83,12 @@ class OperationHistory extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
         return $parentObject;
     }
 
-    /**
-     * @throws \M2E\OnBuy\Model\Exception\Logic
-     * @throws \Exception
-     */
-    public function start($nick, $parentId = null, $initiator = \M2E\Core\Helper\Data::INITIATOR_UNKNOWN, array $data = []): bool
+    public function start(string $nick, ?int $parentId, int $initiator, array $data = []): bool
     {
         $this->object = $this->operationHistoryFactory->create();
         $this->object->setData(OperationHistoryResource::COLUMN_NICK, $nick);
         $this->object->setData(OperationHistoryResource::COLUMN_PARENT_ID, $parentId);
-        $this->object->setData(OperationHistoryResource::COLUMN_DATA, \M2E\Core\Helper\Json::encode($data));
+        $this->object->setData(OperationHistoryResource::COLUMN_DATA, json_encode($data));
         $this->object->setData(OperationHistoryResource::COLUMN_INITIATOR, $initiator);
         $this->object->setData(
             OperationHistoryResource::COLUMN_START_DATE,
@@ -129,28 +122,22 @@ class OperationHistory extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
         return true;
     }
 
-    /**
-     * @param $key
-     * @param $value
-     *
-     * @return bool
-     * @throws \M2E\OnBuy\Model\Exception\Logic
-     */
-    public function setContentData($key, $value): bool
+    public function setContentData(string $key, $value): bool
     {
         if ($this->object === null) {
             return false;
         }
 
         $data = [];
-        if ($this->object->getData(OperationHistoryResource::COLUMN_DATA) != '') {
-            $data = \M2E\Core\Helper\Json::decode($this->object->getData(OperationHistoryResource::COLUMN_DATA));
+        $existValue = $this->object->getData(OperationHistoryResource::COLUMN_DATA);
+        if (!empty($existValue)) {
+            $data = (array)json_decode($this->object->getData(OperationHistoryResource::COLUMN_DATA), true);
         }
 
         $data[$key] = $value;
         $this->object->setData(
             OperationHistoryResource::COLUMN_DATA,
-            \M2E\Core\Helper\Json::encode($data)
+            json_encode($data)
         );
 
         $this->repository->save($this->object);
@@ -158,14 +145,7 @@ class OperationHistory extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
         return true;
     }
 
-    /**
-     * @param $key
-     * @param $value
-     *
-     * @return bool
-     * @throws \M2E\OnBuy\Model\Exception\Logic
-     */
-    public function addContentData($key, $value): bool
+    public function addContentData(string $key, $value): bool
     {
         $existedData = $this->getContentData($key);
 
@@ -175,30 +155,27 @@ class OperationHistory extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
             return $this->setContentData($key, $existedData);
         }
 
-        is_array($existedData) ? $existedData[] = $value : $existedData .= $value;
+        if (is_array($existedData)) {
+            $existedData[] = $value;
+        } else {
+            $existedData .= $value;
+        }
 
         return $this->setContentData($key, $existedData);
     }
 
-    /**
-     * @param $key
-     *
-     * @return mixed|null
-     * @throws \M2E\OnBuy\Model\Exception\Logic
-     */
-    public function getContentData($key)
+    public function getContentData(string $key)
     {
         if ($this->object === null) {
             return null;
         }
 
-        if ($this->object->getData(OperationHistoryResource::COLUMN_DATA) == '') {
+        $value = $this->object->getData(OperationHistoryResource::COLUMN_DATA);
+        if (empty($value)) {
             return null;
         }
 
-        $data = \M2E\Core\Helper\Json::decode(
-            $this->object->getData(OperationHistoryResource::COLUMN_DATA)
-        );
+        $data = (array)json_decode($value, true);
 
         if (isset($data[$key])) {
             return $data[$key];

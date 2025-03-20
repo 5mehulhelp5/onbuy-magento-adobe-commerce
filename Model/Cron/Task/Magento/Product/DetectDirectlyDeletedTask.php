@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace M2E\OnBuy\Model\Cron\Task\Magento\Product;
 
-class DetectDirectlyDeletedTask extends \M2E\OnBuy\Model\Cron\AbstractTask
+class DetectDirectlyDeletedTask implements \M2E\Core\Model\Cron\TaskHandlerInterface
 {
     public const NICK = 'magento/product/detect_directly_deleted';
 
@@ -17,36 +17,15 @@ class DetectDirectlyDeletedTask extends \M2E\OnBuy\Model\Cron\AbstractTask
         \M2E\OnBuy\Model\UnmanagedProduct\UnmapDeletedProduct $unmanagedUnmapDeletedProduct,
         \M2E\OnBuy\Model\UnmanagedProduct\Repository $otherRepository,
         \M2E\OnBuy\Model\Product\Repository $productRepository,
-        \M2E\OnBuy\Model\Listing\RemoveDeletedProduct $listingRemoveDeletedProduct,
-        \M2E\OnBuy\Model\Cron\Manager $cronManager,
-        \M2E\OnBuy\Model\Synchronization\LogService $syncLogger,
-        \M2E\OnBuy\Helper\Data $helperData,
-        \Magento\Framework\Event\Manager $eventManager,
-        \M2E\OnBuy\Model\ActiveRecord\Factory $activeRecordFactory,
-        \M2E\OnBuy\Model\Cron\TaskRepository $taskRepo,
-        \Magento\Framework\App\ResourceConnection $resource
+        \M2E\OnBuy\Model\Listing\RemoveDeletedProduct $listingRemoveDeletedProduct
     ) {
-        parent::__construct(
-            $cronManager,
-            $syncLogger,
-            $helperData,
-            $eventManager,
-            $activeRecordFactory,
-            $taskRepo,
-            $resource
-        );
         $this->unmanagedUnmapDeletedProduct = $unmanagedUnmapDeletedProduct;
         $this->otherRepository = $otherRepository;
         $this->listingRemoveDeletedProduct = $listingRemoveDeletedProduct;
         $this->productRepository = $productRepository;
     }
 
-    protected function getNick(): string
-    {
-        return self::NICK;
-    }
-
-    protected function performActions(): void
+    public function process($context): void
     {
         $processedIds = [];
         foreach ($this->productRepository->findRemovedMagentoProductIds(100) as $magentoProductId) {

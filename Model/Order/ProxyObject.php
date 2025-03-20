@@ -21,13 +21,13 @@ class ProxyObject
 
     private UserInfoFactory $userInfoFactory;
     protected \Magento\Tax\Model\Calculation $taxCalculation;
-    private \M2E\OnBuy\Model\Magento\CustomerFactory $magentoCustomerFactory;
+    private \M2E\Core\Model\Magento\CustomerFactory $magentoCustomerFactory;
     private \M2E\OnBuy\Model\Config\Manager $config;
 
     public function __construct(
         \M2E\OnBuy\Model\Order $order,
         \M2E\OnBuy\Model\Config\Manager $config,
-        \M2E\OnBuy\Model\Magento\CustomerFactory $magentoCustomerFactory,
+        \M2E\Core\Model\Magento\CustomerFactory $magentoCustomerFactory,
         \Magento\Tax\Model\Calculation $taxCalculation,
         \M2E\OnBuy\Model\Currency $currency,
         OnBuyPayment $payment,

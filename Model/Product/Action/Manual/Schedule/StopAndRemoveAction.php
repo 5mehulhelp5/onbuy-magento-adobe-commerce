@@ -29,7 +29,7 @@ class StopAndRemoveAction extends AbstractSchedule
     {
         $result = [];
         foreach ($listingsProducts as $listingProduct) {
-            if ($listingProduct->isStoppable()) {
+            if ($listingProduct->isRemovableFromChannel()) {
                 $result[] = $listingProduct;
 
                 continue;

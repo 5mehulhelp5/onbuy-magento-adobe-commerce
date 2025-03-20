@@ -273,6 +273,10 @@ class Product extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
     {
         $this->setStatus(self::STATUS_NOT_LISTED, $changer)
              ->setData(ProductResource::COLUMN_CHANNEL_PRODUCT_ID, null)
+             ->setData(ProductResource::COLUMN_ONLINE_SKU, null)
+             ->setData(ProductResource::COLUMN_OPC, null)
+             ->setData(ProductResource::COLUMN_PRODUCT_ENCODED_ID, null)
+             ->setData(ProductResource::COLUMN_ONLINE_GROUP_SKU, null)
              ->setData(ProductResource::COLUMN_ONLINE_TITLE, null)
              ->setData(ProductResource::COLUMN_ONLINE_QTY, null);
 

@@ -16,6 +16,7 @@ class MagentoProcessor
     private MagentoProcessor\HandleOrder $handleOrder;
     /** @var \M2E\OnBuy\Model\Order\MagentoProcessor\Check\ParallelProcess */
     private MagentoProcessor\Check\ParallelProcess $checkParallelProcess;
+    private MagentoProcessor\CreditMemoCreate $magentoCreditMemoCreate;
     private \M2E\OnBuy\Model\Synchronization\LogService $syncLogService;
     private \M2E\OnBuy\Helper\Module\Exception $exceptionHelper;
 
@@ -24,10 +25,12 @@ class MagentoProcessor
         MagentoProcessor\InvoiceCreate $magentoInvoiceCreate,
         MagentoProcessor\ShipmentCreate $magentoShipmentCreate,
         MagentoProcessor\ShipmentTrackCreate $magentoTrackCreate,
+        MagentoProcessor\CreditMemoCreate $magentoCreditMemoCreate,
         \M2E\OnBuy\Model\Order\MagentoProcessor\Check\ParallelProcess $checkParallelProcess,
         \M2E\OnBuy\Model\Synchronization\LogService $syncLogService,
         \M2E\OnBuy\Helper\Module\Exception $exceptionHelper
     ) {
+        $this->magentoCreditMemoCreate = $magentoCreditMemoCreate;
         $this->magentoInvoiceCreate = $magentoInvoiceCreate;
         $this->magentoShipmentCreate = $magentoShipmentCreate;
         $this->magentoTrackCreate = $magentoTrackCreate;
@@ -68,6 +71,7 @@ class MagentoProcessor
         $this->magentoInvoiceCreate->process($order);
         $this->magentoShipmentCreate->process($order);
         $this->magentoTrackCreate->process($order);
+        $this->magentoCreditMemoCreate->process($order);
     }
 
     /**
