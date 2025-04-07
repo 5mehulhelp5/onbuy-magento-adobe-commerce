@@ -6,7 +6,7 @@ namespace M2E\OnBuy\Model\Policy;
 
 use M2E\OnBuy\Model\ResourceModel\Policy\SellingFormat as SellingFormatResource;
 
-class SellingFormat extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
+class SellingFormat extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel implements PolicyInterface
 {
     public const QTY_MODE_PRODUCT = 1;
     public const QTY_MODE_NUMBER = 3;

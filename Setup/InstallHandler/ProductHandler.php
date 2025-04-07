@@ -67,6 +67,12 @@ class ProductHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
                 ['unsigned' => true, 'nullable' => true, 'default' => null]
             )
             ->addColumn(
+                ProductResource::COLUMN_IS_PRODUCT_CREATOR,
+                Table::TYPE_BOOLEAN,
+                null,
+                ['default' => 0]
+            )
+            ->addColumn(
                 ProductResource::COLUMN_ONLINE_SKU,
                 Table::TYPE_TEXT,
                 50,
@@ -137,6 +143,12 @@ class ProductHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
                 Table::TYPE_TEXT,
                 \M2E\Core\Model\ResourceModel\Setup::LONG_COLUMN_SIZE,
                 ['nullable' => true, 'default' => null]
+            )
+            ->addColumn(
+                ProductResource::COLUMN_TEMPLATE_CATEGORY_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 ProductResource::COLUMN_LAST_BLOCKING_ERROR_DATE,

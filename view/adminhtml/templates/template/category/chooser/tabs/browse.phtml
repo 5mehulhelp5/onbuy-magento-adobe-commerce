@@ -9,21 +9,17 @@ $block->jsUrl->add($block->getUrl('*/general/getChildCategories'), 'general/getC
 $block->js->add(
     "
 require([
-    'OnBuy/OnBuy/Template/Category/Chooser/Tabs/Browse'
+    'OnBuy/Template/Category/Chooser/Tabs/Browse'
 ], function(){
 
     window.OnBuyTemplateCategoryChooserTabsBrowseObj = new OnBuyTemplateCategoryChooserTabsBrowse();
 
-    OnBuyTemplateCategoryChooserTabsBrowseObj.setShopId(OnBuyCategoryChooserObj.getShopId());
+    OnBuyTemplateCategoryChooserTabsBrowseObj.setSiteId(OnBuyCategoryChooserObj.getSiteId());
     OnBuyTemplateCategoryChooserTabsBrowseObj.setAccountId(OnBuyCategoryChooserObj.getAccountId());
     OnBuyTemplateCategoryChooserTabsBrowseObj.renderTopLevelCategories('chooser_browser-selects');
     OnBuyTemplateCategoryChooserTabsBrowseObj.observe('leaf_selected', function(selectedCategories) {
         const lastCategory = selectedCategories[selectedCategories.length-1];
-        if (lastCategory['invite_only'] == 1) {
-            OnBuyCategoryChooserObj.unSelectCategory();
-        } else {
-            OnBuyCategoryChooserObj.selectCategory(lastCategory['value']);
-        }
+        OnBuyCategoryChooserObj.selectCategory(lastCategory['value']);
     });
 });
 
@@ -36,12 +32,8 @@ require([
         display: inline-block;
         margin-left: 10px;
     }
-    [data-invite_only="1"] {
-        color: gray
-    }
 </style>
 
 <div id="chooser_browser">
-    <div id="chooser_browser-message_wrapper"><?= $block->getInviteOnlyNotice() ?></div>
     <div id="chooser_browser-selects"></div>
 </div>

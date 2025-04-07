@@ -123,6 +123,7 @@
                 <item name="policy" xsi:type="object">M2E\OnBuy\Setup\InstallHandler\PolicyHandler</item>
                 <item name="tag" xsi:type="object">M2E\OnBuy\Setup\InstallHandler\TagHandler</item>
                 <item name="processing" xsi:type="object">M2E\OnBuy\Setup\InstallHandler\ProcessingHandler</item>
+                <item name="category" xsi:type="object">M2E\OnBuy\Setup\InstallHandler\CategoryHandler</item>
             </argument>
         </arguments>
     </type>
@@ -147,4 +148,46 @@
         </arguments>
     </type>
 
+    <!--  Validators  -->
+    <type name="M2E\OnBuy\Model\Product\Action\Type\ListAction\Validator">
+        <arguments>
+            <argument name="validatorsProduct" xsi:type="array">
+                <item name="category" xsi:type="object">
+                    M2E\OnBuy\Model\Product\Action\Validator\CategoryValidator
+                </item>
+                <item name="title" xsi:type="object">
+                    M2E\OnBuy\Model\Product\Action\Validator\TitleValidator
+                </item>
+                <item name="images" xsi:type="object">
+                    M2E\OnBuy\Model\Product\Action\Validator\ImagesValidator
+                </item>
+                <item name="description" xsi:type="object">
+                    M2E\OnBuy\Model\Product\Action\Validator\DescriptionValidator
+                </item>
+                <item name="ean" xsi:type="object">
+                    M2E\OnBuy\Model\Product\Action\Validator\IdentifierValidator
+                </item>
+                <item name="brand" xsi:type="object">
+                    M2E\OnBuy\Model\Product\Action\Validator\BrandValidator
+                </item>
+            </argument>
+            <argument name="validatorsListing" xsi:type="array">
+                <item name="same_sku" xsi:type="object">
+                    M2E\OnBuy\Model\Product\Action\Validator\SameSkuAlreadyExists
+                </item>
+                <item name="price" xsi:type="object">
+                    M2E\OnBuy\Model\Product\Action\Validator\PriceValidator
+                </item>
+                <item name="same_opc" xsi:type="object">
+                    M2E\OnBuy\Model\Product\Action\Validator\SameOpcAndConditionExists
+                </item>
+                <item name="qty" xsi:type="object">
+                    M2E\OnBuy\Model\Product\Action\Validator\QtyValidator
+                </item>
+                <item name="condition" xsi:type="object">
+                    M2E\OnBuy\Model\Product\Action\Validator\ConditionValidator
+                </item>
+            </argument>
+        </arguments>
+    </type>
 </config>

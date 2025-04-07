@@ -13,6 +13,7 @@ class Grid extends AbstractGrid
     private \M2E\OnBuy\Model\ResourceModel\Policy\SellingFormat\CollectionFactory $sellingCollectionFactory;
     private \M2E\OnBuy\Model\ResourceModel\Policy\Synchronization\CollectionFactory $syncCollectionFactory;
     private \M2E\OnBuy\Model\ResourceModel\Policy\Shipping\CollectionFactory $shippingCollectionFactory;
+    private \M2E\OnBuy\Model\ResourceModel\Policy\Description\CollectionFactory $descriptionCollectionFactory;
     private \M2E\OnBuy\Model\ResourceModel\Account $accountResource;
     private \M2E\OnBuy\Model\ResourceModel\Site $siteResource;
     private \M2E\OnBuy\Model\ResourceModel\Account\CollectionFactory $accountCollectionFactory;
@@ -28,6 +29,7 @@ class Grid extends AbstractGrid
         \M2E\OnBuy\Model\ResourceModel\Policy\SellingFormat\CollectionFactory $sellingCollectionFactory,
         \M2E\OnBuy\Model\ResourceModel\Policy\Synchronization\CollectionFactory $syncCollectionFactory,
         \M2E\OnBuy\Model\ResourceModel\Policy\Shipping\CollectionFactory $shippingCollectionFactory,
+        \M2E\OnBuy\Model\ResourceModel\Policy\Description\CollectionFactory $descriptionCollectionFactory,
         \M2E\OnBuy\Model\ResourceModel\Collection\WrapperFactory $wrapperCollectionFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \M2E\OnBuy\Block\Adminhtml\Magento\Context\Template $context,
@@ -41,8 +43,10 @@ class Grid extends AbstractGrid
         $this->shippingCollectionFactory = $shippingCollectionFactory;
         $this->sellingCollectionFactory = $sellingCollectionFactory;
         $this->syncCollectionFactory = $syncCollectionFactory;
+        $this->descriptionCollectionFactory = $descriptionCollectionFactory;
         $this->siteResource = $siteResource;
         $this->siteRepository = $siteRepository;
+
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -147,13 +151,33 @@ class Grid extends AbstractGrid
             ]
         );
 
+        ///Prepare Description collection
+        $collectionDescription = $this->descriptionCollectionFactory->create();
+        $collectionDescription->getSelect()->reset(Select::COLUMNS);
+        $collectionDescription->getSelect()->columns(
+            [
+                'id as template_id',
+                'title',
+                new \Zend_Db_Expr('NULL as `account_title`'),
+                new \Zend_Db_Expr('\'0\' as `account_id`'),
+                new \Zend_Db_Expr('NULL as `site_title`'),
+                new \Zend_Db_Expr('\'0\' as `site_id`'),
+                new \Zend_Db_Expr(
+                    '\'' . \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_DESCRIPTION . '\' as `nick`'
+                ),
+                'create_date',
+                'update_date',
+            ]
+        );
+
         // Prepare union select
         // ---------------------------------------
         $unionSelect = $this->resourceConnection->getConnection()->select();
         $unionSelect->union([
             $collectionSellingFormat->getSelect(),
             $collectionSynchronization->getSelect(),
-            $collectionShipping->getSelect()
+            $collectionShipping->getSelect(),
+            $collectionDescription->getSelect(),
         ]);
 
         // Prepare result collection
@@ -195,6 +219,7 @@ class Grid extends AbstractGrid
             \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_SELLING_FORMAT => __('Selling'),
             \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_SYNCHRONIZATION => __('Synchronization'),
             \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_SHIPPING => __('Shipping'),
+            \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_DESCRIPTION => __('Description'),
         ];
         $this->addColumn('nick', [
             'header' => __('Type'),

@@ -360,7 +360,7 @@ define([
                 },
                 onSuccess: function (transport) {
 
-                    BlockNoticeObj.initializedBlocks = [];
+                   BlockNoticeObj.initializedBlocks = [];
 
                     self.getTemplateDataContainer(templateNick).replace(transport.responseText);
                     self.getTemplateDataContainer(templateNick).show();

@@ -10,6 +10,13 @@ class Factory
         PriceProvider::NICK => PriceProvider::class,
         QtyProvider::NICK => QtyProvider::class,
         DeliveryProvider::NICK => DeliveryProvider::class,
+        IdentifierProvider::NICK => IdentifierProvider::class,
+        TitleProvider::NICK => TitleProvider::class,
+        DescriptionProvider::NICK => DescriptionProvider::class,
+        ImagesProvider::NICK => ImagesProvider::class,
+        CategoryProvider::NICK => CategoryProvider::class,
+        ProductAttributesProvider::NICK => ProductAttributesProvider::class,
+        BrandProvider::NICK => BrandProvider::class
     ];
 
     private \Magento\Framework\ObjectManagerInterface $objectManager;

@@ -381,7 +381,7 @@ JS,
         $select->reset(\Magento\Framework\DB\Select::COLUMNS);
         $select->resetJoinLeft();
 
-        $select->columns('lp.id');
+        $select->columns('listing_product.id');
 
         $connection = $this->getCollection()->getConnection();
 

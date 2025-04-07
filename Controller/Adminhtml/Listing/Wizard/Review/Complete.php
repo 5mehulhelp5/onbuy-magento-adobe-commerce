@@ -37,12 +37,17 @@ class Complete extends \M2E\OnBuy\Controller\Adminhtml\AbstractListing
         $id = $this->getWizardIdFromRequest();
         $wizardManager = $this->wizardManagerFactory->createById($id);
 
-        if (!empty($this->wizardRepository->getNotValidWizardProductsIds($wizardManager->getWizardId()))) {
-            $this->getMessageManager()->addWarningMessage(
-                __(
-                    'Magento products that could not be matched with items on the OnBuy marketplace were not added to the Listing'
-                )
-            );
+        if (!$wizardManager->isEnabledCreateNewProductMode()) {
+            if (!empty($this->wizardRepository->getNotValidWizardProductsIds($wizardManager->getWizardId()))) {
+                $this->getMessageManager()->addWarningMessage(
+                    __(
+                        'Magento products that could not be matched with items on the %channel_title marketplace were not added to the Listing',
+                        [
+                            'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                        ]
+                    )
+                );
+            }
         }
 
         $listingProducts = $this->completeProcessor->process($wizardManager);

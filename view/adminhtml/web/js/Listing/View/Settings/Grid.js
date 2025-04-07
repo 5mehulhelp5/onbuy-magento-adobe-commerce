@@ -1,22 +1,23 @@
 define([
     'jquery',
     'OnBuy/Listing/View/Grid',
+    'OnBuy/Listing/Wizard/Category',
     'OnBuy/Listing/MovingFromListing',
     'Magento_Ui/js/modal/modal'
 ], function (jQuery) {
-
+//TODO: add listing wizard category
     window.OnBuyListingViewSettingsGrid = Class.create(ListingViewGrid, {
 
         // ---------------------------------------
 
         accountId: null,
-        shopId: null,
+        siteId: null,
 
         // ---------------------------------------
 
-        initialize: function ($super, gridId, listingId, accountId, shopId) {
+        initialize: function ($super, gridId, listingId, accountId, siteId) {
             this.accountId = accountId;
-            this.shopId = shopId;
+            this.siteId = siteId;
 
             $super(gridId, listingId);
         },
@@ -27,9 +28,11 @@ define([
             $super();
 
             this.movingHandler = new MovingFromListing(this);
+            this.categoryHandler = new OnBuyListingCategory(this);
 
             this.actions = Object.extend(this.actions, {
                 movingAction: this.movingHandler.run.bind(this.movingHandler),
+                editCategorySettingsAction: this.categoryHandler.editCategorySettings.bind(this.categoryHandler)
             });
         },
 

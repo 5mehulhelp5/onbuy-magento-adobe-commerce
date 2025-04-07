@@ -9,6 +9,7 @@ class Product extends \M2E\OnBuy\Model\ResourceModel\ActiveRecord\AbstractModel
     public const COLUMN_ID = 'id';
     public const COLUMN_LISTING_ID = 'listing_id';
     public const COLUMN_CHANNEL_PRODUCT_ID = 'channel_product_id';
+    public const COLUMN_IS_PRODUCT_CREATOR = 'is_product_creator';
     public const COLUMN_MAGENTO_PRODUCT_ID = 'magento_product_id';
     public const COLUMN_ONLINE_SKU = 'online_sku';
     public const COLUMN_STATUS = 'status';
@@ -23,6 +24,7 @@ class Product extends \M2E\OnBuy\Model\ResourceModel\ActiveRecord\AbstractModel
 
     public const COLUMN_ONLINE_QTY = 'online_qty';
     public const COLUMN_ONLINE_PRICE = 'online_price';
+    public const COLUMN_TEMPLATE_CATEGORY_ID  = 'template_category_id';
 
     public const COLUMN_LAST_BLOCKING_ERROR_DATE = 'last_blocking_error_date';
     public const COLUMN_ADDITIONAL_DATA = 'additional_data';
@@ -35,5 +37,28 @@ class Product extends \M2E\OnBuy\Model\ResourceModel\ActiveRecord\AbstractModel
             \M2E\OnBuy\Helper\Module\Database\Tables::TABLE_NAME_PRODUCT,
             self::COLUMN_ID
         );
+    }
+
+    public function getTemplateCategoryIds(array $listingProductIds, $columnName, $returnNull = false): array
+    {
+        $select = $this->getConnection()
+                       ->select()
+                       ->from(['product' => $this->getMainTable()])
+                       ->reset(\Magento\Framework\DB\Select::COLUMNS)
+                       ->columns([$columnName])
+                       ->where('id IN (?)', $listingProductIds);
+
+        !$returnNull && $select->where("{$columnName} IS NOT NULL");
+
+        foreach ($select->query()->fetchAll() as $row) {
+            $id = $row[$columnName] !== null ? (int)$row[$columnName] : null;
+            if (!$returnNull) {
+                continue;
+            }
+
+            $ids[$id] = $id;
+        }
+
+        return array_values($ids);
     }
 }

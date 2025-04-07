@@ -6,7 +6,7 @@ namespace M2E\OnBuy\Model\Policy;
 
 use M2E\OnBuy\Model\ResourceModel\Policy\Shipping as ShippingResource;
 
-class Shipping extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
+class Shipping extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel implements PolicyInterface
 {
     private \M2E\OnBuy\Model\Account\Repository $accountRepository;
     private \M2E\OnBuy\Model\ResourceModel\Listing\CollectionFactory $listingCollectionFactory;
@@ -50,6 +50,11 @@ class Shipping extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
     public function getTitle(): string
     {
         return (string)$this->getData(ShippingResource::COLUMN_TITLE);
+    }
+
+    public function getNick(): string
+    {
+        return \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_SHIPPING;
     }
 
     public function getAccountId(): int

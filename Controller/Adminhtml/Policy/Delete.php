@@ -3,119 +3,66 @@
 namespace M2E\OnBuy\Controller\Adminhtml\Policy;
 
 use M2E\OnBuy\Controller\Adminhtml\AbstractTemplate;
+use M2E\OnBuy\Model\Policy\Manager;
 
 class Delete extends AbstractTemplate
 {
-    private \M2E\OnBuy\Model\Policy\SellingFormat\Repository $sellingFormatRepository;
-    private \M2E\OnBuy\Model\Policy\Synchronization\Repository $synchronizationRepository;
-    private \M2E\OnBuy\Model\Policy\Shipping\Repository $shippingRepository;
+    private \M2E\OnBuy\Model\Policy\Synchronization\DeleteService $synchronizationDeleteService;
+    private \M2E\OnBuy\Model\Policy\SellingFormat\DeleteService $sellingFormatDeleteService;
+    private \M2E\OnBuy\Model\Policy\Shipping\DeleteService $shippingDeleteService;
+    private \M2E\OnBuy\Model\Policy\Description\DeleteService $descriptionDeleteService;
 
     public function __construct(
-        \M2E\OnBuy\Model\Policy\SellingFormat\Repository $sellingFormatRepository,
-        \M2E\OnBuy\Model\Policy\Synchronization\Repository $synchronizationRepository,
-        \M2E\OnBuy\Model\Policy\Shipping\Repository $shippingRepository,
+        \M2E\OnBuy\Model\Policy\Synchronization\DeleteService $synchronizationDeleteService,
+        \M2E\OnBuy\Model\Policy\SellingFormat\DeleteService $sellingFormatDeleteService,
+        \M2E\OnBuy\Model\Policy\Shipping\DeleteService $shippingDeleteService,
+        \M2E\OnBuy\Model\Policy\Description\DeleteService $descriptionDeleteService,
         \M2E\OnBuy\Model\Policy\Manager $templateManager
     ) {
         parent::__construct($templateManager);
-        $this->shippingRepository = $shippingRepository;
-        $this->sellingFormatRepository = $sellingFormatRepository;
-        $this->synchronizationRepository = $synchronizationRepository;
+        $this->synchronizationDeleteService = $synchronizationDeleteService;
+        $this->sellingFormatDeleteService = $sellingFormatDeleteService;
+        $this->shippingDeleteService = $shippingDeleteService;
+        $this->descriptionDeleteService = $descriptionDeleteService;
     }
 
     public function execute()
     {
-        // ---------------------------------------
-        $id = $this->getRequest()->getParam('id');
+        $id = (int)$this->getRequest()->getParam('id');
         $nick = $this->getRequest()->getParam('nick');
-        // ---------------------------------------
 
-        if ($nick === \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_SYNCHRONIZATION) {
-            return $this->deleteSynchronizationTemplate($id);
-        }
+        $this->isValidNick($nick);
 
-        if ($nick === \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_SELLING_FORMAT) {
-            return $this->deleteSellingFormatTemplate($id);
-        }
-
-        if ($nick === \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_SHIPPING) {
-            return $this->deleteShippingTemplate($id);
-        }
-
-        throw new \M2E\OnBuy\Model\Exception\Logic('Unknown nick ' . $nick);
-    }
-
-    private function deleteSynchronizationTemplate($id): \Magento\Framework\App\ResponseInterface
-    {
         try {
-            $template = $this->synchronizationRepository->get((int)$id);
+            if ($nick === Manager::TEMPLATE_SYNCHRONIZATION) {
+                $this->synchronizationDeleteService->process($id);
+            } elseif ($nick === Manager::TEMPLATE_SELLING_FORMAT) {
+                $this->sellingFormatDeleteService->process($id);
+            } elseif ($nick === Manager::TEMPLATE_DESCRIPTION) {
+                $this->descriptionDeleteService->process($id);
+            } elseif ($nick === Manager::TEMPLATE_SHIPPING) {
+                $this->shippingDeleteService->process($id);
+            }
+
+            $this->messageManager->addSuccess((string)__('Policy was deleted.'));
         } catch (\M2E\OnBuy\Model\Exception\Logic $exception) {
-            $this->messageManager
-                ->addError(__($exception->getMessage()));
-            return $this->_redirect('*/*/index');
+            $this->getMessageManager()->addError(__($exception->getMessage()));
         }
-
-        if ($template->isLocked()) {
-            $this->messageManager
-                ->addError(__('Policy cannot be deleted as it is used in Listing Settings.'));
-
-            return $this->_redirect('*/*/index');
-        }
-
-        $this->synchronizationRepository->delete($template);
-
-        $this->messageManager
-                ->addSuccess(__('Policy was deleted.'));
 
         return $this->_redirect('*/*/index');
     }
 
-    private function deleteSellingFormatTemplate($id)
+    private function isValidNick($nick): void
     {
-        try {
-            $template = $this->sellingFormatRepository->get((int)$id);
-        } catch (\M2E\OnBuy\Model\Exception\Logic $exception) {
-            $this->messageManager
-                ->addError(__($exception->getMessage()));
-            return $this->_redirect('*/*/index');
+        $allowed = [
+            Manager::TEMPLATE_SYNCHRONIZATION,
+            Manager::TEMPLATE_SELLING_FORMAT,
+            Manager::TEMPLATE_DESCRIPTION,
+            Manager::TEMPLATE_SHIPPING,
+        ];
+
+        if (!in_array($nick, $allowed)) {
+            throw new \M2E\OnBuy\Model\Exception\Logic('Unknown Policy nick ' . $nick);
         }
-
-        if ($template->isLocked()) {
-            $this->messageManager
-                ->addError(__('Policy cannot be deleted as it is used in Listing Settings.'));
-
-            return $this->_redirect('*/*/index');
-        }
-
-        $this->sellingFormatRepository->delete($template);
-
-        $this->messageManager
-            ->addSuccess(__('Policy was deleted.'));
-
-        return $this->_redirect('*/*/index');
-    }
-
-    private function deleteShippingTemplate($id)
-    {
-        try {
-            $template = $this->shippingRepository->get((int)$id);
-        } catch (\M2E\OnBuy\Model\Exception\Logic $exception) {
-            $this->messageManager
-                ->addError(__($exception->getMessage()));
-            return $this->_redirect('*/*/index');
-        }
-
-        if ($template->isLocked()) {
-            $this->messageManager
-                ->addError(__('Policy cannot be deleted as it is used in Listing Settings.'));
-
-            return $this->_redirect('*/*/index');
-        }
-
-        $this->shippingRepository->delete($template);
-
-        $this->messageManager
-            ->addSuccess(__('Policy was deleted.'));
-
-        return $this->_redirect('*/*/index');
     }
 }

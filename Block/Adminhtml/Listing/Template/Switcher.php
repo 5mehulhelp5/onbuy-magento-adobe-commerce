@@ -172,6 +172,9 @@ class Switcher extends AbstractBlock
             case \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_SHIPPING:
                 $blockName = \M2E\OnBuy\Block\Adminhtml\Template\Shipping\Edit\Form\Data::class;
                 break;
+            case \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_DESCRIPTION:
+                $blockName = \M2E\OnBuy\Block\Adminhtml\Template\Description\Edit\Form\Data::class;
+                break;
         }
 
         if ($blockName === null) {

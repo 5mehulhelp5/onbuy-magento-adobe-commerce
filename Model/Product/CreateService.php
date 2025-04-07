@@ -21,6 +21,7 @@ class CreateService
     public function create(
         \M2E\OnBuy\Model\Listing $listing,
         \M2E\OnBuy\Model\Magento\Product $m2eMagentoProduct,
+        ?int $categoryDictionaryId,
         ?string $opc,
         ?string $url,
         ?\M2E\OnBuy\Model\UnmanagedProduct $unmanagedProduct = null
@@ -33,8 +34,14 @@ class CreateService
             $opc
         );
 
+        $listingProduct->setProductCreator($opc === null);
+
         if ($unmanagedProduct !== null) {
             $listingProduct->fillFromUnmanagedProduct($unmanagedProduct);
+        }
+
+        if ($categoryDictionaryId !== null) {
+            $listingProduct->setTemplateCategoryId($categoryDictionaryId);
         }
 
         if ($url !== null) {

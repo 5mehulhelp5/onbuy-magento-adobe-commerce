@@ -18,9 +18,11 @@ class Product extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
     /** @var \M2E\OnBuy\Model\Listing\Wizard\Repository */
     private Repository $repository;
     private \M2E\OnBuy\Model\Magento\Product\CacheFactory $magentoProductFactory;
+    private \M2E\OnBuy\Model\Category\Dictionary\Repository $dictionaryRepository;
 
     public function __construct(
         Repository $repository,
+        \M2E\OnBuy\Model\Category\Dictionary\Repository $dictionaryRepository,
         \M2E\OnBuy\Model\Magento\Product\CacheFactory $magentoProductFactory,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
@@ -31,6 +33,7 @@ class Product extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
         parent::__construct($context, $registry, $resource, $resourceCollection, $data);
         $this->repository = $repository;
         $this->magentoProductFactory = $magentoProductFactory;
+        $this->dictionaryRepository = $dictionaryRepository;
     }
 
     public function _construct(): void
@@ -91,6 +94,26 @@ class Product extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
         $this->setData(WizardProductResource::COLUMN_UNMANAGED_PRODUCT_ID, $value);
 
         return $this;
+    }
+
+    public function getCategoryDictionary(): ?\M2E\OnBuy\Model\Category\Dictionary
+    {
+        $dictionaryId = $this->getCategoryDictionaryId();
+        if ($dictionaryId === null) {
+            return null;
+        }
+
+        return $this->dictionaryRepository->get($dictionaryId);
+    }
+
+    public function getCategoryId(): ?string
+    {
+        $dictionary = $this->getCategoryDictionary();
+        if ($dictionary === null) {
+            return null;
+        }
+
+        return $dictionary->getCategoryId();
     }
 
     public function setCategoryId(int $value): self

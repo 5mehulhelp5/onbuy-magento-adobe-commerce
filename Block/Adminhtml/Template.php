@@ -76,6 +76,12 @@ class Template extends AbstractContainer
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Manager::TEMPLATE_SHIPPING) . "')",
                 'default' => false,
             ],
+            Manager::TEMPLATE_DESCRIPTION => [
+                'label' => __('Description'),
+                'id' => 'description',
+                'onclick' => "setLocation('" . $this->getTemplateUrl(Manager::TEMPLATE_DESCRIPTION) . "')",
+                'default' => false,
+            ],
         ];
 
         return $data;

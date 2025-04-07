@@ -4,7 +4,7 @@ namespace M2E\OnBuy\Model\Policy;
 
 use M2E\OnBuy\Model\ResourceModel\Policy\Synchronization as SynchronizationResource;
 
-class Synchronization extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
+class Synchronization extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel implements PolicyInterface
 {
     public const QTY_MODE_NONE = 0;
     public const QTY_MODE_YES = 1;
@@ -42,7 +42,7 @@ class Synchronization extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
     /**
      * @return string
      */
-    public function getNick()
+    public function getNick(): string
     {
         return \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_SYNCHRONIZATION;
     }

@@ -17,8 +17,10 @@ class SameSkuAlreadyExists implements \M2E\OnBuy\Model\Product\Action\Validator\
         $this->productRepository = $productRepository;
     }
 
-    public function validate(\M2E\OnBuy\Model\Product $product): ?string
-    {
+    public function validate(
+        \M2E\OnBuy\Model\Product $product,
+        \M2E\OnBuy\Model\Product\Action\Configurator $configurator
+    ): ?string {
         $onBuyProductSku = $product->getOnlineSku();
         if (empty($onBuyProductSku)) {
             $onBuyProductSku = $product->getMagentoProduct()->getSku();

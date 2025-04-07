@@ -26,6 +26,11 @@ class Same extends \M2E\OnBuy\Block\Adminhtml\Magento\AbstractContainer
 
         $this->setId('listingCategoryChooser');
 
+        $url = $this->getUrl(
+            '*/listing_wizard_category/completeStep',
+            ['id' => $this->uiWizardRuntimeStorage->getManager()->getWizardId()],
+        );
+
         $this->prepareButtons(
             [
                 'label' => __('Continue'),
@@ -42,6 +47,20 @@ class Same extends \M2E\OnBuy\Block\Adminhtml\Magento\AbstractContainer
         );
 
         $this->_headerText = __('Categories');
+    }
+
+    protected function _toHtml()
+    {
+        $chooserBlock = $this
+            ->getLayout()
+            ->createBlock(
+                \M2E\OnBuy\Block\Adminhtml\Category\CategoryChooser::class,
+                '',
+                ['selectedCategory' => null],
+            );
+
+        return parent::_toHtml()
+            . $chooserBlock->toHtml();
     }
 
     protected function _beforeToHtml()

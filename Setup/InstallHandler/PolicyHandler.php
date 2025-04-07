@@ -8,6 +8,8 @@ use M2E\OnBuy\Helper\Module\Database\Tables as TablesHelper;
 use M2E\OnBuy\Model\ResourceModel\Policy\SellingFormat as SellingFormatResource;
 use M2E\OnBuy\Model\ResourceModel\Policy\Synchronization as SynchronizationResource;
 use M2E\OnBuy\Model\ResourceModel\Policy\Shipping as ShippingResource;
+use M2E\OnBuy\Model\ResourceModel\Policy\Description as DescriptionResource;
+use M2E\Core\Model\ResourceModel\Setup;
 use Magento\Framework\DB\Ddl\Table;
 
 class PolicyHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
@@ -19,6 +21,7 @@ class PolicyHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
         $this->installTemplateSellingFormatTable($setup);
         $this->installTemplateSynchronizationTable($setup);
         $this->installTemplateShippingTable($setup);
+        $this->installDescriptionTable($setup);
     }
 
     private function installTemplateSellingFormatTable(\Magento\Framework\Setup\SetupInterface $setup): void
@@ -433,6 +436,123 @@ class PolicyHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
             ->setOption('row_format', 'dynamic');
 
         $setup->getConnection()->createTable($table);
+    }
+
+    private function installDescriptionTable(\Magento\Framework\Setup\SetupInterface $setup): void
+    {
+        $tableName = $this->tablesHelper->getFullName(TablesHelper::TABLE_NAME_TEMPLATE_DESCRIPTION);
+
+        $descriptionTable = $setup->getConnection()->newTable($tableName);
+        $descriptionTable
+            ->addColumn(
+                DescriptionResource::COLUMN_ID,
+                Table::TYPE_INTEGER,
+                null,
+                [
+                    'unsigned' => true,
+                    'primary' => true,
+                    'nullable' => false,
+                    'auto_increment' => true,
+                ]
+            )
+            ->addColumn(
+                DescriptionResource::COLUMN_TITLE,
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                DescriptionResource::COLUMN_IS_CUSTOM_TEMPLATE,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                DescriptionResource::COLUMN_TITLE_MODE,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                DescriptionResource::COLUMN_TITLE_TEMPLATE,
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                DescriptionResource::COLUMN_DESCRIPTION_MODE,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                DescriptionResource::COLUMN_DESCRIPTION_TEMPLATE,
+                Table::TYPE_TEXT,
+                Setup::LONG_COLUMN_SIZE,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                DescriptionResource::COLUMN_IMAGE_MAIN_MODE,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                DescriptionResource::COLUMN_IMAGE_MAIN_ATTRIBUTE,
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                DescriptionResource::COLUMN_GALLERY_TYPE,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 4]
+            )
+            ->addColumn(
+                DescriptionResource::COLUMN_GALLERY_IMAGES_MODE,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                DescriptionResource::COLUMN_GALLERY_IMAGES_LIMIT,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 1]
+            )
+            ->addColumn(
+                DescriptionResource::COLUMN_GALLERY_IMAGES_ATTRIBUTE,
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                DescriptionResource::COLUMN_UPDATE_DATE,
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                DescriptionResource::COLUMN_CREATE_DATE,
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null]
+            )
+            ->addIndex(
+                'is_custom_template',
+                DescriptionResource::COLUMN_IS_CUSTOM_TEMPLATE
+            )
+            ->addIndex(
+                'title',
+                DescriptionResource::COLUMN_TITLE
+            )
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci')
+            ->setOption('row_format', 'dynamic');
+
+        $setup->getConnection()->createTable($descriptionTable);
     }
 
     public function installData(\Magento\Framework\Setup\SetupInterface $setup): void

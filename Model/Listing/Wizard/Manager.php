@@ -212,7 +212,18 @@ class Manager
 
     public function isEnabledCreateNewProductMode(): bool
     {
-        return false;
+        try {
+            $data = $this->getStepData(StepDeclarationCollectionFactory::STEP_SEARCH_PRODUCTS_CHANNEL_ID);
+        } catch (\Throwable $e) {
+            return false;
+        }
+
+        return $data['create_new_product_mode'] ?? false;
+    }
+
+    public function enableCreateNewProductMode(): void
+    {
+        $this->setStepData(StepDeclarationCollectionFactory::STEP_SEARCH_PRODUCTS_CHANNEL_ID, ['create_new_product_mode' => true]);
     }
 
     public function setStepData(string $stepNick, array $data): void

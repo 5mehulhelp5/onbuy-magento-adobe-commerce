@@ -46,6 +46,10 @@ class SearchChannelIdStep extends \M2E\OnBuy\Block\Adminhtml\Magento\Grid\Abstra
                                 '*/listing_wizard_search/completeStep',
                                 ['id' => $this->getWizardIdFromRequest()],
                             ),
+                            'urlEnableProductNewMode' => $this->getUrl(
+                                '*/listing_wizard/enableCreateProductMode',
+                                ['id' => $this->getWizardIdFromRequest()],
+                            ),
                         ],
                     ],
                 ],

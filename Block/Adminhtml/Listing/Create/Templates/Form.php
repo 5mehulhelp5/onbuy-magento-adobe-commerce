@@ -7,6 +7,7 @@ use M2E\OnBuy\Model\Policy\Manager as TemplateManager;
 use M2E\OnBuy\Model\ResourceModel\Policy\SellingFormat\CollectionFactory as SellingFormatCollectionFactory;
 use M2E\OnBuy\Model\ResourceModel\Policy\Shipping\CollectionFactory as ShippingCollectionFactory;
 use M2E\OnBuy\Model\ResourceModel\Policy\Synchronization\CollectionFactory as SynchronizationCollectionFactory;
+use M2E\OnBuy\Model\ResourceModel\Policy\Description\CollectionFactory as DescriptionCollectionFactory;
 use M2E\OnBuy\Model\ResourceModel\Policy\Shipping as ShippingResource;
 
 class Form extends \M2E\OnBuy\Block\Adminhtml\Magento\Form\AbstractForm
@@ -17,11 +18,13 @@ class Form extends \M2E\OnBuy\Block\Adminhtml\Magento\Form\AbstractForm
     private SellingFormatCollectionFactory $sellingFormatCollectionFactory;
     private SynchronizationCollectionFactory $synchronizationCollectionFactory;
     private ShippingCollectionFactory $shippingCollectionFactory;
+    private DescriptionCollectionFactory $descriptionCollectionFactory;
 
     public function __construct(
         ShippingCollectionFactory $shippingCollectionFactory,
         SellingFormatCollectionFactory $sellingFormatCollectionFactory,
         SynchronizationCollectionFactory $synchronizationCollectionFactory,
+        DescriptionCollectionFactory $descriptionCollectionFactory,
         \M2E\OnBuy\Model\Listing\Repository $listingRepository,
         \M2E\OnBuy\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
@@ -34,6 +37,8 @@ class Form extends \M2E\OnBuy\Block\Adminhtml\Magento\Form\AbstractForm
         $this->sellingFormatCollectionFactory = $sellingFormatCollectionFactory;
         $this->synchronizationCollectionFactory = $synchronizationCollectionFactory;
         $this->shippingCollectionFactory = $shippingCollectionFactory;
+        $this->descriptionCollectionFactory = $descriptionCollectionFactory;
+
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -259,6 +264,70 @@ HTML
             ]
         );
 
+        $descriptionTemplates = $this->getDescriptionTemplates();
+        $style = count($descriptionTemplates) === 0 ? 'display: none' : '';
+
+        $templateDescriptionValue = $formData['template_description_id'];
+        if (empty($templateDescriptionValue) && !empty($descriptionTemplates)) {
+            $templateDescriptionValue = reset($descriptionTemplates)['value'];
+        }
+
+        $templateDescription = $this->elementFactory->create(
+            'select',
+            [
+                'data' => [
+                    'html_id' => 'template_description_id',
+                    'name' => 'template_description_id',
+                    'style' => 'width: 50%;' . $style,
+                    'no_span' => true,
+                    'values' => array_merge(['' => ''], $descriptionTemplates),
+                    'value' => $templateDescriptionValue,
+                    'required' => true,
+                ],
+            ]
+        );
+        $templateDescription->setForm($form);
+
+        $style = count($descriptionTemplates) === 0 ? '' : 'display: none';
+        $fieldset->addField(
+            'template_description_container',
+            self::CUSTOM_CONTAINER,
+            [
+                'label' => __('Description Policy'),
+                'style' => 'line-height: 34px;display: initial;',
+                'field_extra_attributes' => 'style="margin-bottom: 5px"',
+                'required' => true,
+                'text' => <<<HTML
+    <span id="template_description_label" style="{$style}">
+        $noPoliciesAvailableText
+    </span>
+    {$templateDescription->toHtml()}
+HTML
+                ,
+                'after_element_html' => <<<HTML
+&nbsp;
+<span style="line-height: 30px;">
+    <span id="edit_description_template_link" style="color:#41362f">
+        <a href="javascript: void(0);" onclick="OnBuyListingSettingsObj.editTemplate(
+            '{$this->getEditUrl(TemplateManager::TEMPLATE_DESCRIPTION)}',
+            $('template_description_id').value,
+            OnBuyListingSettingsObj.newDescriptionTemplateCallback
+        );">
+            $viewText&nbsp;/&nbsp;$editText
+        </a>
+        <span>$orText</span>
+    </span>
+    <a id="add_description_template_link" href="javascript: void(0);"
+        onclick="OnBuyListingSettingsObj.addNewTemplate(
+        '{$this->getAddNewUrl(TemplateManager::TEMPLATE_DESCRIPTION)}',
+        OnBuyListingSettingsObj.newDescriptionTemplateCallback
+    );">$addNewText</a>
+</span>
+HTML
+                ,
+            ]
+        );
+
         $fieldset = $form->addFieldset(
             'shipping_settings',
             [
@@ -392,6 +461,17 @@ HTML
                         'is_custom_template' => 0,
                     ]
                 ),
+                'getDescriptionTemplates' => $this->getUrl(
+                    '*/general/modelGetAll',
+                    [
+                        'model' => 'Policy_Description',
+                        'id_field' => 'id',
+                        'data_field' => 'title',
+                        'sort_field' => 'title',
+                        'sort_dir' => 'ASC',
+                        'is_custom_template' => 0,
+                    ]
+                ),
             ]
         );
 
@@ -473,6 +553,22 @@ JS
             [
                 'value' => \M2E\OnBuy\Model\ResourceModel\Policy\Synchronization::COLUMN_ID,
                 'label' => \M2E\OnBuy\Model\ResourceModel\Policy\Synchronization::COLUMN_TITLE,
+            ]
+        );
+
+        return $collection->getConnection()->fetchAssoc($collection->getSelect());
+    }
+
+    protected function getDescriptionTemplates(): array
+    {
+        $collection = $this->descriptionCollectionFactory->create();
+        $collection->addFieldToFilter('is_custom_template', 0);
+        $collection->setOrder('title', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
+
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)->columns(
+            [
+                'value' => \M2E\OnBuy\Model\ResourceModel\Policy\Description::COLUMN_ID,
+                'label' => \M2E\OnBuy\Model\ResourceModel\Policy\Description::COLUMN_TITLE,
             ]
         );
 

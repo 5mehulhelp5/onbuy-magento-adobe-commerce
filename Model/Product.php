@@ -40,16 +40,21 @@ class Product extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
     public const SEARCH_STATUS_COMPLETED = 1;
 
     private \M2E\OnBuy\Model\Listing $listing;
+    private ?\M2E\OnBuy\Model\Category\Dictionary $categoryDictionary = null;
     private \M2E\OnBuy\Model\Magento\Product\Cache $magentoProductModel;
     private \M2E\OnBuy\Model\Listing\Repository $listingRepository;
     private \M2E\OnBuy\Model\Magento\Product\CacheFactory $magentoProductFactory;
     private \M2E\OnBuy\Model\Product\DataProvider $dataProvider;
     private \M2E\OnBuy\Model\Product\DataProviderFactory $dataProviderFactory;
+    private \M2E\OnBuy\Model\Product\Description\RendererFactory $descriptionRendererFactory;
+    private \M2E\OnBuy\Model\Category\Dictionary\Repository $categoryDictionaryRepository;
 
     public function __construct(
         \M2E\OnBuy\Model\Listing\Repository $listingRepository,
         \M2E\OnBuy\Model\Magento\Product\CacheFactory $magentoProductFactory,
         \M2E\OnBuy\Model\Product\DataProviderFactory $dataProviderFactory,
+        \M2E\OnBuy\Model\Product\Description\RendererFactory $descriptionRendererFactory,
+        \M2E\OnBuy\Model\Category\Dictionary\Repository $categoryDictionaryRepository,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry
     ) {
@@ -58,6 +63,8 @@ class Product extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
         $this->listingRepository = $listingRepository;
         $this->magentoProductFactory = $magentoProductFactory;
         $this->dataProviderFactory = $dataProviderFactory;
+        $this->descriptionRendererFactory = $descriptionRendererFactory;
+        $this->categoryDictionaryRepository = $categoryDictionaryRepository;
     }
 
     protected function _construct(): void
@@ -194,6 +201,11 @@ class Product extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
     public function getOpc(): string
     {
         return (string)$this->getData(ProductResource::COLUMN_OPC);
+    }
+
+    public function hasOpc(): bool
+    {
+        return (string)$this->getData(ProductResource::COLUMN_OPC) !== '';
     }
 
     public function setOpc(string $opc): self
@@ -420,6 +432,49 @@ class Product extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
         return $this->getSellingFormatTemplate()->getSource($this->getMagentoProduct());
     }
 
+    /**
+     * @return \M2E\OnBuy\Model\Policy\Description
+     * @throws \M2E\OnBuy\Model\Exception\Logic
+     */
+    public function getDescriptionTemplate(): \M2E\OnBuy\Model\Policy\Description
+    {
+        return $this->getListing()->getTemplateDescription();
+    }
+
+    public function getRenderedDescription(): string
+    {
+        return $this->descriptionRendererFactory
+            ->create($this)
+            ->parseTemplate($this->getDescriptionTemplateSource()->getDescription());
+    }
+
+    /**
+     * @return \M2E\OnBuy\Model\Policy\Description\Source
+     * @throws \M2E\OnBuy\Model\Exception\Logic
+     */
+    public function getDescriptionTemplateSource(): \M2E\OnBuy\Model\Policy\Description\Source
+    {
+        return $this->getDescriptionTemplate()->getSource($this->getMagentoProduct());
+    }
+
+    public function getCategoryDictionary(): Category\Dictionary
+    {
+        if (isset($this->categoryDictionary)) {
+            return $this->categoryDictionary;
+        }
+
+        if (!$this->hasCategoryTemplate()) {
+            throw new \M2E\OnBuy\Model\Exception\Logic('Category was not selected.');
+        }
+
+        return $this->categoryDictionary = $this->categoryDictionaryRepository->get($this->getTemplateCategoryId());
+    }
+
+    public function hasCategoryTemplate(): bool
+    {
+        return !empty($this->getData(ProductResource::COLUMN_TEMPLATE_CATEGORY_ID));
+    }
+
     public function getOnlineTitle(): string
     {
         return (string)$this->getData(ProductResource::COLUMN_ONLINE_TITLE);
@@ -473,6 +528,18 @@ class Product extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
         $this->setData(ProductResource::COLUMN_MAGENTO_PRODUCT_ID, $magentoProductId);
 
         return $this;
+    }
+
+    public function setTemplateCategoryId(int $id): self
+    {
+        $this->setData(ProductResource::COLUMN_TEMPLATE_CATEGORY_ID, $id);
+
+        return $this;
+    }
+
+    public function getTemplateCategoryId(): int
+    {
+        return (int)$this->getData(ProductResource::COLUMN_TEMPLATE_CATEGORY_ID);
     }
 
     public function setChannelProductId(int $productId): self
@@ -542,6 +609,16 @@ class Product extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
         $this->setData(ProductResource::COLUMN_ONLINE_PRODUCT_URL, $value);
 
         return $this;
+    }
+
+    public function isProductCreator(): bool
+    {
+        return (bool)$this->getData(ProductResource::COLUMN_IS_PRODUCT_CREATOR);
+    }
+
+    public function setProductCreator(bool $value): void
+    {
+        $this->setData(ProductResource::COLUMN_IS_PRODUCT_CREATOR, (int)$value);
     }
 
     public function hasBlockingByError(): bool

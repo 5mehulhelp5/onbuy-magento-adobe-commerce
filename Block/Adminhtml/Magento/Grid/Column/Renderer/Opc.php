@@ -13,7 +13,10 @@ class Opc extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
         $opc = $row->getData('opc');
         $url = $row->getData('online_product_url');
 
-        return '<a href="' . $url . '" target="_blank">' . $opc . '</a>';
+        $creator = $row->getData('is_product_creator') ?
+            '<br><span style="font-size: 10px; color: grey;">' . __('Product Creator') . '</span>' : '';
+
+        return '<a href="' . $url . '" target="_blank">' . $opc . '</a>' . $creator;
     }
 
     public function renderExport(\Magento\Framework\DataObject $row)

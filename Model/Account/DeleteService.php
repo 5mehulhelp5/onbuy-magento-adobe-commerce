@@ -20,8 +20,10 @@ class DeleteService
     private \M2E\OnBuy\Model\Site\Repository $siteRepository;
     private \M2E\OnBuy\Model\Order\DeleteService $deleteService;
     private \M2E\OnBuy\Model\Policy\Shipping\Repository $templateShippingRepository;
+    private \M2E\OnBuy\Model\StopQueue\Repository $stopQueueRepository;
 
     public function __construct(
+        \M2E\OnBuy\Model\StopQueue\Repository $stopQueueRepository,
         \M2E\OnBuy\Model\Policy\Shipping\Repository $templateShippingRepository,
         Repository $accountRepository,
         \M2E\OnBuy\Model\Listing\DeleteService $listingDeleteService,
@@ -35,6 +37,7 @@ class DeleteService
         \M2E\OnBuy\Helper\Data\Cache\Permanent $cache,
         \M2E\OnBuy\Model\Order\DeleteService $deleteService
     ) {
+        $this->stopQueueRepository = $stopQueueRepository;
         $this->templateShippingRepository = $templateShippingRepository;
         $this->accountRepository = $accountRepository;
         $this->orderLogRepository = $orderLogRepository;
@@ -71,6 +74,8 @@ class DeleteService
             $this->unmanagedProductDeleteService->deleteUnmanagedByAccountId($accountId);
 
             $this->templateShippingRepository->removeByAccountId($accountId);
+
+            $this->stopQueueRepository->removeByAccountId($accountId);
 
             $this->removeListings($account);
 

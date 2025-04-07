@@ -156,15 +156,14 @@ class InterfaceAndMagentoInventory extends \M2E\OnBuy\Block\Adminhtml\System\Con
                 'value' => $this->configurationHelper
                     ->getMagentoAttributePriceTypeConvertingMode(),
                 'tooltip' => __(
-                    '<p>Choose whether Magento Price Attribute values should be converted ' .
-                    'automatically. With this option enabled, %extension_title will provide currency conversion ' .
-                    'based on Magento Currency Settings.</p><p><strong>For example</strong>, the Item Price is set ' .
-                    'to be taken from Magento Price Attribute (e.g. 5 USD).<br>If this Item is listed ' .
-                    'with a different Base Currency (e.g. GBP), the currency conversion is performed automatically ' .
-                    'based on the set exchange rate (e.g. 1 USD = 0.82 GBP).<br>The Item will be available on Channel ' .
-                    'at the Price of 4.1 GBP.</p>',
+                    '<p>Set this option to "Yes" to activate currency conversion for price values ' .
+                    'from custom Magento Attributes (conversion for standard Magento Price attributes is automatic).</p>' .
+                    '<p>Once enabled, M2E will convert prices according to your Magento Currency Settings. <strong>For example</strong>, ' .
+                    'M2E handles the conversion using the established exchange rate (e.g., 1 USD = 0.92 EUR). If a product\'s ' .
+                    'price is set to 5 USD in a Magento Attribute, it will be listed at 4.62 EUR on %channel_title, where EUR is ' .
+                    'the base currency.</p>',
                     [
-                        'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
                     ]
                 ),
             ]

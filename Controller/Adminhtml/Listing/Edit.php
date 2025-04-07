@@ -36,7 +36,11 @@ class Edit extends \M2E\OnBuy\Controller\Adminhtml\AbstractListing
         $this->uiListingRuntimeStorage->setListing($listing);
 
         $this->addContent(
-            $this->getLayout()->createBlock(\M2E\OnBuy\Block\Adminhtml\Listing\Edit::class)
+            $this->getLayout()->createBlock(
+                \M2E\OnBuy\Block\Adminhtml\Listing\Edit::class,
+                '',
+                ['listing' => $listing],
+            )
         );
         $this->getResultPage()->getConfig()->getTitle()->prepend(
             __(

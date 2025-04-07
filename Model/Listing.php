@@ -34,17 +34,23 @@ class Listing extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
 
     public const CREATE_LISTING_SESSION_DATA = 'onbuy_listing_create';
 
+    public const REQUIRED_POLICIES = [
+        'Description' => ListingResource::COLUMN_TEMPLATE_DESCRIPTION_ID
+    ];
+
     private \M2E\OnBuy\Model\Account $account;
     private \M2E\OnBuy\Model\Site $site;
     private \M2E\OnBuy\Model\Policy\SellingFormat $templateSellingFormat;
     private \M2E\OnBuy\Model\Policy\Synchronization $templateSynchronization;
     private \M2E\OnBuy\Model\Policy\Shipping $templateShipping;
+    private \M2E\OnBuy\Model\Policy\Description $templateDescription;
     private \M2E\OnBuy\Model\Site\Repository $siteRepository;
     private \M2E\OnBuy\Model\Product\Repository $listingProductRepository;
     private \M2E\OnBuy\Model\Account\Repository $accountRepository;
     private \M2E\OnBuy\Model\Policy\SellingFormat\Repository $sellingFormatTemplateRepository;
     private \M2E\OnBuy\Model\Policy\Synchronization\Repository $synchronizationTemplateRepository;
     private \M2E\OnBuy\Model\Policy\Shipping\Repository $shippingTemplateRepository;
+    private \M2E\OnBuy\Model\Policy\Description\Repository $templateDescriptionRepository;
 
     public function __construct(
         \M2E\OnBuy\Model\Product\Repository $listingProductRepository,
@@ -53,6 +59,7 @@ class Listing extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
         \M2E\OnBuy\Model\Policy\SellingFormat\Repository $sellingFormatTemplateRepository,
         \M2E\OnBuy\Model\Policy\Synchronization\Repository $synchronizationTemplateRepository,
         \M2E\OnBuy\Model\Policy\Shipping\Repository $shippingTemplateRepository,
+        \M2E\OnBuy\Model\Policy\Description\Repository $templateDescriptionRepository,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
@@ -71,6 +78,7 @@ class Listing extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
         $this->sellingFormatTemplateRepository = $sellingFormatTemplateRepository;
         $this->synchronizationTemplateRepository = $synchronizationTemplateRepository;
         $this->shippingTemplateRepository = $shippingTemplateRepository;
+        $this->templateDescriptionRepository = $templateDescriptionRepository;
         $this->siteRepository = $siteRepository;
     }
 
@@ -142,6 +150,20 @@ class Listing extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
     /**
      * @throws \M2E\OnBuy\Model\Exception\Logic
      */
+    public function getTemplateDescription(): Policy\Description
+    {
+        /** @psalm-suppress RedundantPropertyInitializationCheck */
+        if (!isset($this->templateDescription)) {
+            $this->templateDescription = $this->templateDescriptionRepository
+                ->get($this->getTemplateDescriptionId());
+        }
+
+        return $this->templateDescription;
+    }
+
+    /**
+     * @throws \M2E\OnBuy\Model\Exception\Logic
+     */
     public function getTemplateShipping(): ?Policy\Shipping
     {
         if ($this->getTemplateShippingId() === null) {
@@ -159,6 +181,22 @@ class Listing extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
     public function hasTemplateShipping(): bool
     {
         return !empty($this->getTemplateShippingId());
+    }
+
+    public function isAllRequiredPoliciesExist(): bool
+    {
+        foreach (self::REQUIRED_POLICIES as $policy) {
+            if (!$this->hasTemplatePolicyId($policy)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function hasTemplatePolicyId(string $policy): bool
+    {
+        return (bool)$this->getData($policy);
     }
 
     public function getTitle(): string

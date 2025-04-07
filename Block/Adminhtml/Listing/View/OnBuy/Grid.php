@@ -99,6 +99,7 @@ class Grid extends \M2E\OnBuy\Block\Adminhtml\Listing\View\AbstractGrid
                 'online_price' => ListingProductResource::COLUMN_ONLINE_PRICE,
                 'online_product_url' => ListingProductResource::COLUMN_ONLINE_PRODUCT_URL,
                 'listing_id' => ListingProductResource::COLUMN_LISTING_ID,
+                'is_product_creator' => ListingProductResource::COLUMN_IS_PRODUCT_CREATOR,
             ],
             sprintf(
                 '{{table}}.%s = %s',
@@ -142,7 +143,9 @@ class Grid extends \M2E\OnBuy\Block\Adminhtml\Listing\View\AbstractGrid
             'width' => '100px',
             'type' => 'text',
             'index' => 'opc',
+            'filter' => \M2E\OnBuy\Block\Adminhtml\Grid\Column\Filter\Opc::class,
             'renderer' => \M2E\OnBuy\Block\Adminhtml\Magento\Grid\Column\Renderer\Opc::class,
+            'filter_condition_callback' => [$this, 'callbackFilterIsProductCreator'],
         ]);
         $this->addColumn(
             'online_qty',
@@ -318,6 +321,22 @@ class Grid extends \M2E\OnBuy\Block\Adminhtml\Listing\View\AbstractGrid
                 ['attribute' => 'online_sku', 'like' => '%' . $value . '%'],
             ]
         );
+    }
+
+    protected function callbackFilterIsProductCreator($collection, $column)
+    {
+        $inputValue = $column->getFilter()->getValue('input');
+        if ($inputValue !== null) {
+            $collection->addFieldToFilter('opc', ['like' => '%' . $inputValue . '%']);
+        }
+
+        $selectValue = $column->getFilter()->getValue('select');
+        if ($selectValue !== null) {
+            $collection->addFieldToFilter(
+                ListingProductResource::COLUMN_IS_PRODUCT_CREATOR,
+                $selectValue
+            );
+        }
     }
 
     /**

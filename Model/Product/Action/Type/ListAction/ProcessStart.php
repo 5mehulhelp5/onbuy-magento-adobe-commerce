@@ -53,7 +53,7 @@ class ProcessStart extends \M2E\OnBuy\Model\Product\Action\Async\AbstractProcess
             $this->getAccount()->getServerHash(),
             $this->getListingProduct()->getListing()->getSite()->getSiteId(),
             $requestData->getData(),
-            Request::LISTING_MODE
+            $this->getRequest()->getActionMode($this->getListingProduct())
         );
     }
 
@@ -71,4 +71,13 @@ class ProcessStart extends \M2E\OnBuy\Model\Product\Action\Async\AbstractProcess
 
         return $this->request = $this->requestFactory->create();
     }
+
+    //private function getActionMode(): string
+    //{
+    //    if ($this->getListingProduct()->getOpc() === '') {
+    //        return Request::LISTING_MODE;
+    //    }
+    //
+    //    return Request::PRODUCT_MODE;
+    //}
 }

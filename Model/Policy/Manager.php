@@ -23,11 +23,13 @@ class Manager
     private \M2E\OnBuy\Model\Policy\SellingFormatFactory $sellingFormatFactory;
     private \M2E\OnBuy\Model\Policy\SynchronizationFactory $synchronizationFactory;
     private \M2E\OnBuy\Model\Policy\ShippingFactory $shippingFactory;
+    private \M2E\OnBuy\Model\Policy\DescriptionFactory $descriptionFactory;
 
     public function __construct(
         \M2E\OnBuy\Model\Policy\SellingFormatFactory $sellingFormatFactory,
         \M2E\OnBuy\Model\Policy\SynchronizationFactory $synchronizationFactory,
         \M2E\OnBuy\Model\Policy\ShippingFactory $shippingFactory,
+        \M2E\OnBuy\Model\Policy\DescriptionFactory $descriptionFactory,
         \M2E\OnBuy\Model\ActiveRecord\Factory $activeRecordFactory
     ) {
         $this->activeRecordFactory = $activeRecordFactory;
@@ -35,6 +37,7 @@ class Manager
         $this->shippingFactory = $shippingFactory;
         $this->sellingFormatFactory = $sellingFormatFactory;
         $this->synchronizationFactory = $synchronizationFactory;
+        $this->descriptionFactory = $descriptionFactory;
     }
 
     //########################################
@@ -100,6 +103,7 @@ class Manager
             self::TEMPLATE_SELLING_FORMAT,
             self::TEMPLATE_SYNCHRONIZATION,
             self::TEMPLATE_SHIPPING,
+            self::TEMPLATE_DESCRIPTION
         ];
     }
 
@@ -160,6 +164,9 @@ class Manager
             case self::TEMPLATE_SHIPPING:
                 $name = 'OnBuy_Template_Shipping';
                 break;
+            case self::TEMPLATE_DESCRIPTION:
+                $name = 'OnBuy_Template_Description';
+                break;
         }
 
         if ($name === null) {
@@ -180,6 +187,8 @@ class Manager
                 return $this->synchronizationFactory->create();
             case self::TEMPLATE_SHIPPING:
                 return $this->shippingFactory->createEmpty();
+            case self::TEMPLATE_DESCRIPTION:
+                return $this->descriptionFactory->create();
         }
 
         throw new \M2E\OnBuy\Model\Exception\Logic(

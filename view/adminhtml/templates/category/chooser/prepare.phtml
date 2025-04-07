@@ -1,0 +1,32 @@
+<?php
+/**
+ * @var \M2E\OnBuy\Block\Adminhtml\Category\Chooser\Prepare $block
+ */
+?>
+
+<script>
+    require([
+        'OnBuy/Category/Chooser'
+    ], () => {
+        window.OnBuyCategoryChooserObj = new OnBuyCategoryChooser(
+            "<?= $block->getSiteId() ?>",
+            <?= $block->getAccountId() ?>
+        );
+    });
+</script>
+
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Magento_Ui/js/core/app": {
+                "components": {
+                    "category_search": {
+                        "component": "M2E_OnBuy/js/Category/Chooser/Tabs/Search",
+                        "searchUrl": "<?= $block->getSearchUrl() ?>",
+                        "siteId": "<?= $block->getSiteId() ?>"
+                    }
+                }
+            }
+        }
+    }
+</script>

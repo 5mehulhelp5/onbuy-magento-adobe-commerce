@@ -6,8 +6,10 @@ namespace M2E\OnBuy\Model\Product\Action\Validator;
 
 class ConditionValidator implements \M2E\OnBuy\Model\Product\Action\Validator\ValidatorInterface
 {
-    public function validate(\M2E\OnBuy\Model\Product $product): ?string
-    {
+    public function validate(
+        \M2E\OnBuy\Model\Product $product,
+        \M2E\OnBuy\Model\Product\Action\Configurator $configurator
+    ): ?string {
         if (empty($product->getListing()->getCondition())) {
             return (string)__(
                 'The Product Сondition is not specified. Please select the correct ' .

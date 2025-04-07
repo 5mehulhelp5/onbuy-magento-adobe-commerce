@@ -33,6 +33,10 @@ class Tables
 
     public const TABLE_NAME_PROCESSING_PARTIAL_DATA = self::PREFIX . 'processing_partial_data';
 
+    public const TABLE_NAME_CATEGORY_TREE = self::PREFIX . 'category_tree';
+    public const TABLE_NAME_CATEGORY_DICTIONARY = self::PREFIX . 'category_dictionary';
+    public const TABLE_NAME_TEMPLATE_CATEGORY_ATTRIBUTES = self::PREFIX . 'template_category_attributes';
+
     public const TABLE_NAME_PROCESSING_LOCK = self::PREFIX . 'processing_lock';
 
     public const TABLE_NAME_STOP_QUEUE = self::PREFIX . 'stop_queue';
@@ -43,6 +47,7 @@ class Tables
     public const TABLE_NAME_TEMPLATE_SELLING_FORMAT = self::PREFIX . 'template_selling_format';
     public const TABLE_NAME_TEMPLATE_SYNCHRONIZATION = self::PREFIX . 'template_synchronization';
     public const TABLE_NAME_TEMPLATE_SHIPPING = self::PREFIX . 'template_shipping';
+    public const TABLE_NAME_TEMPLATE_DESCRIPTION = self::PREFIX . 'template_description';
 
     public const TABLE_NAME_TAG = self::PREFIX . 'tag';
 
@@ -101,6 +106,8 @@ class Tables
             self::TABLE_NAME_OPERATION_HISTORY => \M2E\OnBuy\Model\OperationHistory::class,
             self::TABLE_NAME_TEMPLATE_SELLING_FORMAT => \M2E\OnBuy\Model\Policy\SellingFormat::class,
             self::TABLE_NAME_TEMPLATE_SYNCHRONIZATION => \M2E\OnBuy\Model\Policy\Synchronization::class,
+            self::TABLE_NAME_TEMPLATE_SHIPPING => \M2E\OnBuy\Model\Policy\Shipping::class,
+            self::TABLE_NAME_TEMPLATE_DESCRIPTION => \M2E\OnBuy\Model\Policy\Description::class,
             self::TABLE_NAME_WIZARD => \M2E\OnBuy\Model\Wizard::class,
             self::TABLE_NAME_TAG => \M2E\OnBuy\Model\Tag\Entity::class,
             self::TABLE_NAME_PRODUCT_TAG_RELATION => \M2E\OnBuy\Model\Tag\ListingProduct\Relation::class,
@@ -112,6 +119,9 @@ class Tables
             self::TABLE_NAME_UNMANAGED_PRODUCT => \M2E\OnBuy\Model\UnmanagedProduct::class,
             self::TABLE_NAME_INVENTORY_SYNC_RECEIVED_PRODUCT => \M2E\OnBuy\Model\InventorySync\ReceivedProduct::class,
             self::TABLE_NAME_PRODUCT_LOCK => \M2E\OnBuy\Model\Product\Lock::class,
+            self::TABLE_NAME_CATEGORY_TREE => \M2E\OnBuy\Model\Category\Tree::class,
+            self::TABLE_NAME_CATEGORY_DICTIONARY => \M2E\OnBuy\Model\Category\Dictionary::class,
+            self::TABLE_NAME_TEMPLATE_CATEGORY_ATTRIBUTES => \M2E\OnBuy\Model\Category\CategoryAttribute::class,
         ];
     }
 
@@ -140,6 +150,7 @@ class Tables
             self::TABLE_NAME_TEMPLATE_SELLING_FORMAT => \M2E\OnBuy\Model\ResourceModel\Policy\SellingFormat::class,
             self::TABLE_NAME_TEMPLATE_SYNCHRONIZATION => \M2E\OnBuy\Model\ResourceModel\Policy\Synchronization::class,
             self::TABLE_NAME_TEMPLATE_SHIPPING => \M2E\OnBuy\Model\ResourceModel\Policy\Shipping::class,
+            self::TABLE_NAME_TEMPLATE_DESCRIPTION => \M2E\OnBuy\Model\ResourceModel\Policy\Description::class,
             self::TABLE_NAME_WIZARD => \M2E\OnBuy\Model\ResourceModel\Wizard::class,
             self::TABLE_NAME_TAG => \M2E\OnBuy\Model\ResourceModel\Tag::class,
             self::TABLE_NAME_PRODUCT_TAG_RELATION => \M2E\OnBuy\Model\ResourceModel\Tag\ListingProduct\Relation::class,
@@ -150,7 +161,10 @@ class Tables
             self::TABLE_NAME_ORDER_CHANGE => \M2E\OnBuy\Model\ResourceModel\Order\Change::class,
             self::TABLE_NAME_UNMANAGED_PRODUCT => \M2E\OnBuy\Model\ResourceModel\UnmanagedProduct::class,
             self::TABLE_NAME_INVENTORY_SYNC_RECEIVED_PRODUCT => \M2E\OnBuy\Model\ResourceModel\InventorySync\ReceivedProduct::class,
-            self::TABLE_NAME_PRODUCT_LOCK => \M2E\OnBuy\Model\ResourceModel\Product\Lock::class
+            self::TABLE_NAME_PRODUCT_LOCK => \M2E\OnBuy\Model\ResourceModel\Product\Lock::class,
+            self::TABLE_NAME_CATEGORY_TREE => \M2E\OnBuy\Model\ResourceModel\Category\Tree::class,
+            self::TABLE_NAME_CATEGORY_DICTIONARY => \M2E\OnBuy\Model\ResourceModel\Category\Dictionary::class,
+            self::TABLE_NAME_TEMPLATE_CATEGORY_ATTRIBUTES => \M2E\OnBuy\Model\ResourceModel\Category\Attribute::class,
         ];
     }
 

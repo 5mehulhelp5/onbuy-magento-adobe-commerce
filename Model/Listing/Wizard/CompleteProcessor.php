@@ -47,13 +47,19 @@ class CompleteProcessor
             }
 
             if ($wizardManager->isWizardTypeGeneral()) {
+                $channelProductId = null;
+                if ($wizardProduct->getChannelProductId()) {
+                    $channelProductId = $wizardProduct->getChannelProductId();
+                }
+
                 $data = $wizardProduct->getChannelProductData();
                 $listingProduct = $this->addProductsService
                     ->addProduct(
                         $listing,
                         $magentoProduct,
-                        $wizardProduct->getChannelProductId(),
-                        $data['url'],
+                        $wizardProduct->getCategoryDictionaryId(),
+                        $channelProductId,
+                        $data['url'] ?? null,
                         \M2E\Core\Helper\Data::INITIATOR_USER,
                     );
             } elseif ($wizardManager->isWizardTypeUnmanaged()) {

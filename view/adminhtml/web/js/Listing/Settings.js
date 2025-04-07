@@ -55,6 +55,22 @@ define([
                 $('template_synchronization_id').simulate('change');
             }
 
+            $('template_description_id').observe('change', function () {
+                if ($('template_description_id').value) {
+                    $('edit_description_template_link').show();
+                } else {
+                    $('edit_description_template_link').hide();
+                }
+            });
+            $('template_description_id').simulate('change');
+
+            $('template_description_id').observe('change', function () {
+                OnBuyListingSettingsObj.hideEmptyOption(this);
+            });
+            if ($('template_description_id').value) {
+                $('template_description_id').simulate('change');
+            }
+
             $('template_shipping_id').observe('change', function () {
                 if ($('template_shipping_id').value) {
                     $('edit_shipping_template_link').show();
@@ -213,6 +229,21 @@ define([
                 $('template_selling_format_id').hide();
                 noteEl && $('template_selling_format_note').hide();
                 $('template_selling_format_label').show();
+            }
+        },
+
+        newDescriptionTemplateCallback: function () {
+            var noteEl = $('template_description_note');
+
+            OnBuyListingSettingsObj.reload(OnBuy.url.get('getDescriptionTemplates'), 'template_description_id');
+            if ($('template_description_id').children.length > 0) {
+                $('template_description_id').show();
+                noteEl && $('template_description_note').show();
+                $('template_description_label').hide();
+            } else {
+                $('template_description_id').hide();
+                noteEl && $('template_description_note').hide();
+                $('template_description_label').show();
             }
         },
 

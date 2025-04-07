@@ -46,14 +46,12 @@ class Edit extends \M2E\OnBuy\Block\Adminhtml\Magento\Form\AbstractContainer
                 (string)__('Add %template_name Policy', ['template_name' => $this->getTemplateName()]),
             );
 
-            $onclickHandler = $nick == \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_DESCRIPTION
-                ? 'OnBuyTemplateDescriptionObj'
-                : 'OnBuyTemplateEditObj';
+            $onclickHandler = 'OnBuyTemplateEditObj';
 
             $this->buttonList->add('duplicate', [
                 'label' => __('Duplicate'),
                 'onclick' => $onclickHandler . '.duplicateClick(
-                    \'tts-template\', \'' . $duplicateHeaderText . '\', \'' . $nick . '\'
+                    \'onbuy-template\', \'' . $duplicateHeaderText . '\', \'' . $nick . '\'
                 )',
                 'class' => 'add onbuy_duplicate_button primary',
             ]);
@@ -61,7 +59,7 @@ class Edit extends \M2E\OnBuy\Block\Adminhtml\Magento\Form\AbstractContainer
             $url = $this->getUrl('*/policy/delete');
             $this->buttonList->add('delete', [
                 'label' => __('Delete'),
-                'onclick' => 'OnBuyTemplateEditObj.deleteClick(\'' . $url . '\')',
+                'onclick' => $onclickHandler . '.deleteClick(\'' . $url . '\')',
                 'class' => 'delete onbuy_delete_button primary',
             ]);
         }

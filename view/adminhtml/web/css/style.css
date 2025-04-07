@@ -313,6 +313,16 @@ a.hover-underline:hover {
     margin: 0 0 .6rem !important;
 }
 
+.search_ean_new_product_popup_class .modal-inner-wrap{
+    width: 40%;
+    line-height: 2;
+    font-size: 16px;
+}
+
+#search_ean_new_product_popup {
+    padding-top: 40px;
+}
+
 /* Errors Summary */
 /* ================================================ */
 

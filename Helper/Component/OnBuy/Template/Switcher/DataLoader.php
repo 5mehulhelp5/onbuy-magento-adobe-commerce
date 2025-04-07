@@ -296,6 +296,10 @@ class DataLoader
             return \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_SHIPPING;
         }
 
+        if ($source instanceof \M2E\OnBuy\Model\Policy\Description) {
+            return \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_DESCRIPTION;
+        }
+
         throw new \M2E\OnBuy\Model\Exception\Logic('Invalid source ' . $source);
     }
 
@@ -310,6 +314,7 @@ class DataLoader
             $source instanceof \M2E\OnBuy\Model\Policy\SellingFormat
             || $source instanceof \M2E\OnBuy\Model\Policy\Synchronization
             || $source instanceof \M2E\OnBuy\Model\Policy\Shipping
+            || $source instanceof \M2E\OnBuy\Model\Policy\Description
         ) {
             return true;
         }

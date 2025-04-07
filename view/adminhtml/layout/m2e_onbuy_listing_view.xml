@@ -25,6 +25,8 @@
         </referenceContainer>
 
         <referenceContainer name="content">
+            <block class="M2E\OnBuy\Block\Adminhtml\Category\Chooser\Prepare"/>
+
             <container name="m2e.onbuy.listing.header">
                 <block class="M2E\OnBuy\Block\Adminhtml\Listing\View\Header">
                     <arguments>

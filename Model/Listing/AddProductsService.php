@@ -35,6 +35,7 @@ class AddProductsService
     public function addProduct(
         \M2E\OnBuy\Model\Listing $listing,
         \M2E\OnBuy\Model\Magento\Product $ourMagentoProduct,
+        ?int $categoryDictionaryId,
         ?string $opc,
         ?string $url,
         int $initiator,
@@ -55,6 +56,7 @@ class AddProductsService
         $listingProduct = $this->createProductService->create(
             $listing,
             $ourMagentoProduct,
+            $categoryDictionaryId,
             $opc,
             $url,
             $unmanagedProduct,
@@ -118,6 +120,7 @@ class AddProductsService
         $listingProduct = $this->addProduct(
             $listing,
             $magentoProduct,
+            null,
             $unmanagedProduct->getOpc(),
             $unmanagedProduct->getProductUrl(),
             $initiator,

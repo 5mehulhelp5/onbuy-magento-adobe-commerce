@@ -19,7 +19,7 @@ define([
 
             jQuery.validator.addMethod('OnBuy-validate-description-template', function (value, el) {
 
-                if ($('description_mode').value != OnBuy.php.constant('\\M2E\\OnBuy\\Model\\Template\\Description::DESCRIPTION_MODE_CUSTOM')) {
+                if ($('description_mode').value != OnBuy.php.constant('\\M2E\\OnBuy\\Model\\Policy\\Description::DESCRIPTION_MODE_CUSTOM')) {
                     return true;
                 }
 
@@ -31,7 +31,7 @@ define([
 
                 var isValidMagentoProductId = false;
 
-                new Ajax.Request(OnBuy.url.get('onbuy_template_description/checkMagentoProductId'), {
+                new Ajax.Request(OnBuy.url.get('policy_description/checkMagentoProductId'), {
                     method: 'post',
                     asynchronous: false,
                     parameters: {
@@ -131,7 +131,7 @@ define([
 
             $$('.c-custom_description_tr').invoke('hide');
 
-            if (this.value == OnBuy.php.constant('\\M2E\\OnBuy\\Model\\Template\\Description::DESCRIPTION_MODE_CUSTOM')) {
+            if (this.value == OnBuy.php.constant('\\M2E\\OnBuy\\Model\\Policy\\Description::DESCRIPTION_MODE_CUSTOM')) {
                 if (viewEditCustomDescription) {
                     viewEditCustomDescription.show();
                     $$('.c-custom_description_tr').invoke('hide');
@@ -232,7 +232,7 @@ define([
                     id: 'description_preview_form',
                     method: 'post',
                     target: '_blank',
-                    action: OnBuy.url.get('onbuy_template_description/preview')
+                    action: OnBuy.url.get('policy_description/preview')
                 }));
                 this.initFormValidation('#description_preview_form');
             }
@@ -270,7 +270,7 @@ define([
 
         openPreviewPopup: function () {
             if (
-                    $('description_mode').value == OnBuy.php.constant('\\M2E\\OnBuy\\Model\\Template\\Description::DESCRIPTION_MODE_CUSTOM')
+                    $('description_mode').value == OnBuy.php.constant('\\M2E\\OnBuy\\Model\\Policy\\Description::DESCRIPTION_MODE_CUSTOM')
                     && !$('description_template').value.length
             ) {
                 this.alert(OnBuy.translator.translate('Please enter Description Value.'));
@@ -283,7 +283,7 @@ define([
         selectProductIdRandomly: function () {
             var self = this;
 
-            new Ajax.Request(OnBuy.url.get('onbuy_template_description/getRandomMagentoProductId'), {
+            new Ajax.Request(OnBuy.url.get('policy_description/getRandomMagentoProductId'), {
                 method: 'post',
                 parameters: {
                     store_id: $('description_preview_store_id').value

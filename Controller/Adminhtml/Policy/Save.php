@@ -9,11 +9,13 @@ class Save extends \M2E\OnBuy\Controller\Adminhtml\AbstractTemplate
     private \M2E\OnBuy\Model\Policy\Synchronization\SaveService $synchronizationSaveService;
     private \M2E\OnBuy\Model\Policy\SellingFormat\SaveService $sellingFormatSaveService;
     private \M2E\OnBuy\Model\Policy\Shipping\SaveService $shippingFormatSaveService;
+    private \M2E\OnBuy\Model\Policy\Description\SaveService $descriptionSaveService;
 
     public function __construct(
         \M2E\OnBuy\Model\Policy\SellingFormat\SaveService $sellingFormatSaveService,
         \M2E\OnBuy\Model\Policy\Synchronization\SaveService $synchronizationSaveService,
         \M2E\OnBuy\Model\Policy\Shipping\SaveService $shippingFormatSaveService,
+        \M2E\OnBuy\Model\Policy\Description\SaveService $descriptionSaveService,
         \M2E\OnBuy\Helper\Module\Wizard $wizardHelper,
         \M2E\Core\Helper\Url $urlHelper,
         \M2E\OnBuy\Model\Policy\Manager $templateManager
@@ -25,6 +27,7 @@ class Save extends \M2E\OnBuy\Controller\Adminhtml\AbstractTemplate
         $this->synchronizationSaveService = $synchronizationSaveService;
         $this->sellingFormatSaveService = $sellingFormatSaveService;
         $this->shippingFormatSaveService = $shippingFormatSaveService;
+        $this->descriptionSaveService = $descriptionSaveService;
     }
 
     public function execute()
@@ -126,6 +129,10 @@ class Save extends \M2E\OnBuy\Controller\Adminhtml\AbstractTemplate
 
         if ($nick === \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_SHIPPING) {
             return $this->shippingFormatSaveService->save($data);
+        }
+
+        if ($nick === \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_DESCRIPTION) {
+            return $this->descriptionSaveService->save($data);
         }
 
         throw new \M2E\OnBuy\Model\Exception\Logic('Unknown nick ' . $nick);

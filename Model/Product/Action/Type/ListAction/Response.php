@@ -54,6 +54,10 @@ class Response extends \M2E\OnBuy\Model\Product\Action\Type\AbstractResponse
             ->setStatus(\M2E\OnBuy\Model\Product::STATUS_LISTED, $this->getStatusChanger())
             ->removeBlockingByError();
 
+        if (isset($data['product_url'])) {
+            $product->setProductLinkOnChannel($data['product_url']);
+        }
+
         $this->productRepository->save($product);
     }
 
@@ -84,6 +88,13 @@ class Response extends \M2E\OnBuy\Model\Product\Action\Type\AbstractResponse
             $this->getLogBuffer()->addFail('Product failed to be listed.');
 
             return;
+        }
+
+        $responseData = $this->getResponseData();
+        foreach ($responseData['messages'] ?? [] as $messageData) {
+            if ($messageData['type'] === \M2E\Core\Model\Response\Message::TYPE_WARNING) {
+                $this->getLogBuffer()->addWarning($messageData['text']);
+            }
         }
 
         $currencyCode = $this->getProduct()->getListing()->getSite()->getCurrencyCode();

@@ -7,6 +7,7 @@ namespace M2E\OnBuy\Model\Listing;
 use M2E\OnBuy\Model\Policy\SellingFormat;
 use M2E\OnBuy\Model\Policy\Synchronization;
 use M2E\OnBuy\Model\Policy\Shipping;
+use M2E\OnBuy\Model\Policy\Description;
 use M2E\OnBuy\Model\ResourceModel\Listing as ListingResource;
 
 class UpdateService
@@ -26,6 +27,10 @@ class UpdateService
     private Shipping\SnapshotBuilderFactory $shippingSnapshotBuilderFactory;
     private Shipping\DiffFactory $shippingDiffFactory;
     private Shipping\ChangeProcessorFactory $shippingChangeProcessorFactory;
+    private \M2E\OnBuy\Model\Policy\Description\Repository $descriptionTemplateRepository;
+    private \M2E\OnBuy\Model\Policy\Description\SnapshotBuilderFactory $descriptionSnapshotBuilderFactory;
+    private \M2E\OnBuy\Model\Policy\Description\DiffFactory $descriptionDiffFactory;
+    private \M2E\OnBuy\Model\Policy\Description\ChangeProcessorFactory $descriptionChangeProcessorFactory;
 
     public function __construct(
         \M2E\OnBuy\Model\Listing\Repository $listingRepository,
@@ -42,7 +47,11 @@ class UpdateService
         Shipping\Repository $shippingTemplateRepository,
         Shipping\SnapshotBuilderFactory $shippingSnapshotBuilderFactory,
         Shipping\DiffFactory $shippingDiffFactory,
-        Shipping\ChangeProcessorFactory $shippingChangeProcessorFactory
+        Shipping\ChangeProcessorFactory $shippingChangeProcessorFactory,
+        \M2E\OnBuy\Model\Policy\Description\Repository $descriptionTemplateRepository,
+        \M2E\OnBuy\Model\Policy\Description\SnapshotBuilderFactory $descriptionSnapshotBuilderFactory,
+        \M2E\OnBuy\Model\Policy\Description\DiffFactory $descriptionDiffFactory,
+        \M2E\OnBuy\Model\Policy\Description\ChangeProcessorFactory $descriptionChangeProcessorFactory
     ) {
         $this->listingSnapshotBuilderFactory = $listingSnapshotBuilderFactory;
         $this->listingRepository = $listingRepository;
@@ -59,6 +68,10 @@ class UpdateService
         $this->shippingSnapshotBuilderFactory = $shippingSnapshotBuilderFactory;
         $this->shippingDiffFactory = $shippingDiffFactory;
         $this->shippingChangeProcessorFactory = $shippingChangeProcessorFactory;
+        $this->descriptionTemplateRepository = $descriptionTemplateRepository;
+        $this->descriptionSnapshotBuilderFactory = $descriptionSnapshotBuilderFactory;
+        $this->descriptionDiffFactory = $descriptionDiffFactory;
+        $this->descriptionChangeProcessorFactory = $descriptionChangeProcessorFactory;
     }
 
     /**
@@ -71,6 +84,7 @@ class UpdateService
         $isNeedProcessChangesShippingTemplate = false;
         $isNeedProcessChangesCondition = false;
         $isNeedProcessChangesConditionNote = false;
+        $isNeedProcessChangesDescriptionTemplate = false;
 
         $oldListingSnapshot = $this->makeListingSnapshot($listing);
 
@@ -120,12 +134,22 @@ class UpdateService
             $isNeedProcessChangesShippingTemplate = true;
         }
 
+        $newTemplateDescriptionId = $post[ListingResource::COLUMN_TEMPLATE_DESCRIPTION_ID] ?? null;
+        if (
+            $newTemplateDescriptionId !== null
+            && $listing->getTemplateDescriptionId() !== (int)$newTemplateDescriptionId
+        ) {
+            $listing->setTemplateDescriptionId((int)$newTemplateDescriptionId);
+            $isNeedProcessChangesDescriptionTemplate = true;
+        }
+
         if (
             $isNeedProcessChangesSellingFormatTemplate === false
             && $isNeedProcessChangesSynchronizationTemplate === false
             && $isNeedProcessChangesCondition === false
             && $isNeedProcessChangesConditionNote === false
             && $isNeedProcessChangesShippingTemplate === false
+            && $isNeedProcessChangesDescriptionTemplate === false
         ) {
             return;
         }
@@ -157,6 +181,14 @@ class UpdateService
             $this->processChangeShippingTemplate(
                 (int)$oldListingSnapshot[ListingResource::COLUMN_TEMPLATE_SHIPPING_ID],
                 (int)$newListingSnapshot[ListingResource::COLUMN_TEMPLATE_SHIPPING_ID],
+                $affectedListingsProducts
+            );
+        }
+
+        if ($isNeedProcessChangesDescriptionTemplate) {
+            $this->processChangeDescriptionTemplate(
+                (int)$oldListingSnapshot[ListingResource::COLUMN_TEMPLATE_DESCRIPTION_ID],
+                (int)$newListingSnapshot[ListingResource::COLUMN_TEMPLATE_DESCRIPTION_ID],
                 $affectedListingsProducts
             );
         }
@@ -269,6 +301,43 @@ class UpdateService
     {
         $snapshotBuilder = $this->shippingSnapshotBuilderFactory->create();
         $snapshotBuilder->setModel($shippingTemplate);
+
+        return $snapshotBuilder->getSnapshot();
+    }
+
+    private function processChangeDescriptionTemplate(
+        int $oldId,
+        int $newId,
+        \M2E\OnBuy\Model\Listing\AffectedListingsProducts $affectedListingsProducts
+    ) {
+        $oldTemplate = $this->descriptionTemplateRepository->find($oldId);
+        $newTemplate = $this->descriptionTemplateRepository->get($newId);
+
+        if ($oldTemplate === null) {
+            $oldTemplateData = [];
+        } else {
+            $oldTemplateData = $this->makeDescriptionTemplateSnapshot($oldTemplate);
+        }
+
+        $newTemplateData = $this->makeDescriptionTemplateSnapshot($newTemplate);
+
+        $diff = $this->descriptionDiffFactory->create();
+        $diff->setOldSnapshot($oldTemplateData);
+        $diff->setNewSnapshot($newTemplateData);
+
+        $changeProcessor = $this->descriptionChangeProcessorFactory->create();
+
+        $affectedProducts = $affectedListingsProducts->getObjectsData(
+            ['id', 'status'],
+            ['template' => \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_DESCRIPTION]
+        );
+        $changeProcessor->process($diff, $affectedProducts);
+    }
+
+    private function makeDescriptionTemplateSnapshot(Description $descriptionTemplate)
+    {
+        $snapshotBuilder = $this->descriptionSnapshotBuilderFactory->create();
+        $snapshotBuilder->setModel($descriptionTemplate);
 
         return $snapshotBuilder->getSnapshot();
     }

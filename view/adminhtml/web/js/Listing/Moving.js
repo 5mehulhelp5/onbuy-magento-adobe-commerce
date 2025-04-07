@@ -154,7 +154,7 @@ define([
                     if (isLastPart) {
 
                         self.accountId = response.accountId;
-                        self.shopId = response.shopId;
+                        self.siteId = response.siteId;
 
                         self.moveToListingGrid();
                         return;
@@ -174,7 +174,7 @@ define([
                 method: 'get',
                 parameters: {
                     accountId: self.accountId,
-                    shopId: self.shopId,
+                    site_id: self.siteId,
                     ignoreListings: OnBuy.customData.ignoreListings
                 },
                 onSuccess: (function (transport) {

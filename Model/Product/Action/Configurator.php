@@ -12,10 +12,18 @@ class Configurator
     public const DATA_TYPE_GENERAL = 'general';
     public const DATA_TYPE_QTY = 'qty';
     public const DATA_TYPE_PRICE = 'price';
+    public const DATA_TYPE_TITLE = 'title';
+    public const DATA_TYPE_DESCRIPTION = 'description';
+    public const DATA_TYPE_IMAGES = 'images';
+    public const DATA_TYPE_CATEGORIES = 'categories';
 
     private static array $allTypes = [
         self::DATA_TYPE_QTY,
         self::DATA_TYPE_PRICE,
+        self::DATA_TYPE_IMAGES,
+        self::DATA_TYPE_TITLE,
+        self::DATA_TYPE_DESCRIPTION,
+        self::DATA_TYPE_CATEGORIES
     ];
 
     private string $mode = self::MODE_EXCLUDING;
@@ -32,6 +40,10 @@ class Configurator
         return [
             self::DATA_TYPE_QTY,
             self::DATA_TYPE_PRICE,
+            self::DATA_TYPE_IMAGES,
+            self::DATA_TYPE_TITLE,
+            self::DATA_TYPE_DESCRIPTION,
+            self::DATA_TYPE_CATEGORIES
         ];
     }
 
@@ -244,5 +256,81 @@ class Configurator
     public function disallowPrice(): self
     {
         return $this->disallow(self::DATA_TYPE_PRICE);
+    }
+
+    public function isTitleAllowed(): bool
+    {
+        return $this->isAllowed(self::DATA_TYPE_TITLE);
+    }
+
+    public function allowTitle(): self
+    {
+        $this->allow(self::DATA_TYPE_TITLE);
+
+        return $this;
+    }
+
+    public function disallowTitle(): self
+    {
+        $this->disallow(self::DATA_TYPE_TITLE);
+
+        return $this;
+    }
+
+    public function isImagesAllowed(): bool
+    {
+        return $this->isAllowed(self::DATA_TYPE_IMAGES);
+    }
+
+    public function allowImages(): self
+    {
+        $this->allow(self::DATA_TYPE_IMAGES);
+
+        return $this;
+    }
+
+    public function disallowImages(): self
+    {
+        $this->disallow(self::DATA_TYPE_IMAGES);
+
+        return $this;
+    }
+
+    public function isCategoriesAllowed(): bool
+    {
+        return $this->isAllowed(self::DATA_TYPE_CATEGORIES);
+    }
+
+    public function allowCategories(): self
+    {
+        $this->allow(self::DATA_TYPE_CATEGORIES);
+
+        return $this;
+    }
+
+    public function disallowCategories(): self
+    {
+        $this->disallow(self::DATA_TYPE_CATEGORIES);
+
+        return $this;
+    }
+
+    public function isDescriptionAllowed(): bool
+    {
+        return $this->isAllowed(self::DATA_TYPE_DESCRIPTION);
+    }
+
+    public function allowDescription(): self
+    {
+        $this->allow(self::DATA_TYPE_DESCRIPTION);
+
+        return $this;
+    }
+
+    public function disallowDescription(): self
+    {
+        $this->disallow(self::DATA_TYPE_DESCRIPTION);
+
+        return $this;
     }
 }

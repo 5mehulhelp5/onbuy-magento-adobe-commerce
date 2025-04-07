@@ -1,36 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace M2E\OnBuy\Controller\Adminhtml\ControlPanel\Module;
 
 class Integration extends \M2E\OnBuy\Controller\Adminhtml\ControlPanel\AbstractCommand
 {
     private \Magento\Framework\Data\Form\FormKey $formKey;
-    private \M2E\OnBuy\Model\Product\Action\Type\Revise\RequestFactory $reviseRequestFactory;
-    private \M2E\OnBuy\Model\Product\Action\Type\Relist\RequestFactory $relistRequestFactory;
-    private \M2E\OnBuy\Model\Product\Repository $productRepository;
-    private \M2E\OnBuy\Model\Product\ActionCalculator $actionCalculator;
-    private \M2E\OnBuy\Model\Product\Action\Type\Stop\RequestFactory $stopRequestFactory;
-    private \M2E\OnBuy\Model\Product\Action\LogBufferFactory $logBufferFactory;
+    private \M2E\OnBuy\Model\ControlPanel\Module\Integration\RequestData $requestData;
 
     public function __construct(
         \Magento\Framework\Data\Form\FormKey $formKey,
+        \M2E\OnBuy\Model\ControlPanel\Module\Integration\RequestData $requestData,
         \M2E\OnBuy\Helper\View\ControlPanel $controlPanelHelper,
-        \M2E\OnBuy\Model\Product\Action\Type\Revise\RequestFactory $reviseRequestFactory,
-        \M2E\OnBuy\Model\Product\Action\Type\Relist\RequestFactory $relistRequestFactory,
-        \M2E\OnBuy\Model\Product\Action\Type\Stop\RequestFactory $stopRequestFactory,
-        \M2E\OnBuy\Model\Product\Repository $productRepository,
-        \M2E\OnBuy\Model\Product\ActionCalculator $actionCalculator,
-        \M2E\OnBuy\Model\Product\Action\LogBufferFactory $logBufferFactory,
         \M2E\OnBuy\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($controlPanelHelper, $context);
+
         $this->formKey = $formKey;
-        $this->reviseRequestFactory = $reviseRequestFactory;
-        $this->relistRequestFactory = $relistRequestFactory;
-        $this->productRepository = $productRepository;
-        $this->actionCalculator = $actionCalculator;
-        $this->stopRequestFactory = $stopRequestFactory;
-        $this->logBufferFactory = $logBufferFactory;
+        $this->requestData = $requestData;
     }
 
     /**
@@ -39,149 +27,7 @@ class Integration extends \M2E\OnBuy\Controller\Adminhtml\ControlPanel\AbstractC
      */
     public function getRequestDataAction()
     {
-        $httpRequest = $this->getRequest();
-
-        $listingProductMagentoSku = $httpRequest->getParam('listing_product_magento_sku', null);
-
-        $form = $this->printFormForCalculateAction($listingProductMagentoSku);
-        $html = "<div style='padding: 20px;background:#d3d3d3;position:sticky;top:0;width:100vw'>$form</div>";
-
-        if ($httpRequest->getParam('print')) {
-            try {
-                $listingProducts = $this->productRepository->findProductsByMagentoSku($listingProductMagentoSku);
-                foreach ($listingProducts as $listingProduct) {
-                    $action = $this->actionCalculator->calculate(
-                        $listingProduct,
-                        true,
-                        \M2E\OnBuy\Model\Product::STATUS_CHANGER_USER,
-                    );
-
-                    $html .= '<div style="margin: 20px 0">' . $this->printProductInfo(
-                        $listingProduct,
-                        $action
-                    ) . '</div>';
-                }
-            } catch (\Throwable $exception) {
-                $html .= sprintf(
-                    '<div style="margin: 20px 0">%s</div>',
-                    $exception->getMessage()
-                );
-            }
-        }
-
-        return $html;
-    }
-
-    private function printFormForCalculateAction(?string $listingProductMagentoSku): string
-    {
-        $formKey = $this->formKey->getFormKey();
-        $actionUrl = $this->getUrl('*/*/*', ['action' => 'getRequestData']);
-
-        return <<<HTML
-<form style="margin: 0; font-size: 16px" method="get" enctype="multipart/form-data" action="$actionUrl">
-    <input name="form_key" value="$formKey" type="hidden" />
-    <input name="print" value="1" type="hidden" />
-
-    <label style="display: inline-block;">
-        Magento Product Sku:
-        <input name="listing_product_magento_sku" style="width: 200px;" required value="$listingProductMagentoSku">
-    </label>
-    <div style="margin: 10px 0 0 0;">
-        <button type="submit">Calculate Allowed Action</button>
-    </div>
-</form>
-HTML;
-    }
-
-    private function printProductInfo(
-        \M2E\OnBuy\Model\Product $listingProduct,
-        \M2E\OnBuy\Model\Product\Action $action
-    ): ?string {
-        $calculateAction = 'Nothing';
-        if ($action->isActionList()) {
-            throw new \LogicException('Not implemented');
-        } elseif ($action->isActionRevise()) {
-            $calculateAction = sprintf(
-                'Revise (Reason (%s))',
-                implode(' | ', $action->getConfigurator()->getAllowedDataTypes()),
-            );
-            $request = $this->reviseRequestFactory->create();
-            $printResult = $this->printRequestData($request, $listingProduct, $action->getConfigurator());
-        } elseif ($action->isActionStop()) {
-            $calculateAction = 'Stop';
-            $request = $this->stopRequestFactory->create();
-            $printResult = $this->printRequestData($request, $listingProduct, $action->getConfigurator());
-        } elseif ($action->isActionRelist()) {
-            $calculateAction = 'Relist';
-            $request = $this->relistRequestFactory->create();
-            $printResult = $this->printRequestData($request, $listingProduct, $action->getConfigurator());
-        } else {
-            $printResult = 'Nothing action allowed.';
-        }
-        $currentStatusTitle = \M2E\OnBuy\Model\Product::getStatusTitle($listingProduct->getStatus());
-
-        $productSku = $listingProduct->getMagentoProduct()->getSku();
-
-        $listingTitle = $listingProduct->getListing()->getTitle();
-
-        return <<<HTML
-<style>
-    table {
-      border-collapse: collapse;
-      width: 100%;
-    }
-
-    td, th {
-      border: 1px solid #dddddd;
-      text-align: left;
-      padding: 8px;
-    }
-
-    tr:nth-child(even) {
-      background-color: #f2f2f2;
-    }
-
-</style>
-<table>
-    <tr>
-        <td>Listing</td>
-        <td>$listingTitle</td>
-    </tr>
-    <tr>
-        <td>Product (SKU)</td>
-        <td>$productSku</td>
-    </tr>
-    <tr>
-        <td>Current Product Status</td>
-        <td>$currentStatusTitle</td>
-    </tr>
-    <tr>
-        <td>Calculate Action</td>
-        <td>$calculateAction</td>
-    </tr>
-    <tr>
-        <td>Request Data</td>
-        <td>$printResult</td>
-    </tr>
-</table>
-HTML;
-    }
-
-    private function printRequestData(
-        \M2E\OnBuy\Model\Product\Action\AbstractRequest $request,
-        \M2E\OnBuy\Model\Product $product,
-        \M2E\OnBuy\Model\Product\Action\Configurator $actionConfigurator
-    ): string {
-        return sprintf(
-            '<pre>%s</pre>',
-            htmlspecialchars(
-                json_encode(
-                    $request->build($product, $actionConfigurator, $this->logBufferFactory->create(), [])->toArray(),
-                    JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR,
-                ),
-                ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401,
-            ),
-        );
+        return $this->requestData->execute($this->getRequest());
     }
 
     /**

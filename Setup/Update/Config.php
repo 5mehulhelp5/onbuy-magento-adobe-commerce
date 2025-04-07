@@ -16,6 +16,10 @@ class Config implements \M2E\Core\Model\Setup\Upgrade\Entity\ConfigInterface
             ],
             'y25_m03' => [
                 \M2E\OnBuy\Setup\Update\y25_m03\RemoveOldCronValues::class,
+                \M2E\OnBuy\Setup\Update\y25_m03\AddProductCreator::class,
+                \M2E\OnBuy\Setup\Update\y25_m03\AddDescriptionTemplateTable::class,
+                \M2E\OnBuy\Setup\Update\y25_m03\AddCategoryTables::class,
+                \M2E\OnBuy\Setup\Update\y25_m03\AddTemplateCategoryToProduct::class
             ],
         ];
     }

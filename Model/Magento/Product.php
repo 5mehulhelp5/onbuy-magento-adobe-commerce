@@ -1320,7 +1320,7 @@ class Product
             return '';
         }
 
-        if (!$productObject->hasData($attributeCode)) {
+        if ($this->isAttributeValueMissed($productObject, $attributeCode)) {
             $this->addNotFoundAttributes($attributeCode);
 
             return '';
@@ -1342,7 +1342,7 @@ class Product
             return '';
         }
 
-        if ($attributeCode !== 'gallery' && !$productObject->hasData($attributeCode)) {
+        if ($attributeCode !== 'gallery' && $this->isAttributeValueMissed($productObject, $attributeCode)) {
             $this->addNotFoundAttributes($attributeCode);
 
             return '';
@@ -1762,5 +1762,10 @@ class Product
     public function clearNotFoundAttributes(): void
     {
         $this->notFoundAttributes = [];
+    }
+
+    private function isAttributeValueMissed(\Magento\Catalog\Model\Product $productObject, string $attributeCode): bool
+    {
+        return !$productObject->hasData($attributeCode) || empty($productObject->getData($attributeCode));
     }
 }

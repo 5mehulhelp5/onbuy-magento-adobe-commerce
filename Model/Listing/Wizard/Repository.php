@@ -540,4 +540,20 @@ class Repository
 
         return $result;
     }
+
+    public function getCountProductsWithoutChannelId(int $wizardId): int
+    {
+        $productCollection = $this->productCollectionFactory->create();
+        $productCollection
+            ->addFieldToFilter(
+                WizardProductResource::COLUMN_WIZARD_ID,
+                $wizardId,
+            )
+            ->addFieldToFilter(
+                WizardProductResource::COLUMN_CHANNEL_PRODUCT_ID,
+                ['null' => true],
+            );
+
+        return (int)$productCollection->getSize();
+    }
 }

@@ -9,11 +9,13 @@ class IsTitleUnique extends AbstractTemplate
     private \M2E\OnBuy\Model\ResourceModel\Policy\Synchronization\CollectionFactory $syncCollectionFactory;
     private \M2E\OnBuy\Model\ResourceModel\Policy\SellingFormat\CollectionFactory $sellingCollectionFactory;
     private \M2E\OnBuy\Model\ResourceModel\Policy\Shipping\CollectionFactory $shippingCollectionFactory;
+    private \M2E\OnBuy\Model\ResourceModel\Policy\Description\CollectionFactory $descriptionCollectionFactory;
 
     public function __construct(
         \M2E\OnBuy\Model\ResourceModel\Policy\Synchronization\CollectionFactory $syncCollectionFactory,
         \M2E\OnBuy\Model\ResourceModel\Policy\SellingFormat\CollectionFactory $sellingCollectionFactory,
         \M2E\OnBuy\Model\ResourceModel\Policy\Shipping\CollectionFactory $shippingCollectionFactory,
+        \M2E\OnBuy\Model\ResourceModel\Policy\Description\CollectionFactory $descriptionCollectionFactory,
         \M2E\OnBuy\Model\Policy\Manager $templateManager,
         \M2E\OnBuy\Controller\Adminhtml\Context $context
     ) {
@@ -21,6 +23,7 @@ class IsTitleUnique extends AbstractTemplate
         $this->syncCollectionFactory = $syncCollectionFactory;
         $this->sellingCollectionFactory = $sellingCollectionFactory;
         $this->shippingCollectionFactory = $shippingCollectionFactory;
+        $this->descriptionCollectionFactory = $descriptionCollectionFactory;
     }
 
     public function execute()
@@ -45,6 +48,10 @@ class IsTitleUnique extends AbstractTemplate
 
         if ($nick === \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_SHIPPING) {
             return $this->isUniqueTitleShippingTemplate($ignoreId, $title);
+        }
+
+        if ($nick === \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_DESCRIPTION) {
+            return $this->isUniqueTitleDescriptionTemplate($ignoreId, $title);
         }
 
         throw new \M2E\OnBuy\Model\Exception\Logic('Unknown nick ' . $nick);
@@ -112,6 +119,31 @@ class IsTitleUnique extends AbstractTemplate
         if ($ignoreId) {
             $collection->addFieldToFilter(
                 \M2E\OnBuy\Model\ResourceModel\Policy\Shipping::COLUMN_ID,
+                ['neq' => $ignoreId]
+            );
+        }
+
+        $this->setJsonContent(['unique' => $collection->getSize() === 0]);
+
+        return $this->getResult();
+    }
+
+    private function isUniqueTitleDescriptionTemplate($ignoreId, $title)
+    {
+        $collection = $this->descriptionCollectionFactory
+            ->create()
+            ->addFieldToFilter(
+                \M2E\OnBuy\Model\ResourceModel\Policy\Description::COLUMN_IS_CUSTOM_TEMPLATE,
+                0
+            )
+            ->addFieldToFilter(
+                \M2E\OnBuy\Model\ResourceModel\Policy\Description::COLUMN_TITLE,
+                $title
+            );
+
+        if ($ignoreId) {
+            $collection->addFieldToFilter(
+                \M2E\OnBuy\Model\ResourceModel\Policy\Description::COLUMN_ID,
                 ['neq' => $ignoreId]
             );
         }

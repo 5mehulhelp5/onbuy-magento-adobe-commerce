@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace M2E\OnBuy\Block\Adminhtml\Listing\View\Settings;
 
 use M2E\OnBuy\Model\ResourceModel\Product as ListingProductResource;
+use M2E\OnBuy\Model\ResourceModel\Category\Dictionary as CategoryDictionaryResource;
 
 class Grid extends \M2E\OnBuy\Block\Adminhtml\Listing\View\AbstractGrid
 {
+    private CategoryDictionaryResource $categoryResource;
     private \M2E\Core\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory;
     private \M2E\OnBuy\Helper\Data\Session $sessionDataHelper;
     private ListingProductResource $listingProductResource;
@@ -16,6 +18,7 @@ class Grid extends \M2E\OnBuy\Block\Adminhtml\Listing\View\AbstractGrid
     public function __construct(
         \M2E\OnBuy\Model\Magento\ProductFactory $magentoProductFactory,
         ListingProductResource $listingProductResource,
+        CategoryDictionaryResource $categoryResource,
         \M2E\Core\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \M2E\OnBuy\Model\Listing\Ui\RuntimeStorage $uiListingRuntimeStorage,
         \M2E\OnBuy\Block\Adminhtml\Magento\Context\Template $context,
@@ -25,6 +28,7 @@ class Grid extends \M2E\OnBuy\Block\Adminhtml\Listing\View\AbstractGrid
         \M2E\OnBuy\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
+        $this->categoryResource = $categoryResource;
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->sessionDataHelper = $sessionDataHelper;
         $this->listingProductResource = $listingProductResource;
@@ -76,6 +80,7 @@ class Grid extends \M2E\OnBuy\Block\Adminhtml\Listing\View\AbstractGrid
                 'additional_data' => ListingProductResource::COLUMN_ADDITIONAL_DATA,
                 'online_title' => ListingProductResource::COLUMN_ONLINE_TITLE,
                 'available_qty' => ListingProductResource::COLUMN_ONLINE_QTY,
+                'template_category_id' => ListingProductResource::COLUMN_TEMPLATE_CATEGORY_ID
             ],
             sprintf(
                 '{{table}}.%s = %s',
@@ -83,6 +88,20 @@ class Grid extends \M2E\OnBuy\Block\Adminhtml\Listing\View\AbstractGrid
                 $this->getListing()->getId()
             )
         );
+
+        $categoryTableName = $this->categoryResource->getMainTable();
+        $collection
+            ->joinTable(
+                ['category' => $categoryTableName],
+                sprintf('%s = template_category_id', CategoryDictionaryResource::COLUMN_ID),
+                [
+                    'path' => CategoryDictionaryResource::COLUMN_PATH,
+                    'category_id' => CategoryDictionaryResource::COLUMN_CATEGORY_ID,
+                    'is_valid' => CategoryDictionaryResource::COLUMN_IS_VALID,
+                ],
+                null,
+                'left'
+            );
 
         $this->setCollection($collection);
 
@@ -120,6 +139,31 @@ class Grid extends \M2E\OnBuy\Block\Adminhtml\Listing\View\AbstractGrid
             ]
         );
 
+        $this->addColumn(
+            'category',
+            [
+                'header' => __('OnBuy Category'),
+                'align' => 'left',
+                'width' => '200px',
+                'type' => 'text',
+                'frame_callback' => [$this, 'callbackColumnCategory'],
+                'filter_condition_callback' => [$this, 'callbackFilterCategory'],
+            ]
+        );
+
+        $this->addColumn('actions', [
+            'header' => $this->__('Actions'),
+            'align' => 'left',
+            'type' => 'action',
+            'index' => 'actions',
+            'filter' => false,
+            'sortable' => false,
+            'renderer' => \M2E\OnBuy\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
+            'field' => 'id',
+            'group_order' => $this->getGroupOrder(),
+            'actions' => $this->getColumnActionsItems(),
+        ]);
+
         return parent::_prepareColumns();
     }
 
@@ -132,6 +176,16 @@ class Grid extends \M2E\OnBuy\Block\Adminhtml\Listing\View\AbstractGrid
             'label' => $this->__('Move Item(s) to Another Listing'),
             'url' => '',
         ], 'other');
+
+        $this->getMassactionBlock()->setGroups([
+            'edit_categories_settings' => $this->__('Edit Category Settings'),
+            'other' => $this->__('Other'),
+        ]);
+
+        $this->getMassactionBlock()->addItem('editCategorySettings', [
+            'label' => $this->__('Categories & Specifics'),
+            'url' => '',
+        ], 'edit_categories_settings');
 
         return $this;
     }
@@ -167,6 +221,57 @@ class Grid extends \M2E\OnBuy\Block\Adminhtml\Listing\View\AbstractGrid
         }
     }
 
+    public function callbackColumnCategory($value, $row, $column, $isExport): string
+    {
+        $categoryId = $row->getData('category_id') ?? '';
+        $path = $row->getData('path') ?? '';
+        if (empty($categoryId) && empty($path)) {
+            return sprintf(
+                '<span style="color: #e22626;">%s</span>',
+                __('Not Set')
+            );
+        }
+
+        $view = sprintf('%s (%s)', $path, $categoryId);
+
+        if (!$row->getData('is_valid')) {
+            return sprintf(
+                '<div><p style="padding: 2px 0 0 10px">%s <span style="color: #f00;">%s</span></p></span>',
+                $view,
+                __('Invalid')
+            );
+        }
+
+        return sprintf(
+            '<div><p style="padding: 2px 0 0 10px">%s</p></span>',
+            $view
+        );
+    }
+
+    /**
+     * @param \M2E\Core\Model\ResourceModel\MSI\Magento\Product\Collection $collection
+     * @param \M2E\OnBuy\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite $column
+     *
+     * @return void
+     */
+    public function callbackFilterCategory($collection, $column)
+    {
+        $filter = $column->getFilter();
+
+        if ($value = $filter->getValue()) {
+            $collection->getSelect()->where(
+                new \Zend_Db_Expr(
+                    sprintf(
+                        "CONCAT(%s, ' (', %s, ')') LIKE %s",
+                        CategoryDictionaryResource::COLUMN_PATH,
+                        CategoryDictionaryResource::COLUMN_CATEGORY_ID,
+                        $collection->getConnection()->quote("%$value%"),
+                    )
+                )
+            );
+        }
+    }
+
     public function getGridUrl(): string
     {
         return $this->getUrl('*/listing/view', ['_current' => true]);
@@ -179,14 +284,39 @@ class Grid extends \M2E\OnBuy\Block\Adminhtml\Listing\View\AbstractGrid
 
     protected function getGroupOrder(): array
     {
-        return [];
+        return [
+            'edit_categories_settings' => $this->__('Edit Category Settings'),
+        ];
     }
 
     protected function getColumnActionsItems(): array
     {
-        $actions = [];
+        $actions = [
+            'editCategories' => [
+                'caption' => $this->__('Categories & Attributes'),
+                'group' => 'edit_categories_settings',
+                'field' => 'id',
+                'onclick_action' => "OnBuyListingViewSettingsGridObj.actions['editCategorySettingsAction']",
+            ],
+        ];
 
         return $actions;
+    }
+
+    protected function _beforeToHtml()
+    {
+        $this->js->add(
+            <<<JS
+ require([
+     'OnBuy/Category/Chooser/SelectedProductsData'
+], function() {
+     window.SelectedProductsDataObj = new SelectedProductsData();
+     SelectedProductsDataObj.setSiteId('{$this->getListing()->getSite()->getId()}');
+});
+JS,
+        );
+
+        return parent::_beforeToHtml();
     }
 
     protected function _toHtml(): string
@@ -206,6 +336,16 @@ JS
         $this->jsUrl->add($this->getUrl('*/listing_moving/moveToListingGrid'), 'moveToListingGridHtml');
         $this->jsUrl->add($this->getUrl('*/listing_moving/prepareMoveToListing'), 'prepareData');
         $this->jsUrl->add($this->getUrl('*/listing_moving/moveToListing'), 'moveToListing');
+        $this->jsUrl->add(
+            $this->getUrl('*/listing_product_category_settings/edit', ['_current' => true]),
+            'listing_product_category_settings/edit'
+        );
+        $this->jsUrl->add(
+            $this->getUrl('*/listing/saveCategoryTemplate', [
+                'listing_id' => $this->getListing()->getId(),
+            ]),
+            'listing/saveCategoryTemplate'
+        );
 
         //------------------------------
         $temp = $this->sessionDataHelper->getValue('products_ids_for_list', true);
@@ -224,13 +364,14 @@ JS
         $this->js->addOnReadyJs(
             <<<JS
     require([
-        'OnBuy/Listing/View/Settings/Grid',
+        'OnBuy/Listing/View/Settings/Grid'
     ], function(){
 
         window.OnBuyListingViewSettingsGridObj = new OnBuyListingViewSettingsGrid(
             '{$this->getId()}',
             '{$this->getListing()->getId()}',
-            '{$this->getListing()->getAccountId()}'
+            '{$this->getListing()->getAccountId()}',
+            '{$this->getListing()->getSite()->getId()}'
         );
         OnBuyListingViewSettingsGridObj.afterInitPage();
         OnBuyListingViewSettingsGridObj.movingHandler.setProgressBar('listing_view_progress_bar');

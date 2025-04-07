@@ -31,6 +31,10 @@
         <add id="M2E_OnBuy::configuration_accounts" title="Accounts" module="M2E_OnBuy" sortOrder="10"
              parent="M2E_OnBuy::configuration" action="m2e_onbuy/account/index"
              resource="M2E_OnBuy::configuration_accounts"/>
+        <add id="M2E_OnBuy::configuration_categories" module="M2E_OnBuy" sortOrder="20"
+             parent="M2E_OnBuy::configuration" title="Categories"
+             action="m2e_onbuy/template_category/index"
+             resource="M2E_OnBuy::configuration_categories"/>
         <add id="M2E_OnBuy::configuration_templates" title="Policies" module="M2E_OnBuy" sortOrder="30"
              parent="M2E_OnBuy::configuration" action="m2e_onbuy/policy/index"
              resource="M2E_OnBuy::configuration_templates"/>

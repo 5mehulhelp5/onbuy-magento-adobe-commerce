@@ -14,6 +14,9 @@ class Edit extends AbstractTemplate
     private \M2E\OnBuy\Model\Policy\Shipping\Repository $shippingRepository;
     private \M2E\OnBuy\Model\Policy\ShippingFactory $shippingFactory;
 
+    private \M2E\OnBuy\Model\Policy\Description\Repository $descriptionRepository;
+    private \M2E\OnBuy\Model\Policy\DescriptionFactory $descriptionFactory;
+
     public function __construct(
         \M2E\OnBuy\Model\Policy\ShippingFactory $shippingFactory,
         \M2E\OnBuy\Model\Policy\Shipping\Repository $shippingRepository,
@@ -21,6 +24,8 @@ class Edit extends AbstractTemplate
         \M2E\OnBuy\Model\Policy\SellingFormat\Repository $sellingFormatRepository,
         \M2E\OnBuy\Model\Policy\Synchronization\Repository $synchronizationRepository,
         \M2E\OnBuy\Model\Policy\SynchronizationFactory $synchronizationFactory,
+        \M2E\OnBuy\Model\Policy\Description\Repository $descriptionRepository,
+        \M2E\OnBuy\Model\Policy\DescriptionFactory $descriptionFactory,
         \M2E\OnBuy\Helper\Component\OnBuy\Template\Switcher\DataLoader $dataLoader,
         \M2E\OnBuy\Model\Policy\Manager $templateManager
     ) {
@@ -33,6 +38,8 @@ class Edit extends AbstractTemplate
         $this->sellingFormatRepository = $sellingFormatRepository;
         $this->shippingRepository = $shippingRepository;
         $this->shippingFactory = $shippingFactory;
+        $this->descriptionFactory = $descriptionFactory;
+        $this->descriptionRepository = $descriptionRepository;
     }
 
     public function execute()
@@ -52,6 +59,10 @@ class Edit extends AbstractTemplate
 
         if ($nick === \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_SHIPPING) {
             return $this->executeShippingTemplate($id);
+        }
+
+        if ($nick === \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_DESCRIPTION) {
+            return $this->executeDescriptionTemplate($id);
         }
 
         throw new \M2E\OnBuy\Model\Exception\Logic('Unknown nick ' . $nick);
@@ -195,6 +206,57 @@ class Edit extends AbstractTemplate
             [
                 'data' => [
                     'template_nick' => \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_SHIPPING,
+                ],
+            ]
+        );
+
+        $content->toHtml();
+
+        $this->getResult()->getConfig()->getTitle()->prepend($headerText);
+        $this->addContent($content);
+
+        return $this->getResult();
+    }
+
+    private function executeDescriptionTemplate($id)
+    {
+        $template = $this->descriptionRepository->find((int)$id);
+        if ($template === null) {
+            $template = $this->descriptionFactory->create();
+        }
+
+        if (!$template->getId() && $id) {
+            $this->getMessageManager()->addError(__('Policy does not exist.'));
+
+            return $this->_redirect('*/*/index');
+        }
+
+        $dataLoader = $this->dataLoader;
+        $dataLoader->load($template);
+
+        // ---------------------------------------
+
+        //@todo to request proper page creation from marketing
+        $this->setPageHelpLink('docs-m2.m2epro.com/docs/selling-policy-for-onbuy//');
+
+        if ($template->getId()) {
+            $headerText =
+                __(
+                    'Edit "%template_title" Description Policy',
+                    [
+                        'template_title' => \M2E\Core\Helper\Data::escapeHtml($template->getTitle()),
+                    ],
+                );
+        } else {
+            $headerText = __('Add Description Policy');
+        }
+
+        $content = $this->getLayout()->createBlock(
+            \M2E\OnBuy\Block\Adminhtml\Template\Edit::class,
+            '',
+            [
+                'data' => [
+                    'template_nick' => \M2E\OnBuy\Model\Policy\Manager::TEMPLATE_DESCRIPTION,
                 ],
             ]
         );

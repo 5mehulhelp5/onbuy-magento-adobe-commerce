@@ -77,7 +77,7 @@ class Site extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
 
     public function getAccountId(): int
     {
-        return $this->getData(SiteResource::COLUMN_ACCOUNT_ID);
+        return (int)$this->getData(SiteResource::COLUMN_ACCOUNT_ID);
     }
 
     public function getName(): string

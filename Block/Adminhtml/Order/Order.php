@@ -135,10 +135,6 @@ JS,
 
         $dropDownOptions = $this->getAccountSettingsDropDownItems($accountId);
 
-        if ($dropDownOptions === []) {
-            return;
-        }
-
         $this->addButton(
             'order_settings',
             [

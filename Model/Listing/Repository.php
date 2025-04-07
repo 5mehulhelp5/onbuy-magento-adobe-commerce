@@ -139,4 +139,34 @@ class Repository
 
         return (bool) $connection->fetchOne($select);
     }
+
+    public function isExistListingByDescriptionPolicy(int $policyId): bool
+    {
+        return $this->isExistListingByPolicy(ListingResource::COLUMN_TEMPLATE_DESCRIPTION_ID, $policyId);
+    }
+
+    public function isExistListingBySellingPolicy(int $policyId): bool
+    {
+        return $this->isExistListingByPolicy(ListingResource::COLUMN_TEMPLATE_SELLING_FORMAT_ID, $policyId);
+    }
+
+    public function isExistListingBySyncPolicy(int $policyId): bool
+    {
+        return $this->isExistListingByPolicy(ListingResource::COLUMN_TEMPLATE_SYNCHRONIZATION_ID, $policyId);
+    }
+
+    public function isExistListingByShippingPolicy(int $policyId): bool
+    {
+        return $this->isExistListingByPolicy(ListingResource::COLUMN_TEMPLATE_SHIPPING_ID, $policyId);
+    }
+
+    private function isExistListingByPolicy(
+        string $columnName,
+        int $policyId
+    ): bool {
+        $listingCollection = $this->listingCollectionFactory->create();
+        $listingCollection->addFieldToFilter($columnName, ['eq' => $policyId]);
+
+        return $listingCollection->getSize() !== 0;
+    }
 }

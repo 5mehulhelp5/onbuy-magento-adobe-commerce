@@ -22,7 +22,7 @@ class Validator extends \M2E\OnBuy\Model\Product\Action\Type\AbstractValidator
             return false;
         }
 
-        if ($error = $this->priceValidator->validate($this->getListingProduct())) {
+        if ($error = $this->priceValidator->validate($this->getListingProduct(), $this->getConfigurator())) {
             $this->addMessage($error);
 
             return false;

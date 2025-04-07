@@ -17,8 +17,10 @@ class SameOpcAndConditionExists implements \M2E\OnBuy\Model\Product\Action\Valid
         $this->productRepository = $productRepository;
     }
 
-    public function validate(\M2E\OnBuy\Model\Product $product): ?string
-    {
+    public function validate(
+        \M2E\OnBuy\Model\Product $product,
+        \M2E\OnBuy\Model\Product\Action\Configurator $configurator
+    ): ?string {
         $existUnmanagedProducts = $this->unmanagedRepository->findByOpcAccountSite(
             [$product->getOpc()],
             $product->getAccount()->getId(),
