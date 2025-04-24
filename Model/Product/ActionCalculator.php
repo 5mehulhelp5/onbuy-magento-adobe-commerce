@@ -249,15 +249,12 @@ class ActionCalculator
         $productQty = $product->getDataProvider()->getQty()->getValue();
         $channelQty = $product->getOnlineQty();
 
-        if ($syncPolicy->isReviseUpdateQtyMaxAppliedValueModeOn()) {
-            if (
-                $productQty > $maxAppliedValue
-                && $channelQty > $maxAppliedValue
-            ) {
-                return false;
-            }
-
-            return true;
+        if (
+            $syncPolicy->isReviseUpdateQtyMaxAppliedValueModeOn()
+            && $productQty > $maxAppliedValue
+            && $channelQty > $maxAppliedValue
+        ) {
+            return false;
         }
 
         if ($productQty === $channelQty) {

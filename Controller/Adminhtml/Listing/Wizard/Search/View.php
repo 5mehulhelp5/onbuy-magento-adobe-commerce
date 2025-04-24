@@ -43,8 +43,15 @@ class View extends \M2E\OnBuy\Controller\Adminhtml\Listing\Wizard\StepAbstract
         }
 
         $this->getResultPage()
-             ->getConfig()
-             ->getTitle()->prepend(__('OnBuy Product Search'));
+            ->getConfig()
+            ->getTitle()->prepend(
+                __(
+                    '%channel_title Product Search',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ]
+                )
+            );
 
         $this->addContent(
             $this->getLayout()->createBlock(

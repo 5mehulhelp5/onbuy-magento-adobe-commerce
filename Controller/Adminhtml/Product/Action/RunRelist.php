@@ -34,7 +34,7 @@ class RunRelist extends \M2E\OnBuy\Controller\Adminhtml\Listing\AbstractAction
             if ($result === 'success') {
                 $this->getMessageManager()->addSuccessMessage(
                     __(
-                        '"Relisting Selected Items On channel_title%" task has completed.',
+                        '"Relisting Selected Items On %channel_title" task has completed.',
                         [
                             'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
                         ]

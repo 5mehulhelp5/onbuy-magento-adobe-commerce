@@ -6,7 +6,7 @@ namespace M2E\OnBuy\Model\Product\DataProvider\Attributes;
 
 class Result extends \M2E\OnBuy\Model\Product\DataProvider\AbstractResult
 {
-    public function getValue(): array
+    public function getValue(): Value
     {
         return $this->value;
     }

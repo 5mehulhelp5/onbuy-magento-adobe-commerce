@@ -65,8 +65,8 @@ class ShippingAddress extends \Magento\Framework\DataObject
     }
 
     /**
-     * @throws \M2E\OnBuy\Model\Exception
-     */
+     * @throws \M2E\OnBuy\Model\Order\Exception\ShippingAddressRegionInvalidException
+     * */
     public function getRegion()
     {
         if (!$this->getCountry()->getId()) {
@@ -82,14 +82,14 @@ class ShippingAddress extends \Magento\Framework\DataObject
         $isRegionRequired = $this->directoryHelper->isRegionRequired($this->getCountry()->getId());
         if ($isRegionRequired && !$this->region->getId()) {
             if (!$this->isRegionOverrideRequired()) {
-                throw new \M2E\OnBuy\Model\Exception(
-                    sprintf('Invalid Region/State value "%s" in the Shipping Address.', $this->getState())
-                );
+                $errorMessage = sprintf('Invalid Region/State value "%s" in the Shipping Address.', $this->getState());
+
+                throw new \M2E\OnBuy\Model\Order\Exception\ShippingAddressRegionInvalidException($errorMessage);
             }
 
             $countryRegions = $this->getCountry()->getRegionCollection();
             $this->region = $countryRegions->getFirstItem();
-            $msg = ' Invalid Region/State value: "%s" in the Shipping Address is overridden by "%s".';
+            $msg = 'Invalid Region/State value: "%s" in the Shipping Address is overridden by "%s".';
             $this->order->addInfoLog(sprintf($msg, $this->getState(), $this->region->getDefaultName()), [], [], true);
         }
 

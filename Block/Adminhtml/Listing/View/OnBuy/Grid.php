@@ -215,7 +215,7 @@ class Grid extends \M2E\OnBuy\Block\Adminhtml\Listing\View\AbstractGrid
         // ---------------------------------------
 
         $this->getMassactionBlock()->addItem('list', [
-            'label' => __('List Item(s) on OnBuy'),
+            'label' => __('List Item(s) on ' . \M2E\OnBuy\Helper\Module::getChannelTitle()),
             'url' => '',
         ], 'actions');
 

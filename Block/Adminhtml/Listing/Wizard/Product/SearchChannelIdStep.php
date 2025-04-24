@@ -63,8 +63,11 @@ class SearchChannelIdStep extends \M2E\OnBuy\Block\Adminhtml\Magento\Grid\Abstra
         $this->css->addFile('onbuy/listing/view.css');
 
         $text = __(
-            'Since most of the Products already exist in OnBuy Catalog, M2E Pro makes it possible
-                 to find them and to make a link between your Magento Products and existing OnBuy Products.',
+            'Since most of the Products already exist in %channel_title Catalog, M2E Pro makes it possible
+                 to find them and to make a link between your Magento Products and existing %channel_title Products.',
+            [
+                'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+            ]
         );
 
         $text2 = __(

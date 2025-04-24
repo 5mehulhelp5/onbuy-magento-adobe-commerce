@@ -71,6 +71,7 @@ class Request extends \M2E\OnBuy\Model\Product\Action\AbstractRequest
     {
         $dataProvider = $product->getDataProvider();
         $priceData = $dataProvider->getPrice()->getValue();
+        $attributes = $dataProvider->getProductAttributesData()->getValue();
 
         $request = [
             'sku' => $product->getMagentoProduct()->getSku(),
@@ -86,9 +87,24 @@ class Request extends \M2E\OnBuy\Model\Product\Action\AbstractRequest
             'category_id' => $dataProvider->getCategoryData()->getValue(),
             'identifiers' => [$dataProvider->getIdentifier()->getValue()],
             'main_image' => $dataProvider->getImages()->getValue()->mainImage,
-            'additional_images' => $dataProvider->getImages()->getValue()->galleryImages,
+
+            'additional_images' => array_map(
+                static function (\M2E\OnBuy\Model\Product\DataProvider\Images\Image $image) {
+                    return $image->url;
+                },
+                $dataProvider->getImages()->getValue()->galleryImages
+            ),
+
             'brand_name' => $dataProvider->getProductBrand()->getValue(),
-            'attributes' => $dataProvider->getProductAttributesData()->getValue()
+
+            'attributes' => array_map(
+                static function (\M2E\OnBuy\Model\Product\DataProvider\Attributes\Item $attribute) {
+                    return [
+                        'option_id' => $attribute->getValueId(),
+                    ];
+                },
+                $attributes->items
+            ),
         ];
 
         if ($product->getListing()->getCondition() !== Listing::CONDITION_NEW) {

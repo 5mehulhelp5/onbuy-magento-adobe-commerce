@@ -224,7 +224,7 @@ class OrderFactory
                     $deliveryAddress->line3,
                 ],
                 'city' => $deliveryAddress->city,
-                'state' => $deliveryAddress->country,
+                'state' => $deliveryAddress->county,
                 'postal_code' => $deliveryAddress->postCode,
                 'country' => $deliveryAddress->country,
                 'country_code' => $deliveryAddress->countryCode,

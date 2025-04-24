@@ -335,7 +335,10 @@ class Data extends AbstractForm
 
         $tooltipMessage = (string)__(
             'Choose whether to use Magento <strong>Product Description</strong>
-            or <strong>Product Short Description</strong> for the OnBuy Listing Description.'
+            or <strong>Product Short Description</strong> for the %channel_title Listing Description.',
+            [
+                'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+            ]
         );
         $fieldset->addField(
             'description_mode',
@@ -589,7 +592,12 @@ JS
 
         $OnBuyAttributes = [
             'title' => __('Title'),
-            'fixed_price' => __('OnBuy Price'),
+            'fixed_price' => __(
+                '%channel_title Price',
+                [
+                    'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                ]
+            ),
             'qty' => __('QTY'),
         ];
 
@@ -628,10 +636,13 @@ HTML;
                     provide its ID into the <strong>Magento Product ID</strong> input and select
                     a <strong>Magento Store View</strong> the values
                     should be taken from. As a result you will see the Item Description which will be sent to
-                    OnBuy basing on the settings you specified.<br />
+                    %channel_title basing on the settings you specified.<br />
 
                     Also, you can press a <strong>Select Randomly</strong> button to allow M2E OnBuy
-                    to automatically select the most suitable Product for its previewing.'
+                    to automatically select the most suitable Product for its previewing.',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ]
                 ),
             ]
         );

@@ -205,8 +205,10 @@ class ProxyObject
 
             if ($customerDataObject->getId() === null) {
                 throw new \M2E\OnBuy\Model\Exception(
-                    "Customer with ID specified in OnBuy Account
-                    Settings does not exist."
+                    sprintf(
+                        'Customer with ID specified in %s Account Settings does not exist.',
+                        \M2E\OnBuy\Helper\Module::getChannelTitle()
+                    )
                 );
             }
 

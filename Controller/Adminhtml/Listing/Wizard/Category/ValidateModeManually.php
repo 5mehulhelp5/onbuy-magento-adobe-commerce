@@ -119,11 +119,22 @@ class ValidateModeManually extends AbstractListing
         $message = '';
 
         if ($categoryNotSetCount > 0) {
-            $message .= __('OnBuy Category is not set for some Products.');
+            $message .= __(
+                '%channel_title Category is not set for some Products.',
+                [
+                    'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                ]
+            );
         }
 
         if ($requiredAttributesNotSetCount > 0) {
-            $message .= ' ' . __('Required Attributes are not set for the selected OnBuy Shop Category');
+            $message .= ' ' .
+                __(
+                    'Required Attributes are not set for the selected %channel_title Category',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ]
+                );
         }
 
         $this->setJsonContent([

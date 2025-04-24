@@ -24,6 +24,12 @@ class ImagesProvider implements DataBuilderInterface
         return new Images\Value($mainImage, $galleryImages);
     }
 
+    /**
+     * @param \M2E\OnBuy\Model\Product $product
+     *
+     * @return \M2E\Temu\Model\Product\DataProvider\Images\Image[]
+     * @throws \M2E\OnBuy\Model\Exception\Logic
+     */
     private function getGalleryImages(\M2E\OnBuy\Model\Product $product): array
     {
         $productImageSet = $product->getDescriptionTemplateSource()->getGalleryImages();
@@ -31,11 +37,10 @@ class ImagesProvider implements DataBuilderInterface
         $result = [];
 
         foreach ($productImageSet as $productImage) {
-            $result[] = $productImage->getUrl();
+            $result[] = new \M2E\OnBuy\Model\Product\DataProvider\Images\Image($productImage->getUrl());
         }
 
-        $data = json_encode($result);
-        $this->galleryImages = \M2E\Core\Helper\Data::md5String($data);
+        $this->galleryImages = $this->generateImagesHash($result);
 
         return $result;
     }
@@ -51,6 +56,23 @@ class ImagesProvider implements DataBuilderInterface
         }
 
         return $imageUrl;
+    }
+
+    /**
+     * @param \M2E\Temu\Model\Product\DataProvider\Images\Image[] $images
+     *
+     * @return string
+     */
+    private function generateImagesHash(array $images): string
+    {
+        $flatImages = [];
+        foreach ($images as $image) {
+            $flatImages[] = $image->url;
+        }
+
+        sort($flatImages);
+
+        return \M2E\Core\Helper\Data::md5String(json_encode($flatImages));
     }
 
     public function getMetaData(): array

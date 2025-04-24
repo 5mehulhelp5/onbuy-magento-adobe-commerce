@@ -190,4 +190,24 @@
             </argument>
         </arguments>
     </type>
+
+    <type name="M2E\OnBuy\Model\Product\Action\Type\Revise\Validator">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="price" xsi:type="object">
+                    M2E\OnBuy\Model\Product\Action\Validator\PriceValidator
+                </item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="M2E\OnBuy\Model\Product\Action\Type\Relist\Validator">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="price" xsi:type="object">
+                    M2E\OnBuy\Model\Product\Action\Validator\PriceValidator
+                </item>
+            </argument>
+        </arguments>
+    </type>
 </config>

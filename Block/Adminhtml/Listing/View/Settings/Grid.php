@@ -142,7 +142,12 @@ class Grid extends \M2E\OnBuy\Block\Adminhtml\Listing\View\AbstractGrid
         $this->addColumn(
             'category',
             [
-                'header' => __('OnBuy Category'),
+                'header' => __(
+                    '%channel_title Category',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ]
+                ),
                 'align' => 'left',
                 'width' => '200px',
                 'type' => 'text',

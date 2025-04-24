@@ -68,17 +68,23 @@ class Preview extends AbstractDescription
         if (!$description) {
             $this->messageManager->addWarning(
                 (string)__(
-                    'The Product Description attribute is selected as a source of the OnBuy Item Description,
+                    'The Product Description attribute is selected as a source of the %channel_title Item Description,
                     but this Product has empty description.',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ]
                 ),
             );
         } elseif ($productsEntities['listing_product'] === null) {
             $this->messageManager->addWarning(
                 (string)__(
-                    'The Product you selected is not presented in any M2E OnBuy Listing.
-                    Thus, the values of the M2E OnBuy Attribute(s), which are used in the Item Description,
+                    'The Product you selected is not presented in any M2E %channel_title Listing.
+                    Thus, the values of the M2E %channel_title Attribute(s), which are used in the Item Description,
                     will be ignored and displayed like #attribute label#.
                     Please, change the Product ID to preview the data.',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ]
                 ),
             );
         }

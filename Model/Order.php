@@ -533,6 +533,8 @@ class Order extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
             $message = 'Magento Order was not created. Reason: %msg%';
             if ($exception instanceof \M2E\OnBuy\Model\Order\Exception\ProductCreationDisabled) {
                 $this->addInfoLog($message, ['msg' => $exception->getMessage()], [], true);
+            } elseif ($exception instanceof \M2E\OnBuy\Model\Order\Exception\ShippingAddressRegionInvalidException) {
+                $this->addErrorLog($message, ['msg' => $exception->getMessage()]);
             } else {
                 $this->exceptionHelper->process($exception);
                 $this->addErrorLog($message, ['msg' => $exception->getMessage()]);

@@ -153,7 +153,12 @@ class Dictionary extends \Magento\Framework\Data\Form\Element\AbstractElement
             ],
             \M2E\OnBuy\Model\Template\Category::VALUE_MODE_ONBUY_RECOMMENDED => [
                 'value' => \M2E\OnBuy\Model\Template\Category::VALUE_MODE_ONBUY_RECOMMENDED,
-                'label' => __('OnBuy Recommended'),
+                'label' => __(
+                    '%channel_title Recommended',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ]
+                ),
             ],
             \M2E\OnBuy\Model\Template\Category::VALUE_MODE_CUSTOM_ATTRIBUTE => [
                 'value' => \M2E\OnBuy\Model\Template\Category::VALUE_MODE_CUSTOM_ATTRIBUTE,

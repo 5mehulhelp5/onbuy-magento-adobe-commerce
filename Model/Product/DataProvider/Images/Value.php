@@ -7,6 +7,8 @@ namespace M2E\OnBuy\Model\Product\DataProvider\Images;
 class Value
 {
     public string $mainImage;
+
+    /** @var \M2E\OnBuy\Model\Product\DataProvider\Images\Image[] */
     public array $galleryImages;
 
     public function __construct(

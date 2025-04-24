@@ -88,12 +88,12 @@ class OrderBuilder
     {
         /** @psalm-suppress RedundantPropertyInitializationCheck */
         if (!isset($this->onBuyOrderId)) {
-            throw new \M2E\OnBuy\Model\Exception\Logic('OnBuy order ID not set');
+            throw new \M2E\OnBuy\Model\Exception\Logic(\M2E\OnBuy\Helper\Module::getChannelTitle() . ' order ID not set');
         }
 
         /** @psalm-suppress RedundantPropertyInitializationCheck */
         if (empty($this->tracking)) {
-            throw new \M2E\OnBuy\Model\Exception\Logic('OnBuy tracking is empty');
+            throw new \M2E\OnBuy\Model\Exception\Logic(\M2E\OnBuy\Helper\Module::getChannelTitle() . ' tracking is empty');
         }
     }
 }

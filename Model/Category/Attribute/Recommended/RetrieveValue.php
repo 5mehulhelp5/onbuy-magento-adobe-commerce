@@ -93,7 +93,9 @@ class RetrieveValue
 
     private function normalizeAttributeValue(string $value): string
     {
-        return strtolower(trim($value));
+        $removePunctuation = str_replace([' ', '_', '-', '.'], '', $value);
+
+        return strtolower($removePunctuation);
     }
 
     private function processFail(

@@ -512,14 +512,22 @@ for an item that does <b>not</b> belong to the %extension_title Listing.',
             [
                 'container_id' => 'magento_orders_cancel_container',
                 'name' => 'magento_orders_settings[order_cancel_on_channel][mode]',
-                'label' => __('Cancel/Refund OnBuy Orders'),
+                'label' => __(
+                    'Cancel/Refund %channel_title Orders',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ]
+                ),
                 'values' => [
                     OrderSettings::CANCEL_ON_CHANNEL_NO => __('No'),
                     OrderSettings::CANCEL_ON_CHANNEL_YES => __('Yes'),
                 ],
                 'value' => $orderSettings->getOrderCancelOrRefundOnChannelMode(),
                 'tooltip' => __(
-                    'Enable to cancel OnBuy orders and automatically update their statuses on the Channel.',
+                    'Enable to cancel %channel_title orders and automatically update their statuses on the Channel.',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ]
                 ),
             ]
         );

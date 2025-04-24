@@ -6,12 +6,13 @@ namespace M2E\OnBuy\Model\Product\Action\Type\Relist;
 
 class Validator extends \M2E\OnBuy\Model\Product\Action\Type\AbstractValidator
 {
-    private \M2E\OnBuy\Model\Product\Action\Validator\PriceValidator $priceValidator;
+    /** @var \M2E\OnBuy\Model\Product\Action\Validator\ValidatorInterface[] */
+    private array $validators;
 
     public function __construct(
-        \M2E\OnBuy\Model\Product\Action\Validator\PriceValidator $priceValidator
+        array $validators = []
     ) {
-        $this->priceValidator = $priceValidator;
+        $this->validators = $validators;
     }
 
     public function validate(): bool
@@ -22,12 +23,13 @@ class Validator extends \M2E\OnBuy\Model\Product\Action\Type\AbstractValidator
             return false;
         }
 
-        if ($error = $this->priceValidator->validate($this->getListingProduct(), $this->getConfigurator())) {
-            $this->addMessage($error);
-
-            return false;
+        foreach ($this->validators as $validator) {
+            $error = $validator->validate($this->getListingProduct(), $this->getConfigurator());
+            if ($error !== null) {
+                $this->addMessage($error);
+            }
         }
 
-        return true;
+        return !$this->hasErrorMessages();
     }
 }
