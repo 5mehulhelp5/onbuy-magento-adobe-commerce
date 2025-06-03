@@ -9,7 +9,6 @@ class PriceProvider implements DataBuilderInterface
     use DataBuilderHelpTrait;
 
     public const NICK = 'Price';
-
     private \M2E\OnBuy\Model\Product\PriceCalculatorFactory $priceCalculatorFactory;
 
     public function __construct(\M2E\OnBuy\Model\Product\PriceCalculatorFactory $priceCalculatorFactory)

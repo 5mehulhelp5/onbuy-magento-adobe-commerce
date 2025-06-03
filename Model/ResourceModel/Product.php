@@ -16,6 +16,12 @@ class Product extends \M2E\OnBuy\Model\ResourceModel\ActiveRecord\AbstractModel
     public const COLUMN_STATUS_CHANGER = 'status_changer';
     public const COLUMN_STATUS_CHANGE_DATE = 'status_change_date';
     public const COLUMN_ONLINE_TITLE = 'online_title';
+    public const COLUMN_ONLINE_DESCRIPTION = 'online_description';
+    public const COLUMN_ONLINE_MAIN_IMAGE = 'online_main_image';
+    public const COLUMN_ONLINE_ADDITIONAL_IMAGES = 'online_additional_images';
+    public const COLUMN_ONLINE_CATEGORY_ID = 'online_category_id';
+    public const COLUMN_ONLINE_CATEGORIES_ATTRIBUTES_DATA = 'online_categories_attributes_data';
+    public const COLUMN_ONLINE_DELIVERY_TEMPLATE_ID = 'online_delivery_template_id';
     public const COLUMN_ONLINE_PRODUCT_URL = 'online_product_url';
     public const COLUMN_ONLINE_GROUP_SKU = 'online_group_sku';
     public const COLUMN_OPC = 'opc';

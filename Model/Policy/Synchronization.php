@@ -126,6 +126,11 @@ class Synchronization extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel implem
         return $this->getData(SynchronizationResource::COLUMN_REVISE_UPDATE_PRICE) != 0;
     }
 
+    public function isReviseUpdateShipping(): bool
+    {
+        return $this->getData(SynchronizationResource::COLUMN_REVISE_UPDATE_SHIPPING) != 0;
+    }
+
     // ---------------------------------------
 
     public function isRelistMode(): bool

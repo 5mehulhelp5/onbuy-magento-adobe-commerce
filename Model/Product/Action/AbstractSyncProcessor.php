@@ -77,11 +77,11 @@ abstract class AbstractSyncProcessor
     {
         $validationResult = $this->getActionValidator()->validate();
 
-        foreach ($this->getActionValidator()->getMessages() as $messageData) {
+        foreach ($this->getActionValidator()->getMessages() as $message) {
             $this->addActionLogMessage(
                 \M2E\Core\Model\Response\Message::create(
-                    (string)$messageData['text'],
-                    $messageData['type']
+                    $message->getText(),
+                    $message->getType()
                 ),
             );
         }

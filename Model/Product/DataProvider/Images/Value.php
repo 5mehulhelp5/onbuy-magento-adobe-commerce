@@ -10,12 +10,15 @@ class Value
 
     /** @var \M2E\OnBuy\Model\Product\DataProvider\Images\Image[] */
     public array $galleryImages;
+    public string $hashGalleryImages;
 
     public function __construct(
         string $mainImage,
-        array $galleryImages
+        array $galleryImages,
+        string $hashGalleryImages
     ) {
         $this->mainImage = $mainImage;
         $this->galleryImages = $galleryImages;
+        $this->hashGalleryImages = $hashGalleryImages;
     }
 }

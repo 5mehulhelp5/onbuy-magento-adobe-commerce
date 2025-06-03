@@ -35,6 +35,10 @@
              parent="M2E_OnBuy::configuration" title="Categories"
              action="m2e_onbuy/template_category/index"
              resource="M2E_OnBuy::configuration_categories"/>
+        <add id="M2E_OnBuy::configuration_mapping" module="M2E_OnBuy" sortOrder="25"
+             parent="M2E_OnBuy::configuration" title="Mapping"
+             action="m2e_onbuy/mapping/index"
+             resource="M2E_OnBuy::configuration_mapping"/>
         <add id="M2E_OnBuy::configuration_templates" title="Policies" module="M2E_OnBuy" sortOrder="30"
              parent="M2E_OnBuy::configuration" action="m2e_onbuy/policy/index"
              resource="M2E_OnBuy::configuration_templates"/>

@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace M2E\OnBuy\Model\Product\Action\Type\ListAction;
 
-use M2E\OnBuy\Model\Product\DataProvider\DeliveryProvider;
-use M2E\OnBuy\Model\Product\DataProvider\PriceProvider;
-use M2E\OnBuy\Model\Product\DataProvider\QtyProvider;
-
 class Response extends \M2E\OnBuy\Model\Product\Action\Type\AbstractResponse
 {
     private \M2E\OnBuy\Model\Product\Repository $productRepository;
@@ -36,7 +32,6 @@ class Response extends \M2E\OnBuy\Model\Product\Action\Type\AbstractResponse
         $this->processSuccess();
     }
 
-    //@todo Consider refactoring to get rid of arrays
     protected function processSuccess(): void
     {
         $requestMetadata = $this->getRequestMetaData();
@@ -56,6 +51,34 @@ class Response extends \M2E\OnBuy\Model\Product\Action\Type\AbstractResponse
 
         if (isset($data['product_url'])) {
             $product->setProductLinkOnChannel($data['product_url']);
+        }
+
+        if (isset($requestMetadata['delivery_template_id'])) {
+            $product->setOnlineDeliveryTemplateId((int)$requestMetadata['delivery_template_id']);
+        }
+
+        if (isset($requestMetadata['title'])) {
+            $product->setOnlineTitle($requestMetadata['title']);
+        }
+
+        if (isset($requestMetadata['description_hash'])) {
+            $product->setOnlineDescription($requestMetadata['description_hash']);
+        }
+
+        if (isset($requestMetadata['main_image'])) {
+            $product->setOnlineMainImage($requestMetadata['main_image']);
+        }
+
+        if (isset($requestMetadata['additional_images_hash'])) {
+            $product->setOnlineAdditionalImages($requestMetadata['additional_images_hash']);
+        }
+
+        if (isset($requestMetadata['category_id'])) {
+            $product->setOnlineCategoryId((int)$requestMetadata['category_id']);
+        }
+
+        if (isset($requestMetadata['attributes_hash'])) {
+            $product->setOnlineCategoryAttributesData($requestMetadata['attributes_hash']);
         }
 
         $this->productRepository->save($product);

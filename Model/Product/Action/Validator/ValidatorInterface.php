@@ -7,7 +7,6 @@ namespace M2E\OnBuy\Model\Product\Action\Validator;
 interface ValidatorInterface
 {
     public function validate(
-        \M2E\OnBuy\Model\Product $product,
-        \M2E\OnBuy\Model\Product\Action\Configurator $configurator
-    ): ?string;
+        \M2E\OnBuy\Model\Product $product
+    ): ?ValidatorMessage;
 }

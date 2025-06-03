@@ -11,6 +11,8 @@ class Processor
     private const LIST_PRIORITY = 25;
     private const REVISE_QTY_PRIORITY = 500;
     private const REVISE_PRICE_PRIORITY = 250;
+    private const REVISE_SHIPPING_PRIORITY = 50;
+    private const REVISE_DETAILS_PRIORITY = 50;
     private const RELIST_PRIORITY = 125;
     private const STOP_PRIORITY = 1000;
 
@@ -113,6 +115,8 @@ class Processor
             $this->getListScheduledActionsPreparedCollection()->getSelect(),
             $this->getRevisePriceScheduledActionsPreparedCollection()->getSelect(),
             $this->getReviseQtyScheduledActionsPreparedCollection()->getSelect(),
+            $this->getReviseShippingScheduledActionsPreparedCollection()->getSelect(),
+            $this->getReviseDetailsScheduledActionsPreparedCollection()->getSelect(),
             $this->getRelistScheduledActionsPreparedCollection()->getSelect(),
             $this->getStopScheduledActionsPreparedCollection()->getSelect(),
             $this->getDeleteScheduledActionsPreparedCollection()->getSelect(),
@@ -165,6 +169,28 @@ class Processor
             \M2E\OnBuy\Model\Product::ACTION_REVISE
         );
         $collection->addTagFilter('price');
+
+        return $collection;
+    }
+
+    private function getReviseShippingScheduledActionsPreparedCollection(): ScheduledActionCollection
+    {
+        $collection = $this->scheduledActionRepository->createCollectionForFindByActionType(
+            self::REVISE_SHIPPING_PRIORITY,
+            \M2E\OnBuy\Model\Product::ACTION_REVISE
+        );
+        $collection->addTagFilter('shipping');
+
+        return $collection;
+    }
+
+    private function getReviseDetailsScheduledActionsPreparedCollection(): ScheduledActionCollection
+    {
+        $collection = $this->scheduledActionRepository->createCollectionForFindByActionType(
+            self::REVISE_DETAILS_PRIORITY,
+            \M2E\OnBuy\Model\Product::ACTION_REVISE
+        );
+        $collection->addTagFilter('details');
 
         return $collection;
     }

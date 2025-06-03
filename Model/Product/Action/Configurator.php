@@ -9,21 +9,16 @@ class Configurator
     private const MODE_INCLUDING = 'including';
     private const MODE_EXCLUDING = 'excluding';
 
-    public const DATA_TYPE_GENERAL = 'general';
     public const DATA_TYPE_QTY = 'qty';
     public const DATA_TYPE_PRICE = 'price';
-    public const DATA_TYPE_TITLE = 'title';
-    public const DATA_TYPE_DESCRIPTION = 'description';
-    public const DATA_TYPE_IMAGES = 'images';
-    public const DATA_TYPE_CATEGORIES = 'categories';
+    public const DATA_TYPE_SHIPPING = 'shipping';
+    public const DATA_TYPE_DETAILS = 'details';
 
     private static array $allTypes = [
         self::DATA_TYPE_QTY,
         self::DATA_TYPE_PRICE,
-        self::DATA_TYPE_IMAGES,
-        self::DATA_TYPE_TITLE,
-        self::DATA_TYPE_DESCRIPTION,
-        self::DATA_TYPE_CATEGORIES
+        self::DATA_TYPE_SHIPPING,
+        self::DATA_TYPE_DETAILS
     ];
 
     private string $mode = self::MODE_EXCLUDING;
@@ -40,10 +35,8 @@ class Configurator
         return [
             self::DATA_TYPE_QTY,
             self::DATA_TYPE_PRICE,
-            self::DATA_TYPE_IMAGES,
-            self::DATA_TYPE_TITLE,
-            self::DATA_TYPE_DESCRIPTION,
-            self::DATA_TYPE_CATEGORIES
+            self::DATA_TYPE_SHIPPING,
+            self::DATA_TYPE_DETAILS
         ];
     }
 
@@ -258,79 +251,48 @@ class Configurator
         return $this->disallow(self::DATA_TYPE_PRICE);
     }
 
-    public function isTitleAllowed(): bool
+    /**
+     * @throws \M2E\OnBuy\Model\Exception\Logic
+     */
+    public function isShippingAllowed(): bool
     {
-        return $this->isAllowed(self::DATA_TYPE_TITLE);
+        return $this->isAllowed(self::DATA_TYPE_SHIPPING);
     }
 
-    public function allowTitle(): self
+    /**
+     * @throws \M2E\OnBuy\Model\Exception\Logic
+     */
+    public function allowShipping(): self
     {
-        $this->allow(self::DATA_TYPE_TITLE);
-
-        return $this;
+        return $this->allow(self::DATA_TYPE_SHIPPING);
     }
 
-    public function disallowTitle(): self
+    /**
+     * @throws \M2E\OnBuy\Model\Exception\Logic
+     */
+    public function disallowShipping(): self
     {
-        $this->disallow(self::DATA_TYPE_TITLE);
-
-        return $this;
+        return $this->disallow(self::DATA_TYPE_SHIPPING);
     }
 
-    public function isImagesAllowed(): bool
+    /**
+     * @throws \M2E\OnBuy\Model\Exception\Logic
+     */
+    public function allowDetails(): self
     {
-        return $this->isAllowed(self::DATA_TYPE_IMAGES);
+        return $this->allow(self::DATA_TYPE_DETAILS);
     }
 
-    public function allowImages(): self
+    public function isDetailsAllowed(): bool
     {
-        $this->allow(self::DATA_TYPE_IMAGES);
-
-        return $this;
+        return $this->isAllowed(self::DATA_TYPE_DETAILS);
     }
 
-    public function disallowImages(): self
+    /**
+     * @throws \M2E\OnBuy\Model\Exception\Logic
+     */
+    public function disallowDetails(): self
     {
-        $this->disallow(self::DATA_TYPE_IMAGES);
-
-        return $this;
-    }
-
-    public function isCategoriesAllowed(): bool
-    {
-        return $this->isAllowed(self::DATA_TYPE_CATEGORIES);
-    }
-
-    public function allowCategories(): self
-    {
-        $this->allow(self::DATA_TYPE_CATEGORIES);
-
-        return $this;
-    }
-
-    public function disallowCategories(): self
-    {
-        $this->disallow(self::DATA_TYPE_CATEGORIES);
-
-        return $this;
-    }
-
-    public function isDescriptionAllowed(): bool
-    {
-        return $this->isAllowed(self::DATA_TYPE_DESCRIPTION);
-    }
-
-    public function allowDescription(): self
-    {
-        $this->allow(self::DATA_TYPE_DESCRIPTION);
-
-        return $this;
-    }
-
-    public function disallowDescription(): self
-    {
-        $this->disallow(self::DATA_TYPE_DESCRIPTION);
-
-        return $this;
+        return $this->disallow(self::DATA_TYPE_DETAILS);
     }
 }

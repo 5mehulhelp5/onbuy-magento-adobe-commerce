@@ -148,6 +148,18 @@ class ActionCalculator
             $product
         );
 
+        $this->updateConfiguratorAddShipping(
+            $configurator,
+            $product
+        );
+
+        if ($product->isProductCreator()) {
+            $this->updateConfiguratorAddDetails(
+                $configurator,
+                $product
+            );
+        }
+
         if (empty($configurator->getAllowedDataTypes())) {
             return Action::createNothing($product);
         }
@@ -281,6 +293,95 @@ class ActionCalculator
     private function isChangedPrice(\M2E\OnBuy\Model\Product $product): bool
     {
         return $product->getOnlinePrice() !== $product->getDataProvider()->getPrice()->getValue()->price;
+    }
+
+    private function updateConfiguratorAddShipping(
+        Action\Configurator $configurator,
+        \M2E\OnBuy\Model\Product $product
+    ): void {
+        $syncPolicy = $product->getSynchronizationTemplate();
+
+        if (
+            $syncPolicy->isReviseUpdateShipping()
+            && $this->isChangedShipping($product)
+        ) {
+            $configurator->allowShipping();
+        }
+    }
+
+    private function isChangedShipping(
+        \M2E\OnBuy\Model\Product $product
+    ): bool {
+        $deliveryTemplateId = $product->getDataProvider()->getDelivery()->getValue();
+        $onlineDelivery = $product->getOnlineDeliveryTemplateId();
+
+        return $deliveryTemplateId !== $onlineDelivery;
+    }
+
+    private function updateConfiguratorAddDetails(
+        Action\Configurator $configurator,
+        \M2E\OnBuy\Model\Product $product
+    ): void {
+        $syncPolicy = $product->getSynchronizationTemplate();
+
+        $shouldReviseDetails = (
+            $syncPolicy->isReviseUpdateTitle()
+            || $syncPolicy->isReviseUpdateDescription()
+            || $syncPolicy->isReviseUpdateImages()
+            || $syncPolicy->isReviseUpdateCategories()
+        );
+
+        if ($shouldReviseDetails && $this->isChangedDetails($product)) {
+            $configurator->allowDetails();
+        }
+    }
+
+    private function isChangedDetails(
+        \M2E\OnBuy\Model\Product $product
+    ): bool {
+        $title = $product->getDataProvider()->getTitle()->getValue();
+        $onlineTitle = $product->getOnlineTitle();
+
+        if ($title !== $onlineTitle) {
+            return true;
+        }
+
+        $onlineDescription = $product->getOnlineDescription();
+        $description = $product->getDataProvider()->getDescription()->getValue()->hash;
+
+        if ($description !== $onlineDescription) {
+            return true;
+        }
+
+        $onlineMainImage = $product->getOnlineMainImage();
+        $mainImage = $product->getDataProvider()->getImages()->getValue()->mainImage;
+
+        if ($mainImage !== $onlineMainImage) {
+            return true;
+        }
+
+        $onlineImages = $product->getOnlineAdditionalImages();
+        $images = $product->getDataProvider()->getImages()->getValue()->hashGalleryImages;
+
+        if ($images !== $onlineImages) {
+            return true;
+        }
+
+        $onlineCategoryId = $product->getOnlineCategoryId();
+        $categoryId = $product->getDataProvider()->getCategoryData()->getValue();
+
+        if ($onlineCategoryId !== $categoryId) {
+            return true;
+        }
+
+        $onlineCategoryAttributes = $product->getOnlineCategoryAttributesData();
+        $categoryAttributes = $product->getDataProvider()->getProductAttributesData()->getValue()->hash;
+
+        if ($onlineCategoryAttributes !== $categoryAttributes) {
+            return true;
+        }
+
+        return false;
     }
 
     public function calculateToRelist(\M2E\OnBuy\Model\Product $product, int $changer): Action

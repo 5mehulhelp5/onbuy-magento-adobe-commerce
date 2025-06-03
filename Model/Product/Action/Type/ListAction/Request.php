@@ -23,12 +23,6 @@ class Request extends \M2E\OnBuy\Model\Product\Action\AbstractRequest
         $dataProvider = $product->getDataProvider();
         $priceData = $dataProvider->getPrice()->getValue();
 
-        if ($this->getActionMode($product) === self::LISTING_MODE) {
-            $request = $this->getActionDataForListingMode($product);
-        } else {
-            $request = $this->getActionDataForProductMode($product);
-        }
-
         $this->metadata = [
             'opc' => $product->getOpc(),
             'sku' => $product->getMagentoProduct()->getSku(),
@@ -36,6 +30,12 @@ class Request extends \M2E\OnBuy\Model\Product\Action\AbstractRequest
             'price' => $priceData->price,
             'qty' => $dataProvider->getQty()->getValue(),
         ];
+
+        if ($this->getActionMode($product) === self::LISTING_MODE) {
+            $request = $this->getActionDataForListingMode($product);
+        } else {
+            $request = $this->getActionDataForProductMode($product);
+        }
 
         $this->processDataProviderLogs($dataProvider);
 
@@ -58,7 +58,10 @@ class Request extends \M2E\OnBuy\Model\Product\Action\AbstractRequest
             'delivery_template_id' => $dataProvider->getDelivery()->getValue()
         ];
 
-        if ($product->getListing()->getCondition() !== Listing::CONDITION_NEW) {
+        if (
+            $product->getListing()->getCondition() !== Listing::CONDITION_NEW
+            && !empty($product->getListing()->getConditionNote())
+        ) {
             $request['condition_notes'] = [
                 $product->getListing()->getConditionNote(),
             ];
@@ -107,11 +110,22 @@ class Request extends \M2E\OnBuy\Model\Product\Action\AbstractRequest
             ),
         ];
 
-        if ($product->getListing()->getCondition() !== Listing::CONDITION_NEW) {
+        if (
+            $product->getListing()->getCondition() !== Listing::CONDITION_NEW
+            && !empty($product->getListing()->getConditionNote())
+        ) {
             $request['condition_notes'] = [
                 $product->getListing()->getConditionNote(),
             ];
         }
+
+        $this->metadata['title'] = $request['title'];
+        $this->metadata['description_hash'] = $dataProvider->getDescription()->getValue()->hash;
+        $this->metadata['delivery_template_id'] = $request['delivery_template_id'];
+        $this->metadata['category_id'] = $request['category_id'];
+        $this->metadata['attributes_hash'] = $attributes->hash;
+        $this->metadata['main_image'] = $request['main_image'];
+        $this->metadata['additional_images_hash'] = $dataProvider->getImages()->getValue()->hashGalleryImages;
 
         return $request;
     }

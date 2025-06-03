@@ -257,6 +257,12 @@ class PolicyHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
+                SynchronizationResource::COLUMN_REVISE_UPDATE_SHIPPING,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
                 SynchronizationResource::COLUMN_REVISE_UPDATE_OTHER,
                 Table::TYPE_SMALLINT,
                 null,

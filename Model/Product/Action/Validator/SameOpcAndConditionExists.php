@@ -18,9 +18,8 @@ class SameOpcAndConditionExists implements \M2E\OnBuy\Model\Product\Action\Valid
     }
 
     public function validate(
-        \M2E\OnBuy\Model\Product $product,
-        \M2E\OnBuy\Model\Product\Action\Configurator $configurator
-    ): ?string {
+        \M2E\OnBuy\Model\Product $product
+    ): ?ValidatorMessage {
         $existUnmanagedProducts = $this->unmanagedRepository->findByOpcAccountSite(
             [$product->getOpc()],
             $product->getAccount()->getId(),
@@ -29,8 +28,9 @@ class SameOpcAndConditionExists implements \M2E\OnBuy\Model\Product\Action\Valid
 
         foreach ($existUnmanagedProducts as $unmanagedProduct) {
             if (strtolower($unmanagedProduct->getCondition()) === $product->getListing()->getCondition()) {
-                return (string)__(
-                    'Product with the same OPC and Condition already exists in Unmanaged Items.'
+                return new ValidatorMessage(
+                    (string)__('Product with the same OPC and Condition already exists in Unmanaged Items.'),
+                    \M2E\OnBuy\Model\Tag\ValidatorIssues::ERROR_DUPLICATE_OPC_UNMANAGED
                 );
             }
         }
@@ -46,11 +46,14 @@ class SameOpcAndConditionExists implements \M2E\OnBuy\Model\Product\Action\Valid
                 $existProduct->getId() !== $product->getId()
                 && $existProduct->getListing()->getCondition() === $product->getListing()->getCondition()
             ) {
-                return (string)__(
-                    'Product with the same OPC and condition already exists in your %listing_title Listing.',
-                    [
-                        'listing_title' => $existProduct->getListing()->getTitle(),
-                    ]
+                return new ValidatorMessage(
+                    (string)__(
+                        'Product with the same OPC and condition already exists in your %listing_title Listing.',
+                        [
+                            'listing_title' => $existProduct->getListing()->getTitle(),
+                        ]
+                    ),
+                    \M2E\OnBuy\Model\Tag\ValidatorIssues::ERROR_DUPLICATE_OPC_LISTING
                 );
             }
         }

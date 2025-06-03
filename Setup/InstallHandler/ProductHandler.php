@@ -103,6 +103,42 @@ class ProductHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
                 ['nullable' => true, 'default' => null]
             )
             ->addColumn(
+                ProductResource::COLUMN_ONLINE_DESCRIPTION,
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => true, 'default' => null]
+            )
+            ->addColumn(
+                ProductResource::COLUMN_ONLINE_MAIN_IMAGE,
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => true, 'default' => null]
+            )
+            ->addColumn(
+                ProductResource::COLUMN_ONLINE_ADDITIONAL_IMAGES,
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => true, 'default' => null]
+            )
+            ->addColumn(
+                ProductResource::COLUMN_ONLINE_CATEGORY_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => true, 'default' => null]
+            )
+            ->addColumn(
+                ProductResource::COLUMN_ONLINE_CATEGORIES_ATTRIBUTES_DATA,
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => true, 'default' => null]
+            )
+            ->addColumn(
+                ProductResource::COLUMN_ONLINE_DELIVERY_TEMPLATE_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => true, 'default' => null]
+            )
+            ->addColumn(
                 ProductResource::COLUMN_ONLINE_PRODUCT_URL,
                 Table::TYPE_TEXT,
                 250,

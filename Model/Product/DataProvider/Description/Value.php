@@ -7,10 +7,13 @@ namespace M2E\OnBuy\Model\Product\DataProvider\Description;
 class Value
 {
     public string $description;
+    public string $hash;
 
     public function __construct(
-        string $description
+        string $description,
+        string $hash
     ) {
         $this->description = $description;
+        $this->hash = $hash;
     }
 }

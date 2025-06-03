@@ -95,13 +95,13 @@
 
                     <?php
                     if (
-                        !empty($block->getShippingAddress()['phone']) && stripos(
-                            $block->getShippingAddress()['phone'],
+                        !empty($block->getBuyerPhone()) && stripos(
+                            $block->getBuyerPhone(),
                             'Invalid Request'
                         ) === false
                     ) : ?>
                         <br/><?= 'T: ' . \M2E\Core\Helper\Data::escapeHtml(
-                            $block->getShippingAddress()['phone']
+                            $block->getBuyerPhone()
                         ); ?>
                     <?php
                     endif; ?>

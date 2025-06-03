@@ -71,6 +71,7 @@ class Save extends AbstractOrder
         $shippingDetails['address'] = $data;
 
         $order->setShippingDetails($shippingDetails);
+        $order->setBuyerPhone($data['phone']);
         $this->orderRepository->save($order);
 
         $shippingAddressBlock = $this

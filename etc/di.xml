@@ -198,6 +198,20 @@
                     M2E\OnBuy\Model\Product\Action\Validator\PriceValidator
                 </item>
             </argument>
+            <argument name="validatorsProduct" xsi:type="array">
+                <item name="category" xsi:type="object">
+                    M2E\OnBuy\Model\Product\Action\Validator\CategoryValidator
+                </item>
+                <item name="title" xsi:type="object">
+                    M2E\OnBuy\Model\Product\Action\Validator\TitleValidator
+                </item>
+                <item name="images" xsi:type="object">
+                    M2E\OnBuy\Model\Product\Action\Validator\ImagesValidator
+                </item>
+                <item name="description" xsi:type="object">
+                    M2E\OnBuy\Model\Product\Action\Validator\DescriptionValidator
+                </item>
+            </argument>
         </arguments>
     </type>
 

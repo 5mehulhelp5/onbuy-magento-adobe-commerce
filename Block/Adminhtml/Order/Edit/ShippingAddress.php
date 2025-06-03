@@ -36,4 +36,9 @@ class ShippingAddress extends AbstractBlock
 
         return $this->shippingAddress;
     }
+
+    public function getBuyerPhone(): ?string
+    {
+        return $this->getOrder()->getBuyerPhone();
+    }
 }

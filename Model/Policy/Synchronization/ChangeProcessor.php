@@ -26,6 +26,9 @@ class ChangeProcessor extends \M2E\OnBuy\Model\Policy\Synchronization\ChangeProc
     public const INSTRUCTION_TYPE_REVISE_CATEGORIES_ENABLED = 'template_synchronization_revise_categories_enabled';
     public const INSTRUCTION_TYPE_REVISE_CATEGORIES_DISABLED = 'template_synchronization_revise_categories_disabled';
 
+    public const INSTRUCTION_TYPE_REVISE_SHIPPING_ENABLED = 'template_synchronization_revise_shipping_enabled';
+    public const INSTRUCTION_TYPE_REVISE_SHIPPING_DISABLED = 'template_synchronization_revise_shipping_disabled';
+
     public const INSTRUCTION_TYPE_REVISE_OTHER_ENABLED = 'template_synchronization_revise_other_enabled';
     public const INSTRUCTION_TYPE_REVISE_OTHER_DISABLED = 'template_synchronization_revise_other_disabled';
 
@@ -120,6 +123,20 @@ class ChangeProcessor extends \M2E\OnBuy\Model\Policy\Synchronization\ChangeProc
         } elseif ($diff->isReviseCategoriesDisabled()) {
             $data[] = [
                 'type' => self::INSTRUCTION_TYPE_REVISE_CATEGORIES_DISABLED,
+                'priority' => 5,
+            ];
+        }
+
+        //----------------------------------------
+
+        if ($diff->isReviseShippingEnabled()) {
+            $data[] = [
+                'type' => self::INSTRUCTION_TYPE_REVISE_SHIPPING_ENABLED,
+                'priority' => $status === \M2E\OnBuy\Model\Product::STATUS_LISTED ? 30 : 5,
+            ];
+        } elseif ($diff->isReviseShippingDisabled()) {
+            $data[] = [
+                'type' => self::INSTRUCTION_TYPE_REVISE_SHIPPING_DISABLED,
                 'priority' => 5,
             ];
         }

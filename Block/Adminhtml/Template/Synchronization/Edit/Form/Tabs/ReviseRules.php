@@ -128,6 +128,110 @@ HTML
             ]
         );
 
+        $fieldset->addField(
+            'revise_update_title',
+            self::SELECT,
+            [
+                'name' => 'synchronization[revise_update_title]',
+                'label' => __('Title'),
+                'value' => $formData['revise_update_title'],
+                'values' => [
+                    0 => __('No'),
+                    1 => __('Yes'),
+                ],
+                'tooltip' => __(
+                    'Automatically revises Item Title on %channel_title when Product Name, Magento Attribute
+                    used for Item Title or Custom Title value are modified in Magento or Policy Template.',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ]
+                ),
+            ]
+        );
+
+        $fieldset->addField(
+            'revise_update_description',
+            self::SELECT,
+            [
+                'name' => 'synchronization[revise_update_description]',
+                'label' => __('Description'),
+                'value' => $formData['revise_update_description'],
+                'values' => [
+                    0 => __('No'),
+                    1 => __('Yes'),
+                ],
+                'tooltip' => __(
+                    'Automatically revises Item Description on %channel_title when Product Description, Product Short
+                    Description or Custom Description value are modified in Magento or Policy Template.',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ]
+                ),
+            ]
+        );
+
+        $fieldset->addField(
+            'revise_update_images',
+            self::SELECT,
+            [
+                'name' => 'synchronization[revise_update_images]',
+                'label' => __('Images'),
+                'value' => $formData['revise_update_images'],
+                'values' => [
+                    0 => __('No'),
+                    1 => __('Yes'),
+                ],
+                'tooltip' => __(
+                    'Automatically revises Item Image(s) on %channel_title when Product Image(s)
+                    or Magento Attribute used for Product Image(s) are modified in Magento or Policy Template.',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ]
+                ),
+            ]
+        );
+
+        $fieldset->addField(
+            'revise_update_categories',
+            self::SELECT,
+            [
+                'name' => 'synchronization[revise_update_categories]',
+                'label' => __('Categories / Attributes'),
+                'value' => $formData['revise_update_categories'],
+                'values' => [
+                    0 => __('No'),
+                    1 => __('Yes'),
+                ],
+                'tooltip' => __(
+                    'Automatically revises Item Categories/Attributes on %channel_title when Categories/Attributes
+                    data or Magento Attributes used for Categories/Attributes are modified.',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ]
+                ),
+            ]
+        );
+
+        $fieldset->addField(
+            'revise_update_shipping',
+            self::SELECT,
+            [
+                'name' => 'synchronization[revise_update_shipping]',
+                'label' => __('Shipping'),
+                'value' => $formData['revise_update_shipping'],
+                'values' => [
+                    0 => __('No'),
+                    1 => __('Yes'),
+                ],
+                'tooltip' => __(
+                    'Automatically revises Shipping on %channel_title when Shipping modified in Policy Template.',
+                    [
+                        'channel_title' => \M2E\OnBuy\Helper\Module::getChannelTitle(),
+                    ]
+                ),
+            ]
+        );
+
         $this->setForm($form);
 
         return parent::_prepareForm();

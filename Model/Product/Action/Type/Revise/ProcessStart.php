@@ -15,8 +15,11 @@ class ProcessStart extends \M2E\OnBuy\Model\Product\Action\Async\AbstractProcess
 
     public function __construct(
         RequestFactory $requestFactory,
-        ValidatorFactory $actionValidatorFactory
+        ValidatorFactory $actionValidatorFactory,
+        \M2E\OnBuy\Model\Product\Action\TagManager $tagManager
     ) {
+        parent::__construct($tagManager);
+
         $this->requestFactory = $requestFactory;
         $this->actionValidatorFactory = $actionValidatorFactory;
     }

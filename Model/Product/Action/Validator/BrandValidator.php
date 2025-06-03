@@ -7,9 +7,8 @@ namespace M2E\OnBuy\Model\Product\Action\Validator;
 class BrandValidator implements ValidatorInterface
 {
     public function validate(
-        \M2E\OnBuy\Model\Product $product,
-        \M2E\OnBuy\Model\Product\Action\Configurator $configurator
-    ): ?string {
+        \M2E\OnBuy\Model\Product $product
+    ): ?ValidatorMessage {
         $resolveResult = $product->getDataProvider()->getProductBrand();
         if ($resolveResult->isSuccess()) {
             return null;
@@ -21,6 +20,9 @@ class BrandValidator implements ValidatorInterface
             $error = reset($errors);
         }
 
-        return $error;
+        return new ValidatorMessage(
+            $error,
+            \M2E\OnBuy\Model\Tag\ValidatorIssues::ERROR_BRAND_INVALID_OR_MISSING
+        );
     }
 }

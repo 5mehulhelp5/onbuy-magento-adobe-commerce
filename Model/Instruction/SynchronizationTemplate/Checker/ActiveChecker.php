@@ -157,6 +157,7 @@ class ActiveChecker extends \M2E\OnBuy\Model\Instruction\SynchronizationTemplate
                 $this->getReviseDescriptionInstructionTypes(),
                 $this->getReviseImagesInstructionTypes(),
                 $this->getReviseCategoriesInstructionTypes(),
+                $this->getReviseShippingInstructionTypes(),
                 $this->getReviseOtherInstructionTypes(),
             ),
         );
@@ -268,6 +269,13 @@ class ActiveChecker extends \M2E\OnBuy\Model\Instruction\SynchronizationTemplate
             \M2E\OnBuy\Model\Listing::INSTRUCTION_TYPE_CHANGE_LISTING_STORE_VIEW,
             \M2E\OnBuy\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_PRODUCT_CHANGED,
             \M2E\OnBuy\Model\Product\InspectDirectChanges::INSTRUCTION_TYPE,
+        ];
+    }
+
+    protected function getReviseShippingInstructionTypes(): array
+    {
+        return [
+            \M2E\OnBuy\Model\Policy\ChangeProcessorAbstract::INSTRUCTION_TYPE_SHIPPING_DATA_CHANGED,
         ];
     }
 

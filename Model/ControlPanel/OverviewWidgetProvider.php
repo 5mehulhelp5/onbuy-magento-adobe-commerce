@@ -76,6 +76,7 @@ class OverviewWidgetProvider implements \M2E\Core\Model\ControlPanel\Overview\Wi
                 \M2E\OnBuy\Helper\Module\Database\Tables::TABLE_NAME_LISTING,
                 \M2E\OnBuy\Helper\Module\Database\Tables::TABLE_NAME_PRODUCT,
                 \M2E\OnBuy\Helper\Module\Database\Tables::TABLE_NAME_UNMANAGED_PRODUCT,
+                \M2E\Core\Helper\Module\Database\Tables::TABLE_NAME_ATTRIBUTE_MAPPING
             ],
             'Processing' => [
                 \M2E\OnBuy\Helper\Module\Database\Tables::TABLE_NAME_PROCESSING,

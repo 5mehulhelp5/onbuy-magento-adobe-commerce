@@ -18,9 +18,8 @@ class SameSkuAlreadyExists implements \M2E\OnBuy\Model\Product\Action\Validator\
     }
 
     public function validate(
-        \M2E\OnBuy\Model\Product $product,
-        \M2E\OnBuy\Model\Product\Action\Configurator $configurator
-    ): ?string {
+        \M2E\OnBuy\Model\Product $product
+    ): ?ValidatorMessage {
         $onBuyProductSku = $product->getOnlineSku();
         if (empty($onBuyProductSku)) {
             $onBuyProductSku = $product->getMagentoProduct()->getSku();
@@ -33,12 +32,15 @@ class SameSkuAlreadyExists implements \M2E\OnBuy\Model\Product\Action\Validator\
         );
 
         if (!empty($existUnmanagedProduct)) {
-            return (string)__(
-                'Product with the same SKU already exists in Unmanaged Items.
+            return new ValidatorMessage(
+                (string)__(
+                    'Product with the same SKU already exists in Unmanaged Items.
                  Once the Item is mapped to a Magento Product, it can be moved to an %extension_title Listing.',
-                [
-                    'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
-                ]
+                    [
+                        'extension_title' => \M2E\OnBuy\Helper\Module::getExtensionTitle(),
+                    ]
+                ),
+                \M2E\OnBuy\Model\Tag\ValidatorIssues::ERROR_DUPLICATE_SKU_UNMANAGED
             );
         }
 
@@ -48,15 +50,17 @@ class SameSkuAlreadyExists implements \M2E\OnBuy\Model\Product\Action\Validator\
             $product->getListing()->getSiteId()
         );
 
-        //@todo to make sure it is a correct check
         if (!empty($existListProducts)) {
             $existListProduct = reset($existListProducts);
             if ($existListProduct->getId() !== $product->getId()) {
-                return (string)__(
-                    'Product with the same SKU already exists in your %listing_title Listing.',
-                    [
-                        'listing_title' => $existListProduct->getListing()->getTitle(),
-                    ]
+                return new ValidatorMessage(
+                    (string)__(
+                        'Product with the same SKU already exists in your %listing_title Listing.',
+                        [
+                            'listing_title' => $existListProduct->getListing()->getTitle(),
+                        ]
+                    ),
+                    \M2E\OnBuy\Model\Tag\ValidatorIssues::ERROR_DUPLICATE_SKU_LISTING
                 );
             }
         }

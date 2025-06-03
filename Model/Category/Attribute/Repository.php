@@ -68,4 +68,28 @@ class Repository
 
         return $collection->getSize();
     }
+
+    /**
+     * @return string[]
+     */
+    public function getAllCustomAttributeIds(): array
+    {
+        $collection = $this->attributeCollectionFactory->create();
+        $collection->addFieldToFilter(
+            AttributeResource::COLUMN_VALUE_MODE,
+            \M2E\OnBuy\Model\Category\CategoryAttribute::VALUE_MODE_CUSTOM_ATTRIBUTE
+        );
+
+        $collection->removeAllFieldsFromSelect();
+
+        $collection->addFieldToSelect(AttributeResource::COLUMN_ATTRIBUTE_ID);
+        $collection->distinct(true);
+
+        $result = [];
+        foreach ($collection->getItems() as $item) {
+            $result[] = $item->getAttributeId();
+        }
+
+        return $result;
+    }
 }

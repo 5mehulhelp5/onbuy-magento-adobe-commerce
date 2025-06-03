@@ -134,6 +134,8 @@ class Diff extends \M2E\OnBuy\Model\ActiveRecord\Diff
             || $this->isReviseImagesDisabled()
             || $this->isReviseCategoriesEnabled()
             || $this->isReviseCategoriesDisabled()
+            || $this->isReviseShippingEnabled()
+            || $this->isReviseShippingDisabled()
             || $this->isReviseOtherEnabled()
             || $this->isReviseOtherDisabled();
     }
@@ -254,6 +256,24 @@ class Diff extends \M2E\OnBuy\Model\ActiveRecord\Diff
 
         return !empty($oldSnapshotData[SynchronizationResource::COLUMN_REVISE_UPDATE_CATEGORIES])
             && empty($newSnapshotData[SynchronizationResource::COLUMN_REVISE_UPDATE_CATEGORIES]);
+    }
+
+    public function isReviseShippingEnabled(): bool
+    {
+        $newSnapshotData = $this->newSnapshot;
+        $oldSnapshotData = $this->oldSnapshot;
+
+        return empty($oldSnapshotData[SynchronizationResource::COLUMN_REVISE_UPDATE_SHIPPING])
+            && !empty($newSnapshotData[SynchronizationResource::COLUMN_REVISE_UPDATE_SHIPPING]);
+    }
+
+    public function isReviseShippingDisabled(): bool
+    {
+        $newSnapshotData = $this->newSnapshot;
+        $oldSnapshotData = $this->oldSnapshot;
+
+        return !empty($oldSnapshotData[SynchronizationResource::COLUMN_REVISE_UPDATE_SHIPPING])
+            && empty($newSnapshotData[SynchronizationResource::COLUMN_REVISE_UPDATE_SHIPPING]);
     }
 
     public function isReviseOtherEnabled(): bool

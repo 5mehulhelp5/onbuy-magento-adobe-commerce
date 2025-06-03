@@ -11,6 +11,13 @@ class Logger
 
     private float $onlinePrice;
     private int $onlineQty;
+    private ?int $onlineDeliveryTemplateId;
+    private string $onlineTitle;
+    private string $onlineDescription;
+    private ?int $onlineCategoryId;
+    private string $onlineCategoryAttributesData;
+    private string $onlineMainImage;
+    private string $onlineAdditionalImages;
 
     public function __construct(
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency
@@ -22,12 +29,24 @@ class Logger
     {
         $this->onlinePrice = $product->getOnlinePrice();
         $this->onlineQty = $product->getOnlineQty();
+        $this->onlineDeliveryTemplateId = $product->getOnlineDeliveryTemplateId();
+        $this->onlineTitle = $product->getOnlineTitle();
+        $this->onlineDescription = $product->getOnlineDescription();
+        $this->onlineCategoryId = $product->getOnlineCategoryId();
+        $this->onlineCategoryAttributesData = $product->getOnlineCategoryAttributesData();
+        $this->onlineMainImage = $product->getOnlineMainImage();
+        $this->onlineAdditionalImages = $product->getOnlineAdditionalImages();
     }
 
     public function collectSuccessMessages(\M2E\OnBuy\Model\Product $product): array
     {
         $this->generateMessageAboutChangePrice($product);
         $this->generateMessageAboutChangeQty($product);
+        $this->generateMessageAboutChangeDeliveryTemplateId($product);
+        $this->generateMessageAboutChangeTitle($product);
+        $this->generateMessageAboutChangeDescription($product);
+        $this->generateMessageAboutChangeCategories($product);
+        $this->generateMessageAboutChangeImages($product);
 
         return $this->logs;
     }
@@ -59,5 +78,46 @@ class Logger
         }
 
         $this->logs[] =  sprintf('Product QTY was revised from %s to %s', $from, $to);
+    }
+
+    private function generateMessageAboutChangeDeliveryTemplateId(\M2E\OnBuy\Model\Product $product): void
+    {
+        if ($this->onlineDeliveryTemplateId !== $product->getOnlineDeliveryTemplateId()) {
+            $this->logs[] = 'Item was revised: Shipping was updated.';
+        }
+    }
+
+    private function generateMessageAboutChangeTitle(\M2E\OnBuy\Model\Product $product): void
+    {
+        if ($this->onlineTitle !== $product->getOnlineTitle()) {
+            $this->logs[] = 'Item was revised: Product Title was updated.';
+        }
+    }
+
+    private function generateMessageAboutChangeDescription(\M2E\OnBuy\Model\Product $product): void
+    {
+        if ($this->onlineDescription !== $product->getOnlineDescription()) {
+            $this->logs[] = 'Item was revised: Product Description was updated.';
+        }
+    }
+
+    private function generateMessageAboutChangeCategories(\M2E\OnBuy\Model\Product $product): void
+    {
+        if (
+            $this->onlineCategoryId !== $product->getOnlineCategoryId()
+            || $this->onlineCategoryAttributesData !== $product->getOnlineCategoryAttributesData()
+        ) {
+            $this->logs[] = 'Item was revised: Product Categories were updated.';
+        }
+    }
+
+    private function generateMessageAboutChangeImages(\M2E\OnBuy\Model\Product $product): void
+    {
+        if (
+            $this->onlineMainImage !== $product->getOnlineMainImage()
+            || $this->onlineAdditionalImages !== $product->getOnlineAdditionalImages()
+        ) {
+            $this->logs[] = 'Item was revised: Product Images were updated.';
+        }
     }
 }

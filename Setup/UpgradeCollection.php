@@ -20,6 +20,7 @@ class UpgradeCollection extends \M2E\Core\Model\Setup\AbstractUpgradeCollection
             '1.1.1' => ['to' => '1.1.2', 'upgrade' => \M2E\OnBuy\Setup\Upgrade\v1_1_2\Config::class],
             '1.1.2' => ['to' => '1.2.0', 'upgrade' => \M2E\OnBuy\Setup\Upgrade\v1_2_0\Config::class],
             '1.2.0' => ['to' => '1.2.1', 'upgrade' => null],
+            '1.2.1' => ['to' => '1.3.0', 'upgrade' => \M2E\OnBuy\Setup\Upgrade\v1_3_0\Config::class],
         ];
     }
 }

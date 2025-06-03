@@ -112,6 +112,10 @@ class Builder extends \M2E\OnBuy\Model\Policy\AbstractBuilder
             $data['revise_update_categories'] = (int)$this->rawData['revise_update_categories'];
         }
 
+        if (isset($this->rawData['revise_update_shipping'])) {
+            $data['revise_update_shipping'] = (int)$this->rawData['revise_update_shipping'];
+        }
+
         if (isset($this->rawData['revise_update_other'])) {
             $data['revise_update_other'] = (int)$this->rawData['revise_update_other'];
         }
@@ -252,6 +256,7 @@ class Builder extends \M2E\OnBuy\Model\Policy\AbstractBuilder
             'revise_update_description' => 0,
             'revise_update_images' => 0,
             'revise_update_categories' => 0,
+            'revise_update_shipping' => 0,
             'revise_update_other' => 0,
 
             // stop

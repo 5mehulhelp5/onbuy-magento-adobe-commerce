@@ -9,7 +9,6 @@ class ProductAttributesProvider implements DataBuilderInterface
     use DataBuilderHelpTrait;
 
     public const NICK = 'ProductAttributes';
-    private string $encodedProductAttributes = '';
 
     private Attributes\Processor $attributeProcessor;
 
@@ -31,16 +30,9 @@ class ProductAttributesProvider implements DataBuilderInterface
         $this->collectWarningMessages($this->attributeProcessor->getWarningMessages());
 
         sort($result);
-        $this->encodedProductAttributes = \M2E\Core\Helper\Data::md5String(json_encode($result));
+        $hash = \M2E\Core\Helper\Data::md5String(json_encode($result));
 
-        return new \M2E\OnBuy\Model\Product\DataProvider\Attributes\Value($attributes);
-    }
-
-    public function getMetaData(): array
-    {
-        return [
-            self::NICK => $this->encodedProductAttributes
-        ];
+        return new \M2E\OnBuy\Model\Product\DataProvider\Attributes\Value($attributes, $hash);
     }
 
     private function collectWarningMessages(array $messages): void

@@ -480,6 +480,89 @@ class Product extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
         return (string)$this->getData(ProductResource::COLUMN_ONLINE_TITLE);
     }
 
+    public function setOnlineTitle(string $onlineTitle): self
+    {
+        $this->setData(ProductResource::COLUMN_ONLINE_TITLE, $onlineTitle);
+
+        return $this;
+    }
+
+    public function getOnlineDescription(): string
+    {
+        return (string)$this->getData(ProductResource::COLUMN_ONLINE_DESCRIPTION);
+    }
+
+    public function setOnlineDescription(string $description): self
+    {
+        $this->setData(ProductResource::COLUMN_ONLINE_DESCRIPTION, $description);
+
+        return $this;
+    }
+
+    public function getOnlineMainImage(): string
+    {
+        return (string)$this->getData(ProductResource::COLUMN_ONLINE_MAIN_IMAGE);
+    }
+
+    public function setOnlineMainImage(string $image): self
+    {
+        $this->setData(ProductResource::COLUMN_ONLINE_MAIN_IMAGE, $image);
+
+        return $this;
+    }
+
+    public function getOnlineAdditionalImages(): string
+    {
+        return (string)$this->getData(ProductResource::COLUMN_ONLINE_ADDITIONAL_IMAGES);
+    }
+
+    public function setOnlineAdditionalImages(string $images): self
+    {
+        $this->setData(ProductResource::COLUMN_ONLINE_ADDITIONAL_IMAGES, $images);
+
+        return $this;
+    }
+
+    public function getOnlineCategoryId(): ?int
+    {
+        $value = $this->getData(ProductResource::COLUMN_ONLINE_CATEGORY_ID);
+
+        return $value !== null ? (int)$value : null;
+    }
+
+    public function setOnlineCategoryId(int $categoryId): self
+    {
+        $this->setData(ProductResource::COLUMN_ONLINE_CATEGORY_ID, $categoryId);
+
+        return $this;
+    }
+
+    public function getOnlineCategoryAttributesData(): string
+    {
+        return (string)$this->getData(ProductResource::COLUMN_ONLINE_CATEGORIES_ATTRIBUTES_DATA);
+    }
+
+    public function setOnlineCategoryAttributesData(string $data): self
+    {
+        $this->setData(ProductResource::COLUMN_ONLINE_CATEGORIES_ATTRIBUTES_DATA, $data);
+
+        return $this;
+    }
+
+    public function getOnlineDeliveryTemplateId(): ?int
+    {
+        $value = $this->getData(ProductResource::COLUMN_ONLINE_DELIVERY_TEMPLATE_ID);
+
+        return $value !== null ? (int)$value : null;
+    }
+
+    public function setOnlineDeliveryTemplateId(int $deliveryTemplateId): self
+    {
+        $this->setData(ProductResource::COLUMN_ONLINE_DELIVERY_TEMPLATE_ID, $deliveryTemplateId);
+
+        return $this;
+    }
+
     public function getCurrencyCode(): string
     {
         return $this->getListing()->getSite()->getCurrencyCode();
@@ -545,13 +628,6 @@ class Product extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
     public function setChannelProductId(int $productId): self
     {
         $this->setData(ProductResource::COLUMN_CHANNEL_PRODUCT_ID, $productId);
-
-        return $this;
-    }
-
-    public function setOnlineTitle(string $onlineTitle): self
-    {
-        $this->setData(ProductResource::COLUMN_ONLINE_TITLE, $onlineTitle);
 
         return $this;
     }

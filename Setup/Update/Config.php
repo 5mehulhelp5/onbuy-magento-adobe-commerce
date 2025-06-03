@@ -21,6 +21,10 @@ class Config implements \M2E\Core\Model\Setup\Upgrade\Entity\ConfigInterface
                 \M2E\OnBuy\Setup\Update\y25_m03\AddCategoryTables::class,
                 \M2E\OnBuy\Setup\Update\y25_m03\AddTemplateCategoryToProduct::class
             ],
+            'y25_m05' => [
+                \M2E\OnBuy\Setup\Update\y25_m05\AddShippingReviseColumnToPolicy::class,
+                \M2E\OnBuy\Setup\Update\y25_m05\AddOnlineDataColumnsToProduct::class
+            ],
         ];
     }
 }

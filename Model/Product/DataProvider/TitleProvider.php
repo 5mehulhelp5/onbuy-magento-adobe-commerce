@@ -10,8 +10,6 @@ class TitleProvider implements DataBuilderInterface
 
     public const NICK = 'Title';
 
-    private string $onlineTitle;
-
     /**
      * @param \M2E\OnBuy\Model\Product $product
      *
@@ -26,15 +24,6 @@ class TitleProvider implements DataBuilderInterface
             $title = substr($title, 0, 70);
         }
 
-        $this->onlineTitle = $title;
-
         return $title;
-    }
-
-    public function getMetaData(): array
-    {
-        return [
-            self::NICK => ['online_title' => $this->onlineTitle],
-        ];
     }
 }

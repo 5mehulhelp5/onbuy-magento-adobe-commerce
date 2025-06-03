@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace M2E\OnBuy\Model\Product\Action\Type\Revise;
 
-use M2E\OnBuy\Model\Product\DataProvider\PriceProvider;
-use M2E\OnBuy\Model\Product\DataProvider\QtyProvider;
-
 class Response extends \M2E\OnBuy\Model\Product\Action\Type\AbstractResponse
 {
     private \M2E\OnBuy\Model\Product\Repository $productRepository;
@@ -79,6 +76,35 @@ class Response extends \M2E\OnBuy\Model\Product\Action\Type\AbstractResponse
             }
         }
 
+        if (isset($requestMetadata['delivery_template_id'])) {
+            $shippingUpdateStatus = ($productResponseData['qty'] || $productResponseData['price']);
+            $requestMetadataShipping = (int)$requestMetadata['delivery_template_id'];
+            if (!$shippingUpdateStatus) {
+                $this->getLogBuffer()->addFail('Shipping failed to be revised.');
+            } else {
+                $product->setOnlineDeliveryTemplateId($requestMetadataShipping);
+            }
+        }
+
+        if (
+            $this->isTriedUpdateDetails(
+                isset($productResponseData['details']),
+                isset($requestMetadata['details'])
+            )
+        ) {
+            $detailUpdateStatus = $productResponseData['details'];
+            if (!$detailUpdateStatus) {
+                $this->getLogBuffer()->addFail('Details failed to be revised.');
+            } else {
+                $product->setOnlineTitle($requestMetadata['details']['title']);
+                $product->setOnlineDescription($requestMetadata['details']['description_hash']);
+                $product->setOnlineCategoryId((int)$requestMetadata['details']['category_id']);
+                $product->setOnlineCategoryAttributesData($requestMetadata['details']['attributes_hash']);
+                $product->setOnlineMainImage($requestMetadata['details']['main_image']);
+                $product->setOnlineAdditionalImages($requestMetadata['details']['additional_images_hash']);
+            }
+        }
+
         $product->removeBlockingByError();
 
         $this->productRepository->save($product);
@@ -101,6 +127,11 @@ class Response extends \M2E\OnBuy\Model\Product\Action\Type\AbstractResponse
     private function isTriedUpdateQty(bool $isQtyPresentInResponse, bool $isSendQty): bool
     {
         return $isQtyPresentInResponse && $isSendQty;
+    }
+
+    private function isTriedUpdateDetails(bool $isDetailPresentInResponse, bool $isSendDetail): bool
+    {
+        return $isDetailPresentInResponse && $isSendDetail;
     }
 
     public function generateResultMessage(): void

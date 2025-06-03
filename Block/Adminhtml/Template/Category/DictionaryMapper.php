@@ -9,11 +9,16 @@ use M2E\OnBuy\Model\Category\CategoryAttribute;
 class DictionaryMapper
 {
     private \M2E\OnBuy\Model\Category\Attribute\Repository $attributeRepository;
+    private \M2E\OnBuy\Model\AttributeMapping\GeneralService $generalService;
+    /** @var \M2E\Core\Model\AttributeMapping\Pair[] */
+    private array $generalAttributeMapping;
 
     public function __construct(
-        \M2E\OnBuy\Model\Category\Attribute\Repository $attributeRepository
+        \M2E\OnBuy\Model\Category\Attribute\Repository $attributeRepository,
+        \M2E\OnBuy\Model\AttributeMapping\GeneralService $generalService
     ) {
         $this->attributeRepository = $attributeRepository;
+        $this->generalService = $generalService;
     }
 
     /**
@@ -21,13 +26,14 @@ class DictionaryMapper
      */
     public function getProductAttributes(\M2E\OnBuy\Model\Category\Dictionary $dictionary): array
     {
+        $generalMappingAttributes = $this->getGeneralAttributesMappingByAttributeId();
         $savedAttributes = $this->loadSavedAttributes($dictionary, [
             CategoryAttribute::ATTRIBUTE_TYPE_PRODUCT,
         ]);
 
         $attributes = [];
         foreach ($dictionary->getProductAttributes() as $productAttribute) {
-            $item = $this->map($productAttribute, $savedAttributes);
+            $item = $this->map($productAttribute, $savedAttributes, $generalMappingAttributes);
 
             if ($item['required']) {
                 array_unshift($attributes, $item);
@@ -42,11 +48,12 @@ class DictionaryMapper
 
     public function getVirtualAttributes(\M2E\OnBuy\Model\Category\Dictionary $dictionary): array
     {
+        $generalMappingAttributes = $this->getGeneralAttributesMappingByAttributeId();
         $savedAttributes = $this->loadSavedAttributes($dictionary, [CategoryAttribute::ATTRIBUTE_TYPE_BRAND]);
 
         $attributes = [];
         foreach ($dictionary->getBrandAttribute() as $virtualAttribute) {
-            $item = $this->map($virtualAttribute, $savedAttributes);
+            $item = $this->map($virtualAttribute, $savedAttributes, $generalMappingAttributes);
 
             if ($item['required']) {
                 array_unshift($attributes, $item);
@@ -59,9 +66,17 @@ class DictionaryMapper
         return $this->sortAttributesByTitle($attributes);
     }
 
+    /**
+     * @param \M2E\OnBuy\Model\Category\Dictionary\AbstractAttribute $attribute
+     * @param \M2E\OnBuy\Model\Category\CategoryAttribute[] $savedAttributes
+     * @param \M2E\Core\Model\AttributeMapping\Pair[] $generalMappingAttributes
+     *
+     * @return array
+     */
     private function map(
         \M2E\OnBuy\Model\Category\Dictionary\AbstractAttribute $attribute,
-        array $savedAttributes
+        array $savedAttributes,
+        array $generalMappingAttributes = []
     ): array {
         $item = [
             'id' => $attribute->getId(),
@@ -76,16 +91,24 @@ class DictionaryMapper
         ];
 
         $existsAttribute = $savedAttributes[$attribute->getId()] ?? null;
-        if ($existsAttribute) {
+        $generalMapping = $generalMappingAttributes[$attribute->getId()] ?? null;
+        if (
+            $existsAttribute !== null
+            || $generalMapping !== null
+        ) {
             $item['template_attribute'] = [
-                'id' => $existsAttribute->getAttributeId(),
-                'template_category_id' => $existsAttribute->getId(),
+                'id' => $existsAttribute ? $existsAttribute->getAttributeId() : null,
+                'template_category_id' => $existsAttribute ? $existsAttribute->getId() : null,
                 'mode' => '1',
-                'attribute_title' => $existsAttribute->getAttributeId(),
-                'value_mode' => $existsAttribute->getValueMode(),
-                'value_onbuy_recommended' => $existsAttribute->getRecommendedValue(),
-                'value_custom_value' => $existsAttribute->getCustomValue(),
-                'value_custom_attribute' => $existsAttribute->getCustomAttributeValue(),
+                'attribute_title' => $existsAttribute ? $existsAttribute->getAttributeId() : $attribute->getName(),
+                'value_mode' => $existsAttribute !== null
+                    ? $existsAttribute->getValueMode()
+                    : ($generalMapping !== null ? \M2E\OnBuy\Model\Category\CategoryAttribute::VALUE_MODE_CUSTOM_ATTRIBUTE : \M2E\OnBuy\Model\Category\CategoryAttribute::VALUE_MODE_NONE),
+                'value_onbuy_recommended' => $existsAttribute ? $existsAttribute->getRecommendedValue() : null,
+                'value_custom_value' => $existsAttribute ? $existsAttribute->getCustomValue() : null,
+                'value_custom_attribute' => $existsAttribute !== null
+                    ? $existsAttribute->getCustomAttributeValue()
+                    : ($generalMapping !== null ? $generalMapping->getMagentoAttributeCode() : null),
             ];
         }
 
@@ -131,5 +154,23 @@ class DictionaryMapper
         }
 
         return array_merge($requiredAttributes, $attributes);
+    }
+
+    /**
+     * @return \M2E\Core\Model\AttributeMapping\Pair[]
+     */
+    private function getGeneralAttributesMappingByAttributeId(): array
+    {
+        /** @psalm-suppress RedundantPropertyInitializationCheck */
+        if (isset($this->generalAttributeMapping)) {
+            return $this->generalAttributeMapping;
+        }
+
+        $result = [];
+        foreach ($this->generalService->getAll() as $item) {
+            $result[$item->getChannelAttributeCode()] = $item;
+        }
+
+        return $this->generalAttributeMapping = $result;
     }
 }

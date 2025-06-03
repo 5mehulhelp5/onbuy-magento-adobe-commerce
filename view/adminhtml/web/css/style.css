@@ -612,3 +612,7 @@ button.action * {
 .data-grid .m2e-variation-attributes a:hover {
     text-decoration: underline;
 }
+
+.onbuy_channel_attribute {
+    width: 45%;
+}

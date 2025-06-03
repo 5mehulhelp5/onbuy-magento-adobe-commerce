@@ -12,22 +12,19 @@ class ImagesProvider implements DataBuilderInterface
 
     private string $images = '';
 
-    private string $mainImage = '';
-
-    private string $galleryImages = '';
-
     public function getImages(\M2E\OnBuy\Model\Product $product): Images\Value
     {
-        $mainImage = $this->getMainImage($product);
+        $mainImage = $this->getMainImageUrl($product);
         $galleryImages = $this->getGalleryImages($product);
+        $hash = $this->generateImagesHash($galleryImages);
 
-        return new Images\Value($mainImage, $galleryImages);
+        return new Images\Value($mainImage, $galleryImages, $hash);
     }
 
     /**
      * @param \M2E\OnBuy\Model\Product $product
      *
-     * @return \M2E\Temu\Model\Product\DataProvider\Images\Image[]
+     * @return \M2E\OnBuy\Model\Product\DataProvider\Images\Image[]
      * @throws \M2E\OnBuy\Model\Exception\Logic
      */
     private function getGalleryImages(\M2E\OnBuy\Model\Product $product): array
@@ -40,26 +37,23 @@ class ImagesProvider implements DataBuilderInterface
             $result[] = new \M2E\OnBuy\Model\Product\DataProvider\Images\Image($productImage->getUrl());
         }
 
-        $this->galleryImages = $this->generateImagesHash($result);
-
         return $result;
     }
 
-    private function getMainImage(\M2E\OnBuy\Model\Product $product): string
+    private function getMainImageUrl(\M2E\OnBuy\Model\Product $product): string
     {
         $imageUrl = '';
         $mainImage = $product->getDescriptionTemplateSource()->getMainImage();
 
         if ($mainImage !== null) {
             $imageUrl = $mainImage->getUrl();
-            $this->mainImage = $mainImage->getHash();
         }
 
         return $imageUrl;
     }
 
     /**
-     * @param \M2E\Temu\Model\Product\DataProvider\Images\Image[] $images
+     * @param \M2E\OnBuy\Model\Product\DataProvider\Images\Image[] $images
      *
      * @return string
      */
@@ -73,15 +67,5 @@ class ImagesProvider implements DataBuilderInterface
         sort($flatImages);
 
         return \M2E\Core\Helper\Data::md5String(json_encode($flatImages));
-    }
-
-    public function getMetaData(): array
-    {
-        return [
-            self::NICK => [
-                'gallery_images' => $this->galleryImages,
-                'main_image' => $this->mainImage,
-            ],
-        ];
     }
 }

@@ -9,21 +9,12 @@ class DescriptionProvider implements DataBuilderInterface
     use DataBuilderHelpTrait;
 
     public const NICK = 'Description';
-    private string $onlineDescription = '';
 
     public function getDescription(\M2E\OnBuy\Model\Product $product): Description\Value
     {
         $data = $product->getRenderedDescription();
+        $hash = \M2E\Core\Helper\Data::md5String($data);
 
-        $this->onlineDescription = \M2E\Core\Helper\Data::md5String($data);
-
-        return new Description\Value($data);
-    }
-
-    public function getMetaData(): array
-    {
-        return [
-            self::NICK => ['online_description' => $this->onlineDescription],
-        ];
+        return new Description\Value($data, $hash);
     }
 }
