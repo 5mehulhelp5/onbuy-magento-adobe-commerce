@@ -9,7 +9,6 @@ use M2E\OnBuy\Model\ResourceModel\Product as ProductResource;
 
 class AddTemplateCategoryToProduct extends \M2E\Core\Model\Setup\Upgrade\Entity\AbstractFeature
 {
-
     public function execute(): void
     {
         $modifier = $this->createTableModifier(Tables::TABLE_NAME_PRODUCT);

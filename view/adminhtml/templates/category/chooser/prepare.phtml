@@ -9,8 +9,8 @@
         'OnBuy/Category/Chooser'
     ], () => {
         window.OnBuyCategoryChooserObj = new OnBuyCategoryChooser(
-            "<?= $block->getSiteId() ?>",
-            <?= $block->getAccountId() ?>
+            "<?= /* @noEscape */ $block->getSiteId() ?>",
+            <?= /* @noEscape */ $block->getAccountId() ?>
         );
     });
 </script>
@@ -22,8 +22,8 @@
                 "components": {
                     "category_search": {
                         "component": "M2E_OnBuy/js/Category/Chooser/Tabs/Search",
-                        "searchUrl": "<?= $block->getSearchUrl() ?>",
-                        "siteId": "<?= $block->getSiteId() ?>"
+                        "searchUrl": "<?= /* @noEscape */ $block->getSearchUrl() ?>",
+                        "siteId": "<?= /* @noEscape */ $block->getSiteId() ?>"
                     }
                 }
             }

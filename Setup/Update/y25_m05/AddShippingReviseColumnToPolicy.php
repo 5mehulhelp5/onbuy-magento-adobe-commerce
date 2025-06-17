@@ -6,6 +6,7 @@ namespace M2E\OnBuy\Setup\Update\y25_m05;
 
 use M2E\OnBuy\Helper\Module\Database\Tables;
 use M2E\OnBuy\Model\ResourceModel\Policy\Synchronization as SynchronizationResource;
+
 class AddShippingReviseColumnToPolicy extends \M2E\Core\Model\Setup\Upgrade\Entity\AbstractFeature
 {
     public function execute(): void

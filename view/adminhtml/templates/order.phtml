@@ -10,7 +10,7 @@
 
             <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
                 <strong class="admin__collapsible-title">
-                    <span><?= __(\M2E\OnBuy\Helper\Module::getChannelTitle() . ' Order'); ?> #<?= $block->order->getChannelOrderId() ?></span>
+                    <span><?= /* @noEscape */ __(\M2E\OnBuy\Helper\Module::getChannelTitle() . ' Order'); ?> #<?= /* @noEscape */ $block->order->getChannelOrderId() ?></span>
                 </strong>
                 <div class="form-buttons"></div>
             </div>
@@ -20,21 +20,21 @@
                     <table class="order-info form-list">
                         <tbody>
                         <tr>
-                            <td class="label"><?= __('Magento Order #') ?></td>
+                            <td class="label"><?= /* @noEscape */ __('Magento Order #') ?></td>
                             <td class="value">
                                 <strong>
                                     <?php
                                     if ($block->order->getMagentoOrderId() !== null) : ?>
                                         <a
-                                            href="<?= $block->getUrl(
+                                            href="<?= /* @noEscape */ $block->getUrl(
                                                 'sales/order/view/',
                                                 ['order_id' => $block->order->getMagentoOrderId()]
                                             ); ?>" target="_blank">
-                                            <?= $block->realMagentoOrderId; ?>
+                                            <?= /* @noEscape */ $block->realMagentoOrderId; ?>
                                         </a>
                                     <?php
                                     else : ?>
-                                        <?= __('N/A'); ?>
+                                        <?= /* @noEscape */ __('N/A'); ?>
                                     <?php
                                     endif; ?>
                                 </strong>
@@ -42,10 +42,10 @@
                         </tr>
 
                         <tr>
-                            <td class="label"><?= __('Purchase Create Time'); ?></td>
+                            <td class="label"><?= /* @noEscape */ __('Purchase Create Time'); ?></td>
                             <td class="value">
                                 <strong>
-                                    <?= $block->formatDate(
+                                    <?= /* @noEscape */ $block->formatDate(
                                         $block->order->getPurchaseDate()->format('Y-m-d H:i:s'),
                                         \IntlDateFormatter::MEDIUM,
                                         true
@@ -55,10 +55,10 @@
                         </tr>
 
                         <tr>
-                            <td class="label"><?= __('Purchase Update Time'); ?></td>
+                            <td class="label"><?= /* @noEscape */ __('Purchase Update Time'); ?></td>
                             <td class="value">
                                 <strong>
-                                    <?= $block->formatDate(
+                                    <?= /* @noEscape */ $block->formatDate(
                                         $block->order->getChannelUpdateDate()->format('Y-m-d H:i:s'),
                                         \IntlDateFormatter::MEDIUM,
                                         true
@@ -70,10 +70,10 @@
                         <?php
                         if ($block->order->getReservationStartDate() !== '') : ?>
                             <tr>
-                                <td class="label"><?= __('Reservation Time') ?></td>
+                                <td class="label"><?= /* @noEscape */ __('Reservation Time') ?></td>
                                 <td class="value">
                                     <strong>
-                                        <?= $block->formatDate(
+                                        <?= /* @noEscape */ $block->formatDate(
                                             $block->order->getReservationStartDate(),
                                             \IntlDateFormatter::MEDIUM,
                                             true
@@ -84,29 +84,28 @@
                         endif; ?>
 
                         <tr>
-                            <td class="label"><?= __('Order Status') ?></td>
+                            <td class="label"><?= /* @noEscape */ __('Order Status') ?></td>
                             <td class="value">
                                 <strong>
-                                    <span style="color: <?= $block->getOrderStatusColor() ?>">
-                                        <b><?= $block->getOrderStatusLabel() ?></b>
+                                    <span style="color: <?= /* @noEscape */ $block->getOrderStatusColor() ?>">
+                                        <b><?= /* @noEscape */ $block->getOrderStatusLabel() ?></b>
                                     </span>
                                 </strong>
                             </td>
                         </tr>
 
                         <tr>
-                            <td class="label"><?= __('Account'); ?></td>
+                            <td class="label"><?= /* @noEscape */ __('Account'); ?></td>
                             <td class="value">
                                 <strong>
 
                                     <?php
                                     if (!$block->order->getAccount()->getId()) { ?>
-                                        <span style="color: red;"><?= __('Deleted'); ?></span>
+                                        <span style="color: red;"><?= /* @noEscape */ __('Deleted'); ?></span>
 
                                     <?php
                                     } else { ?>
-
-                                        <a href="<?= $block->getAccountEditUrl() ?>" target="_blank"><?= \M2E\Core\Helper\Data::escapeHtml(
+                                        <a href="<?= /* @noEscape */ $block->getAccountEditUrl() ?>" target="_blank"><?= /* @noEscape */ \M2E\Core\Helper\Data::escapeHtml(
                                                 $block->order->getAccount()->getTitle()
                                             ); ?></a>
 
@@ -128,15 +127,15 @@
         <div class="fieldset-wrapper" id="magento_block_orders_buyer" style="min-height: 330px">
 
             <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
-                <strong class="admin__collapsible-title"><?= __('Buyer Information'); ?></strong>
+                <strong class="admin__collapsible-title"><?= /* @noEscape */ __('Buyer Information'); ?></strong>
                 <div style="float: right; margin-bottom: -15px; margin-top: -5px;">
-                    <?= $block->getChildHtml('edit_shipping_info'); ?>
+                    <?= /* @noEscape */ $block->getChildHtml('edit_shipping_info'); ?>
                 </div>
             </div>
 
             <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
                 <div id="shipping_address_container" class="hor-scroll">
-                    <?= $block->getChildHtml('shipping_address'); ?>
+                    <?= /* @noEscape */ $block->getChildHtml('shipping_address'); ?>
                 </div>
             </div>
 
@@ -150,7 +149,7 @@
             <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
                 <strong class="icon-head head-edit-form fieldset-legend">
                 <span>
-                    <?= __('Payment Information'); ?>
+                    <?= /* @noEscape */ __('Payment Information'); ?>
                 </span>
                 </strong>
                 <div class="form-buttons"></div>
@@ -163,7 +162,7 @@
                         <tbody>
 
                         <tr>
-                            <td class="label"><?= __('Order Currency'); ?></td>
+                            <td class="label"><?= /* @noEscape */ __('Order Currency'); ?></td>
                             <td class="value">
                                 <strong>
                                     <?= \M2E\Core\Helper\Data::escapeHtml(
@@ -173,13 +172,13 @@
 
                                 <?php
                                 if (!$block->isCurrencyAllowed()) {
-                                    echo '<br/><b>' . __('Attention!') . '</b> '
+                                    /* @noEscape */ echo '<br/><b>' . __('Attention!') . '</b> '
                                         . __('Order Currency is not enabled in Magento. Please, enable it in ')
                                         . '<i>' . __(
                                             'Stores > Settings > Configuration > General > Currency Setup.'
                                         ) . '</i>';
                                 } elseif (!$block->hasCurrencyConversionRate()) {
-                                    echo '<br/><b>' . __('Attention!') . '</b> '
+                                    /* @noEscape */ echo '<br/><b>' . __('Attention!') . '</b> '
                                         . __(
                                             'There\'s no rate for Order Currency in Magento. Please, add Currency convert rate in '
                                         )
@@ -189,15 +188,15 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="label"><?= __('Payment Date'); ?></td>
-                            <td class="value"><strong><?= $block->order->getPaymentDate() ? $block->formatDate(
+                            <td class="label"><?= /* @noEscape */ __('Payment Date'); ?></td>
+                            <td class="value"><strong><?= /* @noEscape */ $block->order->getPaymentDate() ? $block->formatDate(
                                         $block->order->getPaymentDate(),
                                         \IntlDateFormatter::MEDIUM,
                                         true
                                     ) : __('N/A'); ?></strong></td>
                         </tr>
                         <tr>
-                            <td class="label"><?= __('Payment Method'); ?></td>
+                            <td class="label"><?= /* @noEscape */ __('Payment Method'); ?></td>
                             <td class="value"><strong><?= \M2E\Core\Helper\Data::escapeHtml(
                                         $block->order->getPaymentMethod()
                                     ); ?></strong></td>
@@ -214,7 +213,7 @@
 
             <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
                 <strong class="icon-head head-edit-form fieldset-legend">
-                    <span><?= __('Shipping & Handling Information'); ?></span>
+                    <span><?= /* @noEscape */ __('Shipping & Handling Information'); ?></span>
                 </strong>
                 <div class="form-buttons"></div>
             </div>
@@ -226,15 +225,15 @@
                         <tbody>
 
                         <tr>
-                            <td class="label"><?= __('Ship By Date'); ?></td>
+                            <td class="label"><?= /* @noEscape */ __('Ship By Date'); ?></td>
                             <td class="value">
                                 <strong>
                                     <?php
                                     if (empty($block->order->getShippingDateTo())) : ?>
-                                        <?= __('N/A'); ?>
+                                        <?= /* @noEscape */ __('N/A'); ?>
                                     <?php
                                     else : ?>
-                                        <?= $block->formatDate(
+                                        <?= /* @noEscape */ $block->formatDate(
                                             $block->order->getShippingDateTo(),
                                             \IntlDateFormatter::MEDIUM,
                                             true
@@ -246,12 +245,12 @@
                         </tr>
 
                         <tr>
-                            <td class="label"><?= __('Shipping Service'); ?></td>
+                            <td class="label"><?= /* @noEscape */ __('Shipping Service'); ?></td>
                             <td class="value">
                                 <strong>
                                     <?php
                                     if ($block->order->getShippingService() == '') { ?>
-                                        <?= __('N/A'); ?>
+                                        <?= /* @noEscape */ __('N/A'); ?>
                                     <?php
                                     } else { ?>
                                         <?= \M2E\Core\Helper\Data::escapeHtml(
@@ -264,10 +263,10 @@
                         </tr>
 
                         <tr>
-                            <td class="label"><?= __('Shipping Cost'); ?></td>
+                            <td class="label"><?= /* @noEscape */ __('Shipping Cost'); ?></td>
                             <td class="value">
                                 <strong>
-                                    <?= $block->formatPrice(
+                                    <?= /* @noEscape */ $block->formatPrice(
                                         $block->order->getCurrency(),
                                         $block->order->getPriceDelivery()
                                     ) ?>
@@ -278,8 +277,8 @@
                         <?php
                         if ($block->order->getShippedDate() !== null) { ?>
                             <tr>
-                                <td class="label"><?= __('Shipping Time'); ?></td>
-                                <td class="value"><strong><?= $block->order->getShippedDate()->format(
+                                <td class="label"><?= /* @noEscape */ __('Shipping Time'); ?></td>
+                                <td class="value"><strong><?= /* @noEscape */ $block->order->getShippedDate()->format(
                                             'Y-m-d H:i:s'
                                         ); ?></strong></td>
                             </tr>
@@ -288,16 +287,15 @@
 
                         <?php
                         if (count($block->order->getShippingTrackingDetails())) { ?>
-
                             <tr>
                                 <td class="grid" colspan="2">
                                     <br/>
-                                    <h4><?= __('Tracking Details'); ?></h4>
+                                    <h4><?= /* @noEscape */ __('Tracking Details'); ?></h4>
                                     <table class="data-grid " cellpadding="0" cellspacing="0">
                                         <thead>
                                         <tr class="headings">
-                                            <th class="data-grid-th"><?= __('Carrier'); ?></th>
-                                            <th class="data-grid-th"><?= __('Number'); ?></th>
+                                            <th class="data-grid-th"><?= /* @noEscape */ __('Carrier'); ?></th>
+                                            <th class="data-grid-th"><?= /* @noEscape */ __('Number'); ?></th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -306,9 +304,9 @@
                                         foreach (
                                             $block->order->getShippingTrackingDetails() as $key => $trackingDetail
                                         ) { ?>
-                                            <tr class="<?= $key % 2 ? 'odd' : 'even' ?>">
-                                                <td><?= $trackingDetail['supplier_name']; ?></td>
-                                                <td><?= $trackingDetail['tracking_number']; ?></td>
+                                            <tr class="<?= /* @noEscape */ $key % 2 ? 'odd' : 'even' ?>">
+                                                <td><?= /* @noEscape */ $trackingDetail['supplier_name']; ?></td>
+                                                <td><?= /* @noEscape */ $trackingDetail['tracking_number']; ?></td>
                                             </tr>
                                         <?php
                                         } ?>
@@ -326,7 +324,7 @@
                             <tr>
                                 <td></td>
                                 <td class="value" style="padding-top: 10px;">
-                                    <?= $childHtml; ?>
+                                    <?= /* @noEscape */ $childHtml; ?>
                                 </td>
                             </tr>
                         <?php
@@ -347,12 +345,12 @@
         <div class="fieldset-wrapper" id="magento_block_orders_transaction">
             <div class="fieldset-wrapper-title admin__fieldset-wrapper-title" style="margin-bottom: 0">
                 <strong class="admin__collapsible-title">
-                    <span><?= __('Transaction Item(s)') ?></span>
+                    <span><?= /* @noEscape */ __('Transaction Item(s)') ?></span>
                 </strong>
             </div>
 
             <div class="fieldset-wrapper-content admin__fieldset-wrapper-content grid np">
-                <?= $block->getChildHtml('item'); ?>
+                <?= /* @noEscape */ $block->getChildHtml('item'); ?>
             </div>
         </div>
     </div>
@@ -361,13 +359,13 @@
     <div class="col-m-6" style="padding-right:21px">
         <div class="fieldset-wrapper" id="magento_block_orders_history">
             <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
-                <strong class="admin__collapsible-title"><span><?= __('Custom Notes'); ?></span></strong>
+                <strong class="admin__collapsible-title"><span><?= /* @noEscape */ __('Custom Notes'); ?></span></strong>
                 <div class="form-buttons"></div>
             </div>
 
             <div class="fieldset">
-                <?= $block->getChildHtml('order_note_grid'); ?>
-                <?= $block->getChildHtml('add_note_button'); ?>
+                <?= /* @noEscape */ $block->getChildHtml('order_note_grid'); ?>
+                <?= /* @noEscape */ $block->getChildHtml('add_note_button'); ?>
             </div>
 
         </div>
@@ -381,7 +379,7 @@
                 <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
                     <strong class="admin__collapsible-title">
                     <span>
-                        <?= __('Checkout Message From Buyer'); ?>
+                        <?= /* @noEscape */ __('Checkout Message From Buyer'); ?>
                     </span>
                     </strong>
                     <div class="form-buttons"></div>
@@ -398,14 +396,14 @@
         <div class="fieldset-wrapper" id="magento_block_orders_history">
 
             <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
-                <strong class="admin__collapsible-title"><span><?= __('Order Log'); ?></span></strong>
+                <strong class="admin__collapsible-title"><span><?= /* @noEscape */ __('Order Log'); ?></span></strong>
                 <div class="form-buttons"></div>
             </div>
 
             <a name="order_log"></a>
 
             <div class="fieldset">
-                <?= $block->getChildHtml('log'); ?>
+                <?= /* @noEscape */ $block->getChildHtml('log'); ?>
             </div>
 
         </div>
@@ -414,7 +412,7 @@
     <div class="col-m-6 fieldset-wrapper">
 
         <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
-            <strong><span><?= __('Order Totals'); ?></span></strong>
+            <strong><span><?= /* @noEscape */ __('Order Totals'); ?></span></strong>
         </div>
 
         <div class="OnBuy-order-totals">
@@ -423,10 +421,10 @@
 
                 <tr>
                     <td class="label">
-                        <?php echo __('Subtotal'); ?>
+                        <?php /* @noEscape */ echo __('Subtotal'); ?>
                     </td>
                     <td><span class="price">
-                            <?= $block->formatPrice(
+                            <?= /* @noEscape */ $block->formatPrice(
                                 $block->order->getCurrency(),
                                 $block->getSubtotalPrice()
                             ); ?>
@@ -436,17 +434,17 @@
 
                 <tr>
                     <td class="label">
-                        <?= __('Shipping & Handling'); ?>
+                        <?= /* @noEscape */ __('Shipping & Handling'); ?>
                     </td>
-                    <td><span class="price"><?= $block->formatPrice(
+                    <td><span class="price"><?= /* @noEscape */ $block->formatPrice(
                                 $block->order->getCurrency(),
                                 $block->getShippingPrice()
                             ); ?></span></td>
                 </tr>
 
                 <tr>
-                    <td class="label"><?= __('Tax') ?></td>
-                    <td><span class="price"><?= $block->formatPrice(
+                    <td class="label"><?= /* @noEscape */ __('Tax') ?></td>
+                    <td><span class="price"><?= /* @noEscape */ $block->formatPrice(
                                 $block->order->getCurrency(),
                                 $block->getTaxAmount()
                             ); ?></span></td>
@@ -454,8 +452,8 @@
 
                 <tr>
                     <?php if ($block->order->hasPriceDiscount()): ?>
-                        <td class="label"><?= __('Discount') ?></td>
-                        <td><span class="price"><?= $block->formatPrice(
+                        <td class="label"><?= /* @noEscape */ __('Discount') ?></td>
+                        <td><span class="price"><?= /* @noEscape */ $block->formatPrice(
                                     $block->order->getCurrency(),
                                     $block->order->getPriceDiscount()
                                 ); ?></span></td>
@@ -468,9 +466,9 @@
 
                 <tr>
                     <td class="label">
-                        <strong><big><?= __('Grand Total') ?></big></strong>
+                        <strong><big><?= /* @noEscape */ __('Grand Total') ?></big></strong>
                     </td>
-                    <td class="emph"><big><strong><span class="price"><?= $block->formatPrice(
+                    <td class="emph"><big><strong><span class="price"><?= /* @noEscape */ $block->formatPrice(
                                         $block->order->getCurrency(),
                                         $block->order->getGrandTotalPrice()
                                     ); ?></span></strong></big></td>
