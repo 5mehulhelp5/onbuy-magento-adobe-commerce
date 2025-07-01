@@ -23,14 +23,12 @@ class Config extends \M2E\OnBuy\Plugin\AbstractPlugin
     private Module $moduleHelper;
     /** @var \M2E\OnBuy\Helper\Module\Wizard */
     private Module\Wizard $moduleWizardHelper;
-    private \M2E\OnBuy\Model\Module $module;
 
     public function __construct(
         Module $moduleHelper,
         Module\Wizard $moduleWizardHelper,
         \M2E\OnBuy\Helper\Module\Maintenance $moduleMaintenanceHelper,
         \M2E\OnBuy\Model\Registry\Manager $registry,
-        \M2E\OnBuy\Model\Module $module,
         \Magento\Backend\Model\Menu\Item\Factory $itemFactory,
         \M2E\OnBuy\Helper\Data\Cache\Permanent $cache,
         \M2E\Core\Helper\Magento $magentoHelper
@@ -42,12 +40,11 @@ class Config extends \M2E\OnBuy\Plugin\AbstractPlugin
         $this->moduleMaintenanceHelper = $moduleMaintenanceHelper;
         $this->moduleHelper = $moduleHelper;
         $this->moduleWizardHelper = $moduleWizardHelper;
-        $this->module = $module;
     }
 
     protected function canExecute(): bool
     {
-        return $this->module->areImportantTablesExist();
+        return $this->isModuleTablesExist();
     }
 
     public function aroundGetMenu(\Magento\Backend\Model\Menu\Config $interceptor, \Closure $callback, ...$arguments)

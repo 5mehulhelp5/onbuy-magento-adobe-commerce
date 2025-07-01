@@ -594,7 +594,7 @@ JS
         return $result['items'];
     }
 
-    protected function getAddNewUrl($nick, int $accountId = null, int $siteId = null)
+    protected function getAddNewUrl($nick, ?int $accountId = null, ?int $siteId = null)
     {
         $params = [
             'wizard' => $this->getRequest()->getParam('wizard'),

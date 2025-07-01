@@ -333,4 +333,177 @@ class Repository
 
         return array_values($collection->getItems());
     }
+
+    public function getUnshippedCountForRange(
+        \DateTimeInterface $from,
+        \DateTimeInterface $to
+    ): int {
+        $connection = $this->orderResource->getConnection();
+
+        $orderTable = $this->orderCollectionFactory->create()->getMainTable();
+        $orderItemTable = $this->orderItemCollectionFactory->create()->getMainTable();
+
+        $minDate = $from->format('Y-m-d H:i:s');
+        $maxDate = $to->format('Y-m-d H:i:s');
+
+        $havingCondition = sprintf(
+            'MIN(i.expected_dispatch_date) BETWEEN %s AND %s',
+            $connection->quote($minDate),
+            $connection->quote($maxDate)
+        );
+
+        $select = $connection->select()
+                             ->from(['o' => $orderTable], ['order_id' => 'o.id'])
+                             ->join(['i' => $orderItemTable], 'i.order_id = o.id', [])
+                             ->where('o.order_status = ?', \M2E\OnBuy\Model\Order::STATUS_UNSHIPPED)
+                             ->where('i.expected_dispatch_date IS NOT NULL')
+                             ->group('o.id')
+                             ->having($havingCondition);
+
+        $result = $connection->fetchCol($select);
+        return count($result);
+    }
+
+    public function getLateUnshippedCount(): int
+    {
+        $currentDate = \M2E\Core\Helper\Date::createCurrentGmt();
+
+        $connection = $this->orderResource->getConnection();
+
+        $orderTable = $this->orderCollectionFactory->create()->getMainTable();
+        $orderItemTable = $this->orderItemCollectionFactory->create()->getMainTable();
+
+        $select = $connection->select()
+                             ->from(['o' => $orderTable], ['order_id' => 'o.id'])
+                             ->join(['i' => $orderItemTable], 'i.order_id = o.id', [])
+                             ->where('o.order_status = ?', \M2E\OnBuy\Model\Order::STATUS_UNSHIPPED)
+                             ->where('i.expected_dispatch_date IS NOT NULL')
+                             ->group('o.id')
+                             ->having('MIN(i.expected_dispatch_date) < ?', $currentDate->format('Y-m-d H:i:s'));
+
+        $result = $connection->fetchCol($select);
+        return count($result);
+    }
+
+    public function getUnshippedCountFrom(\DateTimeInterface $from): int
+    {
+        $connection = $this->orderResource->getConnection();
+
+        $orderTable = $this->orderCollectionFactory->create()->getMainTable();
+        $orderItemTable = $this->orderItemCollectionFactory->create()->getMainTable();
+
+        $select = $connection->select()
+                             ->from(['o' => $orderTable], ['order_id' => 'o.id'])
+                             ->join(['i' => $orderItemTable], 'i.order_id = o.id', [])
+                             ->where('o.order_status = ?', \M2E\OnBuy\Model\Order::STATUS_UNSHIPPED)
+                             ->where('i.expected_dispatch_date IS NOT NULL')
+                             ->group('o.id')
+                             ->having('MIN(i.expected_dispatch_date) >= ?', $from->format('Y-m-d H:i:s'));
+
+        $result = $connection->fetchCol($select);
+        return count($result);
+    }
+
+    /**
+     * @return \M2E\Core\Model\Dashboard\Sales\Point[]
+     */
+    public function getAmountPoints(
+        \DateTimeInterface $from,
+        \DateTimeInterface $to,
+        bool $isHourlyInterval
+    ): array {
+        return $this->getPoints('SUM(price_total)', $from, $to, $isHourlyInterval);
+    }
+
+    /**
+     * @return \M2E\Core\Model\Dashboard\Sales\Point[]
+     */
+    public function getQuantityPoints(
+        \DateTimeInterface $from,
+        \DateTimeInterface $to,
+        bool $isHourlyInterval
+    ): array {
+        return $this->getPoints('COUNT(*)', $from, $to, $isHourlyInterval);
+    }
+
+    /**
+     * @return \M2E\Core\Model\Dashboard\Sales\Point[]
+     */
+    private function getPoints(
+        string $valueColumn,
+        \DateTimeInterface $from,
+        \DateTimeInterface $to,
+        bool $isHourlyInterval
+    ): array {
+        $collection = $this->orderCollectionFactory->create();
+
+        $collection->addFieldToFilter(\M2E\OnBuy\Model\ResourceModel\Order::COLUMN_ORDER_STATUS, ['in' => [
+            \M2E\OnBuy\Model\Order::STATUS_UNSHIPPED,
+            \M2E\OnBuy\Model\Order::STATUS_SHIPPED,
+            \M2E\OnBuy\Model\Order::STATUS_PARTIALLY_SHIPPED
+        ]]);
+        $collection->addFieldToFilter(OrderResource::COLUMN_PURCHASE_DATE, [
+            'from' => $from->format('Y-m-d H:i:s'),
+            'to'   => $to->format('Y-m-d H:i:s')
+        ]);
+
+        $select = $collection->getSelect();
+        $select->reset('columns');
+        $select->columns(
+            [
+                sprintf(
+                    'DATE_FORMAT(%s, "%s") AS date',
+                    OrderResource::COLUMN_PURCHASE_DATE,
+                    $isHourlyInterval ? '%Y-%m-%d %H' : '%Y-%m-%d'
+                ),
+                sprintf('%s AS value', $valueColumn),
+            ]
+        );
+
+        if ($isHourlyInterval) {
+            $select->group(sprintf('HOUR(main_table.%s)', OrderResource::COLUMN_PURCHASE_DATE));
+        }
+        $select->group(sprintf('DAY(main_table.%s)', OrderResource::COLUMN_PURCHASE_DATE));
+        $select->order('date');
+
+        $queryData = $select->query()->fetchAll();
+
+        $keyValueData = array_combine(
+            array_column($queryData, 'date'),
+            array_column($queryData, 'value')
+        );
+
+        return $this->makePoint($keyValueData, $from, $to, $isHourlyInterval);
+    }
+
+    /**
+     * @return \M2E\Core\Model\Dashboard\Sales\Point[]
+     */
+    private function makePoint(
+        array $data,
+        \DateTimeInterface $from,
+        \DateTimeInterface $to,
+        bool $isHourlyInterval
+    ): array {
+        $intervalFormat = $isHourlyInterval ? 'PT1H' : 'P1D';
+        $dateFormat = $isHourlyInterval ? 'Y-m-d H' : 'Y-m-d';
+
+        $period = new \DatePeriod(
+            $from,
+            new \DateInterval($intervalFormat),
+            $to
+        );
+
+        $points = [];
+        foreach ($period as $value) {
+            $pointValue = (float)($data[$value->format($dateFormat)] ?? 0);
+            $pointDate = clone $value;
+            $points[] = new \M2E\Core\Model\Dashboard\Sales\Point(
+                $pointValue,
+                $pointDate
+            );
+        }
+
+        return $points;
+    }
 }

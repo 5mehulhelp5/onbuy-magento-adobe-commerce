@@ -18,8 +18,8 @@ class UnmanagedProduct extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
         \M2E\OnBuy\Model\Magento\Product\CacheFactory $productCacheFactory,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        ?\Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        ?\Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         parent::__construct(

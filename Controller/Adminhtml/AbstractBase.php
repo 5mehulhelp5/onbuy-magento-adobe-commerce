@@ -56,7 +56,7 @@ abstract class AbstractBase extends Action
 
     //########################################
 
-    protected function isAjax(\Magento\Framework\App\RequestInterface $request = null)
+    protected function isAjax(?\Magento\Framework\App\RequestInterface $request = null)
     {
         if ($request === null) {
             $request = $this->getRequest();

@@ -15,7 +15,7 @@ class UnmanagedListing extends AbstractForm
         \M2E\OnBuy\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
-        \M2E\OnBuy\Model\Account $account = null,
+        ?\M2E\OnBuy\Model\Account $account = null,
         array $data = []
     ) {
         $this->magentoAttributeHelper = $magentoAttributeHelper;

@@ -20,7 +20,7 @@ class Tabs extends \M2E\OnBuy\Block\Adminhtml\Magento\Tabs\AbstractTabs
         \M2E\OnBuy\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Json\EncoderInterface $jsonEncoder,
         \Magento\Backend\Model\Auth\Session $authSession,
-        \M2E\OnBuy\Model\Account $account = null,
+        ?\M2E\OnBuy\Model\Account $account = null,
         array $data = []
     ) {
         $this->account = $account;

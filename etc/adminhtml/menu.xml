@@ -10,6 +10,11 @@
         <add id="M2E_OnBuy::onbuy" title="OnBuy" module="M2E_OnBuy" sortOrder="31"
              dependsOnModule="M2E_OnBuy" resource="M2E_OnBuy::onbuy"/>
 
+        <!-- Dashboard -->
+
+        <add id="M2E_OnBuy::overview" module="M2E_OnBuy" sortOrder="5" parent="M2E_OnBuy::onbuy" title="Overview" resource="M2E_OnBuy::onbuy"/>
+        <add id="M2E_OnBuy::onbuy_dashboard" title="Dashboard" module="M2E_OnBuy" sortOrder="10" parent="M2E_OnBuy::overview" action="m2e_onbuy/dashboard/index" resource="M2E_OnBuy::onbuy"/>
+
         <!-- Listing -->
 
         <add id="M2E_OnBuy::listings" module="M2E_OnBuy" sortOrder="10" parent="M2E_OnBuy::onbuy"

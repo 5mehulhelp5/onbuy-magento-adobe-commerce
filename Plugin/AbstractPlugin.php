@@ -52,6 +52,14 @@ abstract class AbstractPlugin
         return true;
     }
 
+    protected function isModuleTablesExist(): bool
+    {
+        /** @var \M2E\OnBuy\Model\Module $module */
+        $module = $this->getService(\M2E\OnBuy\Model\Module::class);
+
+        return $module->areImportantTablesExist();
+    }
+
     private function getService(string $name): object
     {
         return \Magento\Framework\App\ObjectManager::getInstance()->get($name);
