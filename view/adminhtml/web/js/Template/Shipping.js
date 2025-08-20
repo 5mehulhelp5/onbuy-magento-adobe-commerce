@@ -3,7 +3,7 @@ define([
     'M2ECore/Plugin/Messages',
 ], function($t, MessagesObj) {
 
-    window.OnBuyTemplateShipping = Class.create({
+    window.OnBuyTemplateShipping = Class.create(Common,{
 
         selectedAccountId: null,
         siteId: null,
@@ -36,6 +36,10 @@ define([
                 self.setSiteId($('site_id').value || null);
                 self.updateDeliveryTemplates(false);
             });
+
+            jQuery('#handling_time_mode')
+                    .on('change', this.handlingTimeChange.bind(this))
+                    .trigger('change');
         },
 
         hasAccountId: function() {
@@ -167,6 +171,18 @@ define([
 
             if (this.hasDeliveryTemplateId()) {
                 select.val(this.getDeliveryTemplateId());
+            }
+        },
+
+        handlingTimeChange: function (event) {
+            const el = event.target;
+
+            if (el.value == OnBuy.php.constant('\\M2E\\OnBuy\\Model\\Policy\\Shipping::HANDLING_TIME_MODE_VALUE')) {
+                this.updateHiddenValue(el, jQuery('#handling_time')[0]);
+            }
+
+            if (el.value == OnBuy.php.constant('\\M2E\\OnBuy\\Model\\Policy\\Shipping::HANDLING_TIME_MODE_ATTRIBUTE')) {
+                this.updateHiddenValue(el, jQuery('#handling_time_attribute')[0]);
             }
         },
 

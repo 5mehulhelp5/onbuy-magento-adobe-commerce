@@ -84,6 +84,25 @@ class DataProvider
         return $result;
     }
 
+    public function getHandlingTime(): DataProvider\HandlingTime\Result
+    {
+        if ($this->hasResult(DataProvider\HandlingTimeProvider::NICK)) {
+            /** @var DataProvider\HandlingTime\Result */
+            return $this->getResult(DataProvider\HandlingTimeProvider::NICK);
+        }
+
+        /** @var \M2E\OnBuy\Model\Product\DataProvider\HandlingTimeProvider $builder */
+        $builder = $this->getBuilder(\M2E\OnBuy\Model\Product\DataProvider\HandlingTimeProvider::NICK);
+
+        $value = $builder->getHandlingTime($this->product);
+
+        $result = DataProvider\HandlingTime\Result::success($value, $builder->getWarningMessages());
+
+        $this->addResult(DataProvider\HandlingTimeProvider::NICK, $result);
+
+        return $result;
+    }
+
     public function getTitle(): DataProvider\Title\Result
     {
         if ($this->hasResult(DataProvider\TitleProvider::NICK)) {

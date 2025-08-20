@@ -139,6 +139,12 @@ class ProductHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
                 ['unsigned' => true, 'nullable' => true, 'default' => null]
             )
             ->addColumn(
+                ProductResource::COLUMN_ONLINE_HANDLING_TIME,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'default' => null]
+            )
+            ->addColumn(
                 ProductResource::COLUMN_ONLINE_PRODUCT_URL,
                 Table::TYPE_TEXT,
                 250,

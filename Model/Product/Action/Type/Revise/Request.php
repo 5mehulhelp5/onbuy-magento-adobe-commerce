@@ -35,6 +35,12 @@ class Request extends \M2E\OnBuy\Model\Product\Action\AbstractRequest
             $this->metadata['delivery_template_id'] = $deliveryTemplateId;
         }
 
+        if ($actionConfigurator->isShippingAllowed()) {
+            $handlingTime = $dataProvider->getHandlingTime()->getValue();
+            $request['handling_time'] = $handlingTime;
+            $this->metadata['handling_time'] = $handlingTime;
+        }
+
         if ($product->isProductCreator() && $actionConfigurator->isDetailsAllowed()) {
             $attributes = $dataProvider->getProductAttributesData()->getValue();
             $request['opc'] = $product->getOpc();

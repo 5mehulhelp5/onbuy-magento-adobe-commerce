@@ -7,7 +7,7 @@ namespace M2E\OnBuy\Model\Connector;
 class Protocol implements \M2E\Core\Model\Connector\ProtocolInterface
 {
     public const COMPONENT_NAME = 'OnBuy';
-    public const COMPONENT_VERSION = 1;
+    public const COMPONENT_VERSION = 2;
 
     public function getComponent(): string
     {

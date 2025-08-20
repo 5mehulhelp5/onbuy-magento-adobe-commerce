@@ -11,6 +11,9 @@ class Shipping extends \M2E\OnBuy\Model\ResourceModel\ActiveRecord\AbstractModel
     public const COLUMN_SITE_ID = 'site_id';
     public const COLUMN_TITLE = 'title';
     public const COLUMN_DELIVERY_TEMPLATE_ID = 'delivery_template_id';
+    public const COLUMN_HANDLING_TIME = 'handling_time';
+    public const COLUMN_HANDLING_TIME_MODE = 'handling_time_mode';
+    public const COLUMN_HANDLING_TIME_ATTRIBUTE = 'handling_time_attribute';
     public const COLUMN_UPDATE_DATE = 'update_date';
     public const COLUMN_CREATE_DATE = 'create_date';
 

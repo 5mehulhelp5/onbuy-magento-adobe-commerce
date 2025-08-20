@@ -81,6 +81,10 @@ class Response extends \M2E\OnBuy\Model\Product\Action\Type\AbstractResponse
             $product->setOnlineCategoryAttributesData($requestMetadata['attributes_hash']);
         }
 
+        if (isset($requestMetadata['handling_time'])) {
+            $product->setOnlineHandlingTime($requestMetadata['handling_time']);
+        }
+
         $this->productRepository->save($product);
     }
 

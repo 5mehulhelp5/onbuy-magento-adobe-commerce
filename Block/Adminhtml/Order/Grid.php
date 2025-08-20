@@ -15,8 +15,10 @@ class Grid extends AbstractGrid
     private \M2E\OnBuy\Model\Order\Item\Repository $orderItemRepository;
     private \M2E\OnBuy\Model\Order\Repository $orderRepository;
     private \M2E\OnBuy\Model\Order\Note\Repository $noteRepository;
+    private \M2E\OnBuy\Model\ResourceModel\Order\Item $orderItemResource;
 
     public function __construct(
+        \M2E\OnBuy\Model\ResourceModel\Order\Item $orderItemResource,
         \M2E\OnBuy\Model\Order\Item\Repository $orderItemRepository,
         \M2E\OnBuy\Model\Order\Log\ServiceFactory $orderLogServiceFactory,
         \M2E\Core\Helper\Url $urlHelper,
@@ -28,6 +30,7 @@ class Grid extends AbstractGrid
         \M2E\OnBuy\Model\Currency $currency,
         array $data = []
     ) {
+        $this->orderItemResource = $orderItemResource;
         $this->orderStatusHelper = $orderStatusHelper;
         $this->urlHelper = $urlHelper;
         $this->currency = $currency;
@@ -107,6 +110,7 @@ class Grid extends AbstractGrid
                 'filter_time' => true,
                 'width' => '170px',
                 'frame_callback' => [$this, 'callbackShippingDateTo'],
+                'filter_condition_callback' => [$this, 'callbackFilterShippingDateTo'],
             ]
         );
 
@@ -445,6 +449,29 @@ HTML;
             $this->orderStatusHelper->getStatusColor($status),
             $this->orderStatusHelper->getStatusLabel($status),
         );
+    }
+
+    public function callbackFilterShippingDateTo($collection, $column)
+    {
+        $value = $column->getFilter()->getValue();
+        if (empty($value)) {
+            return;
+        }
+
+        $orderItemTable = $this->orderItemResource->getMainTable();
+        $subSelect = $this->orderItemResource->getConnection()->select()
+                                             ->from(['oi_sub' => $orderItemTable], ['order_id'])
+                                             ->group('oi_sub.order_id');
+
+        if (!empty($value['from'])) {
+            $subSelect->having('MIN(oi_sub.expected_dispatch_date) >= ?', $value['from']->format('Y-m-d H:i:s'));
+        }
+
+        if (!empty($value['to'])) {
+            $subSelect->having('MIN(oi_sub.expected_dispatch_date) <= ?', $value['to']->format('Y-m-d H:i:s'));
+        }
+
+        $collection->addFieldToFilter('main_table.id', ['in' => $subSelect]);
     }
 
     protected function callbackFilterOnBuyOrderId($collection, $column)

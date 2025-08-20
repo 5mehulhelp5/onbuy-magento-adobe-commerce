@@ -315,7 +315,11 @@ class ActionCalculator
         $deliveryTemplateId = $product->getDataProvider()->getDelivery()->getValue();
         $onlineDelivery = $product->getOnlineDeliveryTemplateId();
 
-        return $deliveryTemplateId !== $onlineDelivery;
+        $handlingTime = $product->getDataProvider()->getHandlingTime()->getValue();
+        $onlineHandlingTime = $product->getOnlineHandlingTime();
+
+        return $deliveryTemplateId !== $onlineDelivery
+            || $handlingTime !== $onlineHandlingTime;
     }
 
     private function updateConfiguratorAddDetails(

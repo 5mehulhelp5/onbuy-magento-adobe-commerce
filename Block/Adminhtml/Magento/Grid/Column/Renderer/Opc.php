@@ -12,9 +12,18 @@ class Opc extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
     {
         $opc = $row->getData('opc');
         $url = $row->getData('online_product_url');
+        $status = (int)$row->getData('status');
 
-        $creator = $row->getData('is_product_creator') ?
-            '<br><span style="font-size: 10px; color: grey;">' . __('Product Creator') . '</span>' : '';
+        $creator = '';
+        if ($row->getData('is_product_creator')) {
+            if ($status === \M2E\OnBuy\Model\Product::STATUS_LISTED) {
+                $creator = '<br><span style="font-size: 10px; color: grey;">' . __('Product Creator') . '</span>';
+            } else {
+                $creator = '<br><span style="color: gray;">' . \M2E\OnBuy\Model\Product::getStatusTitle(
+                    \M2E\OnBuy\Model\Product::STATUS_NOT_LISTED
+                ) . '</span>';
+            }
+        }
 
         return '<a href="' . $url . '" target="_blank">' . $opc . '</a>' . $creator;
     }

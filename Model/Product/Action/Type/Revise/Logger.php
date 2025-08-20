@@ -18,6 +18,7 @@ class Logger
     private string $onlineCategoryAttributesData;
     private string $onlineMainImage;
     private string $onlineAdditionalImages;
+    private ?int $onlineHandlingTime;
 
     public function __construct(
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency
@@ -36,6 +37,7 @@ class Logger
         $this->onlineCategoryAttributesData = $product->getOnlineCategoryAttributesData();
         $this->onlineMainImage = $product->getOnlineMainImage();
         $this->onlineAdditionalImages = $product->getOnlineAdditionalImages();
+        $this->onlineHandlingTime = $product->getOnlineHandlingTime();
     }
 
     public function collectSuccessMessages(\M2E\OnBuy\Model\Product $product): array
@@ -47,6 +49,7 @@ class Logger
         $this->generateMessageAboutChangeDescription($product);
         $this->generateMessageAboutChangeCategories($product);
         $this->generateMessageAboutChangeImages($product);
+        $this->generateMessageAboutChangeHandlingTime($product);
 
         return $this->logs;
     }
@@ -118,6 +121,13 @@ class Logger
             || $this->onlineAdditionalImages !== $product->getOnlineAdditionalImages()
         ) {
             $this->logs[] = 'Item was revised: Product Images were updated.';
+        }
+    }
+
+    private function generateMessageAboutChangeHandlingTime(\M2E\OnBuy\Model\Product $product): void
+    {
+        if ($this->onlineHandlingTime !== $product->getOnlineHandlingTime()) {
+            $this->logs[] = 'Item was revised: Handling Time was updated.';
         }
     }
 }

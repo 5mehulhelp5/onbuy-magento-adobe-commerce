@@ -6,8 +6,10 @@ namespace M2E\OnBuy\Setup;
 
 class MagentoCoreConfigSettings implements \M2E\Core\Model\Setup\MagentoCoreConfigSettingsInterface
 {
+    public const MAGENTO_CORE_CONFIG_PREFIX = 'm2e_onbuy';
+
     public function getConfigKeyPrefix(): string
     {
-        return \M2E\OnBuy\Helper\Module\Database\Tables::PREFIX;
+        return self::MAGENTO_CORE_CONFIG_PREFIX;
     }
 }

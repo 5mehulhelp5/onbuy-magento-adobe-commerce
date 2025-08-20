@@ -20,14 +20,20 @@ class ShippingFactory
         \M2E\OnBuy\Model\Account $account,
         int $siteId,
         string $title,
-        int $deliveryTemplateId
+        int $deliveryTemplateId,
+        int $handlingTimeMode,
+        int $handlingTime,
+        string $handlingTimeAttribute
     ): Shipping {
         $model = $this->createEmpty();
         $model->create(
             $account->getId(),
             $siteId,
             $title,
-            $deliveryTemplateId
+            $deliveryTemplateId,
+            $handlingTimeMode,
+            $handlingTime,
+            $handlingTimeAttribute
         );
 
         return $model;

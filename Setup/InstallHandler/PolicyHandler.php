@@ -425,6 +425,24 @@ class PolicyHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
                 ['nullable' => false]
             )
             ->addColumn(
+                ShippingResource::COLUMN_HANDLING_TIME,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true],
+            )
+            ->addColumn(
+                ShippingResource::COLUMN_HANDLING_TIME_MODE,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'default' => 0]
+            )
+            ->addColumn(
+                ShippingResource::COLUMN_HANDLING_TIME_ATTRIBUTE,
+                Table::TYPE_TEXT,
+                255,
+                ['default' => null]
+            )
+            ->addColumn(
                 ShippingResource::COLUMN_UPDATE_DATE,
                 Table::TYPE_DATETIME,
                 null,

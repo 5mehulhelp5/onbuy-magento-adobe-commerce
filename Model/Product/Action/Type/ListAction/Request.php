@@ -55,7 +55,8 @@ class Request extends \M2E\OnBuy\Model\Product\Action\AbstractRequest
             'qty' => $dataProvider->getQty()->getValue(),
             'condition' => $product->getListing()->getCondition(),
             'condition_notes' => [],
-            'delivery_template_id' => $dataProvider->getDelivery()->getValue()
+            'delivery_template_id' => $dataProvider->getDelivery()->getValue(),
+            'handling_time' => $dataProvider->getHandlingTime()->getValue(),
         ];
 
         if (
@@ -84,6 +85,7 @@ class Request extends \M2E\OnBuy\Model\Product\Action\AbstractRequest
             'condition' => $product->getListing()->getCondition(),
             'condition_notes' => [],
             'delivery_template_id' => $dataProvider->getDelivery()->getValue(),
+            'handling_time' => $dataProvider->getHandlingTime()->getValue(),
             'title' => $dataProvider->getTitle()->getValue(),
             'description' => $dataProvider->getDescription()->getValue()->description,
             'bullet_points' => [],
@@ -126,6 +128,7 @@ class Request extends \M2E\OnBuy\Model\Product\Action\AbstractRequest
         $this->metadata['attributes_hash'] = $attributes->hash;
         $this->metadata['main_image'] = $request['main_image'];
         $this->metadata['additional_images_hash'] = $dataProvider->getImages()->getValue()->hashGalleryImages;
+        $this->metadata['handling_time'] = $request['handling_time'];
 
         return $request;
     }

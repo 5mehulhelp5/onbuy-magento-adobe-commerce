@@ -16,7 +16,8 @@ class Factory
         ImagesProvider::NICK => ImagesProvider::class,
         CategoryProvider::NICK => CategoryProvider::class,
         ProductAttributesProvider::NICK => ProductAttributesProvider::class,
-        BrandProvider::NICK => BrandProvider::class
+        BrandProvider::NICK => BrandProvider::class,
+        HandlingTimeProvider::NICK => HandlingTimeProvider::class
     ];
 
     private \Magento\Framework\ObjectManagerInterface $objectManager;

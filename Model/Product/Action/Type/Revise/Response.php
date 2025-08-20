@@ -86,6 +86,16 @@ class Response extends \M2E\OnBuy\Model\Product\Action\Type\AbstractResponse
             }
         }
 
+        if (isset($requestMetadata['handling_time'])) {
+            $shippingUpdateStatus = ($productResponseData['qty'] || $productResponseData['price']);
+            $requestMetadataHandlingTime = (int)$requestMetadata['handling_time'];
+            if (!$shippingUpdateStatus) {
+                $this->getLogBuffer()->addFail('Handling Time failed to be revised.');
+            } else {
+                $product->setOnlineHandlingTime($requestMetadataHandlingTime);
+            }
+        }
+
         if (
             $this->isTriedUpdateDetails(
                 isset($productResponseData['details']),

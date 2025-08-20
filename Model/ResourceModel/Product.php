@@ -22,6 +22,7 @@ class Product extends \M2E\OnBuy\Model\ResourceModel\ActiveRecord\AbstractModel
     public const COLUMN_ONLINE_CATEGORY_ID = 'online_category_id';
     public const COLUMN_ONLINE_CATEGORIES_ATTRIBUTES_DATA = 'online_categories_attributes_data';
     public const COLUMN_ONLINE_DELIVERY_TEMPLATE_ID = 'online_delivery_template_id';
+    public const COLUMN_ONLINE_HANDLING_TIME = 'online_handling_time';
     public const COLUMN_ONLINE_PRODUCT_URL = 'online_product_url';
     public const COLUMN_ONLINE_GROUP_SKU = 'online_group_sku';
     public const COLUMN_OPC = 'opc';

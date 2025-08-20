@@ -8,6 +8,10 @@ use M2E\OnBuy\Model\ResourceModel\Policy\Shipping as ShippingResource;
 
 class Shipping extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel implements PolicyInterface
 {
+    public const HANDLING_TIME_MODE_NOT_SET = 0;
+    public const HANDLING_TIME_MODE_VALUE = 1;
+    public const HANDLING_TIME_MODE_ATTRIBUTE = 2;
+
     private \M2E\OnBuy\Model\Account\Repository $accountRepository;
     private \M2E\OnBuy\Model\ResourceModel\Listing\CollectionFactory $listingCollectionFactory;
     private \M2E\OnBuy\Model\Account $account;
@@ -37,12 +41,25 @@ class Shipping extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel implements Po
         int $accountId,
         int $siteId,
         string $title,
-        int $deliveryTemplateId
+        int $deliveryTemplateId,
+        int $handlingTimeMode,
+        int $handlingTime,
+        string $handlingTimeAttribute
     ): self {
         $this->setData(ShippingResource::COLUMN_ACCOUNT_ID, $accountId)
              ->setData(ShippingResource::COLUMN_SITE_ID, $siteId)
              ->setTitle($title)
-             ->setDeliveryTemplateId($deliveryTemplateId);
+             ->setDeliveryTemplateId($deliveryTemplateId)
+             ->setHandlingTimeMode($handlingTimeMode)
+             ->setHandlingTime($handlingTime)
+             ->setHandlingTimeAttribute($handlingTimeAttribute);
+
+        return $this;
+    }
+
+    public function setTitle(string $title): self
+    {
+        $this->setData(ShippingResource::COLUMN_TITLE, $title);
 
         return $this;
     }
@@ -67,18 +84,47 @@ class Shipping extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel implements Po
         return (int)$this->getData(ShippingResource::COLUMN_DELIVERY_TEMPLATE_ID);
     }
 
-    public function setTitle(string $title): self
-    {
-        $this->setData(ShippingResource::COLUMN_TITLE, $title);
-
-        return $this;
-    }
-
     public function setDeliveryTemplateId(int $deliveryTemplateId): self
     {
         $this->setData(ShippingResource::COLUMN_DELIVERY_TEMPLATE_ID, $deliveryTemplateId);
 
         return $this;
+    }
+
+    public function setHandlingTime(int $handlingTime): self
+    {
+        $this->setData(ShippingResource::COLUMN_HANDLING_TIME, $handlingTime);
+
+        return $this;
+    }
+
+    public function getHandlingTime(): int
+    {
+        return (int)$this->getData(ShippingResource::COLUMN_HANDLING_TIME);
+    }
+
+    public function setHandlingTimeMode(int $handlingTimeMode): self
+    {
+        $this->setData(ShippingResource::COLUMN_HANDLING_TIME_MODE, $handlingTimeMode);
+
+        return $this;
+    }
+
+    public function getHandlingTimeMode(): int
+    {
+        return (int)$this->getData(ShippingResource::COLUMN_HANDLING_TIME_MODE);
+    }
+
+    public function setHandlingTimeAttribute(string $handlingTimeAttribute): self
+    {
+        $this->setData(ShippingResource::COLUMN_HANDLING_TIME_ATTRIBUTE, $handlingTimeAttribute);
+
+        return $this;
+    }
+
+    public function getHandlingTimeAttribute(): string
+    {
+        return (string)$this->getData(ShippingResource::COLUMN_HANDLING_TIME_ATTRIBUTE);
     }
 
     public function getAccount(): \M2E\OnBuy\Model\Account

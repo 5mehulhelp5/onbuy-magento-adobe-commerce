@@ -563,6 +563,20 @@ class Product extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
         return $this;
     }
 
+    public function getOnlineHandlingTime(): ?int
+    {
+        $value = $this->getData(ProductResource::COLUMN_ONLINE_HANDLING_TIME);
+
+        return $value !== null ? (int)$value : null;
+    }
+
+    public function setOnlineHandlingTime(?int $handlingTime): self
+    {
+        $this->setData(ProductResource::COLUMN_ONLINE_HANDLING_TIME, $handlingTime);
+
+        return $this;
+    }
+
     public function getCurrencyCode(): string
     {
         return $this->getListing()->getSite()->getCurrencyCode();

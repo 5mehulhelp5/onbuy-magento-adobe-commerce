@@ -9,7 +9,6 @@ class SaveService
     private \M2E\OnBuy\Model\Policy\ShippingFactory $shippingFactory;
     private \M2E\OnBuy\Model\Policy\Shipping\Repository $shippingRepository;
     private \M2E\OnBuy\Model\Account\Repository $accountRepository;
-    private \M2E\OnBuy\Model\Site\Repository $siteRepository;
     private \M2E\OnBuy\Model\Policy\Shipping\SnapshotBuilderFactory $snapshotBuilderFactory;
     private \M2E\OnBuy\Model\Policy\Shipping\DiffFactory $diffFactory;
     private \M2E\OnBuy\Model\Policy\Shipping\AffectedListingsProductsFactory $affectedListingsProductsFactory;
@@ -17,7 +16,6 @@ class SaveService
 
     public function __construct(
         \M2E\OnBuy\Model\Account\Repository $accountRepository,
-        \M2E\OnBuy\Model\Site\Repository $siteRepository,
         \M2E\OnBuy\Model\Policy\ShippingFactory $shippingFactory,
         \M2E\OnBuy\Model\Policy\Shipping\Repository $shippingRepository,
         \M2E\OnBuy\Model\Policy\Shipping\SnapshotBuilderFactory $snapshotBuilderFactory,
@@ -26,7 +24,6 @@ class SaveService
         \M2E\OnBuy\Model\Policy\Shipping\ChangeProcessorFactory $changeProcessorFactory
     ) {
         $this->accountRepository = $accountRepository;
-        $this->siteRepository = $siteRepository;
         $this->shippingFactory = $shippingFactory;
         $this->shippingRepository = $shippingRepository;
         $this->snapshotBuilderFactory = $snapshotBuilderFactory;
@@ -78,7 +75,10 @@ class SaveService
             $account,
             (int)$data['site_id'],
             $data['title'],
-            (int)$data['delivery_template_id']
+            (int)$data['delivery_template_id'],
+            (int)$data['handling_time_mode'],
+            (int)$data['handling_time'],
+            (string)$data['handling_time_attribute']
         );
         $this->shippingRepository->create($shipping);
 
@@ -90,7 +90,10 @@ class SaveService
         $shipping = $this->shippingRepository->get((int)$data['id']);
 
         $shipping->setTitle($data['title'])
-                   ->setDeliveryTemplateId((int)$data['delivery_template_id']);
+                 ->setDeliveryTemplateId((int)$data['delivery_template_id'])
+                 ->setHandlingTimeMode((int)$data['handling_time_mode'])
+                 ->setHandlingTime((int)$data['handling_time'])
+                 ->setHandlingTimeAttribute((string)$data['handling_time_attribute']);
 
         $this->shippingRepository->save($shipping);
 
