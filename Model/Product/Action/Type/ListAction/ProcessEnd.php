@@ -14,6 +14,12 @@ class ProcessEnd extends \M2E\OnBuy\Model\Product\Action\Async\AbstractProcessEn
         $this->responseFactory = $responseFactory;
     }
 
+    protected function doExpire(): void
+    {
+        $responseObj = $this->createResponse([]);
+        $responseObj->processExpire();
+    }
+
     protected function processComplete(array $resultData, array $messages): void
     {
         if (empty($resultData)) {
@@ -25,18 +31,23 @@ class ProcessEnd extends \M2E\OnBuy\Model\Product\Action\Async\AbstractProcessEn
 
     private function processSuccess(array $data): void
     {
-        /** @var Response $responseObj */
-        $responseObj = $this->responseFactory->create(
+        $responseObj = $this->createResponse($data);
+
+        $responseObj->process();
+        $responseObj->generateResultMessage();
+    }
+
+    private function createResponse(array $responseData): Response
+    {
+        /** @var Response */
+        return $this->responseFactory->create(
             $this->getListingProduct(),
             $this->getListingProduct()->getActionConfigurator(),
             $this->getLogBuffer(),
             $this->getParams(),
             $this->getStatusChanger(),
             $this->getRequestMetadata(),
-            $data
+            $responseData
         );
-
-        $responseObj->process();
-        $responseObj->generateResultMessage();
     }
 }

@@ -28,13 +28,15 @@ class Product extends \M2E\OnBuy\Model\ResourceModel\ActiveRecord\AbstractModel
     public const COLUMN_OPC = 'opc';
     public const COLUMN_PRODUCT_ENCODED_ID = 'product_encoded_id';
     public const COLUMN_IDENTIFIERS = 'identifiers';
-
     public const COLUMN_ONLINE_QTY = 'online_qty';
     public const COLUMN_ONLINE_PRICE = 'online_price';
     public const COLUMN_TEMPLATE_CATEGORY_ID  = 'template_category_id';
-
     public const COLUMN_LAST_BLOCKING_ERROR_DATE = 'last_blocking_error_date';
+    public const COLUMN_LIST_IN_PROGRESS_ON_CHANNEL = 'list_in_progress_on_channel';
+    public const COLUMN_LIST_IN_PROGRESS_ON_CHANNEL_START_DATE = 'list_in_progress_on_channel_start_date';
     public const COLUMN_ADDITIONAL_DATA = 'additional_data';
+    public const COLUMN_IS_VALID_CATEGORY_ATTRIBUTES = 'is_valid_category_attributes';
+    public const COLUMN_CATEGORY_ATTRIBUTES_ERRORS = 'category_attributes_errors';
     public const COLUMN_UPDATE_DATE = 'update_date';
     public const COLUMN_CREATE_DATE = 'create_date';
 

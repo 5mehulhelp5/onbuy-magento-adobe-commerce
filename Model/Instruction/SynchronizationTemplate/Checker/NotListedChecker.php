@@ -34,6 +34,14 @@ class NotListedChecker extends \M2E\OnBuy\Model\Instruction\SynchronizationTempl
             return false;
         }
 
+        if ($listingProduct->isProductMarketAsListingOnChannel()) {
+            return false;
+        }
+
+        if ($listingProduct->isInvalidCategoryAttributes()) {
+            return false;
+        }
+
         return true;
     }
 

@@ -45,8 +45,6 @@ class UpdateFromChannel
         $this->processExist($channelProductCollection);
         $unmanagedItems = $this->processNew($channelProductCollection);
 
-        // remove not exist
-
         $this->autoMapping($unmanagedItems);
 
         return $existProductCollection;
@@ -60,20 +58,20 @@ class UpdateFromChannel
             return $existInProductCollection;
         }
 
-        $existed = $this->listingProductRepository->findBySkusAccountSite(
+        $existedSkus = $this->listingProductRepository->findExistedSkusForAnyProductStatusBySkus(
             $channelProductCollection->getProductsSku(),
             $this->account->getId(),
             $this->site->getId(),
         );
 
-        foreach ($existed as $product) {
-            if (!$channelProductCollection->has($product->getOnlineSku())) { // fix for duplicate products
+        foreach ($existedSkus as $existedSku) {
+            if (!$channelProductCollection->has($existedSku)) { // fix for duplicate products
                 continue;
             }
 
-            $existInProductCollection->add($channelProductCollection->get($product->getOnlineSku()));
+            $existInProductCollection->add($channelProductCollection->get($existedSku));
 
-            $channelProductCollection->remove($product->getOnlineSku());
+            $channelProductCollection->remove($existedSku);
         }
 
         return $existInProductCollection;

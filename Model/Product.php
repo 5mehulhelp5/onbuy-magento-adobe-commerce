@@ -48,6 +48,7 @@ class Product extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
     private \M2E\OnBuy\Model\Product\DataProviderFactory $dataProviderFactory;
     private \M2E\OnBuy\Model\Product\Description\RendererFactory $descriptionRendererFactory;
     private \M2E\OnBuy\Model\Category\Dictionary\Repository $categoryDictionaryRepository;
+    private ?string $runtimeMagentoSku = null;
 
     public function __construct(
         \M2E\OnBuy\Model\Listing\Repository $listingRepository,
@@ -186,6 +187,16 @@ class Product extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
         return $this;
     }
 
+    public function setMagentoSku(string $magentoSku): void
+    {
+        $this->runtimeMagentoSku = $magentoSku;
+    }
+
+    public function getMagentoSku(): ?string
+    {
+        return $this->runtimeMagentoSku;
+    }
+
     public function getOnlineGroupSku(): string
     {
         return (string)$this->getData(ProductResource::COLUMN_ONLINE_GROUP_SKU);
@@ -317,6 +328,9 @@ class Product extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
                  ProductResource::COLUMN_STATUS_CHANGE_DATE,
                  \M2E\Core\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s')
              );
+
+        $this->removeBlockingByError();
+        $this->removeMarkAsListingOnChannelStatus();
 
         return $this;
     }
@@ -630,6 +644,7 @@ class Product extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
     public function setTemplateCategoryId(int $id): self
     {
         $this->setData(ProductResource::COLUMN_TEMPLATE_CATEGORY_ID, $id);
+        $this->resetValidationData();
 
         return $this;
     }
@@ -729,5 +744,88 @@ class Product extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
         $this->setData(ProductResource::COLUMN_LAST_BLOCKING_ERROR_DATE, null);
 
         return $this;
+    }
+
+    // ----------------------------------------
+
+    public function isProductMarketAsListingOnChannel(): bool
+    {
+        if (!$this->isStatusNotListed()) {
+            return false;
+        }
+
+        $value = (bool)$this->getData(ProductResource::COLUMN_LIST_IN_PROGRESS_ON_CHANNEL);
+        if (!$value) {
+            return false;
+        }
+
+        $date = $this->getData(ProductResource::COLUMN_LIST_IN_PROGRESS_ON_CHANNEL_START_DATE);
+        if (empty($date)) {
+            return false;
+        }
+
+        $date = \M2E\Core\Helper\Date::createDateGmt($date);
+
+        return $date > \M2E\Core\Helper\Date::createCurrentGmt()->modify('-24 hour');
+    }
+
+    public function markProductAsListingOnChannel(): void
+    {
+        $this->setData(ProductResource::COLUMN_LIST_IN_PROGRESS_ON_CHANNEL, true);
+        $this->setData(
+            ProductResource::COLUMN_LIST_IN_PROGRESS_ON_CHANNEL_START_DATE,
+            \M2E\Core\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s')
+        );
+    }
+
+    private function removeMarkAsListingOnChannelStatus(): void
+    {
+        $this->setData(ProductResource::COLUMN_LIST_IN_PROGRESS_ON_CHANNEL, false);
+        $this->setData(ProductResource::COLUMN_LIST_IN_PROGRESS_ON_CHANNEL_START_DATE, null);
+    }
+
+    public function isInvalidCategoryAttributes(): bool
+    {
+        $value = $this->getData(ProductResource::COLUMN_IS_VALID_CATEGORY_ATTRIBUTES);
+
+        return $value === null ? false : !$value;
+    }
+
+    public function markCategoryAttributesAsValid(): void
+    {
+        $this->setCategoryAttributesValid(true);
+        $this->setCategoryAttributesErrors([]);
+    }
+
+    /**
+     * @param string[] $errors
+     *
+     * @return void
+     */
+    public function markCategoryAttributesAsInvalid(array $errors): void
+    {
+        $this->setCategoryAttributesValid(false);
+        $this->setCategoryAttributesErrors($errors);
+    }
+
+    private function setCategoryAttributesValid(bool $isValid): void
+    {
+        $this->setData(ProductResource::COLUMN_IS_VALID_CATEGORY_ATTRIBUTES, $isValid);
+    }
+
+    private function setCategoryAttributesErrors(array $errors): void
+    {
+        $value = null;
+        if (!empty($errors)) {
+            $value = json_encode($errors);
+        }
+
+        $this->setData(ProductResource::COLUMN_CATEGORY_ATTRIBUTES_ERRORS, $value);
+    }
+
+    private function resetValidationData(): void
+    {
+        $this->setData(ProductResource::COLUMN_IS_VALID_CATEGORY_ATTRIBUTES, null);
+        $this->setData(ProductResource::COLUMN_CATEGORY_ATTRIBUTES_ERRORS, null);
     }
 }

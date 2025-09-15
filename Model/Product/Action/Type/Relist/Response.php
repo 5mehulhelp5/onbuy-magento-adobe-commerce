@@ -6,24 +6,9 @@ namespace M2E\OnBuy\Model\Product\Action\Type\Relist;
 
 class Response extends \M2E\OnBuy\Model\Product\Action\Type\Revise\Response
 {
-    public function process(): void
+    public function processExpire(): void
     {
-        $response = $this->getResponseData();
-
-        if (!$this->isSuccess()) {
-            $this->addTags($response['messages']);
-
-            return;
-        }
-
-        parent::process();
-    }
-
-    private function isSuccess(): bool
-    {
-        $responseData = $this->getResponseData();
-
-        return $responseData['status'] === true;
+        // do nothing
     }
 
     protected function processSuccess(): void
@@ -39,7 +24,7 @@ class Response extends \M2E\OnBuy\Model\Product\Action\Type\Revise\Response
      */
     public function generateResultMessage(): void
     {
-        if (!$this->isSuccess()) {
+        if (!$this->isProcessSuccess()) {
             $responseData = $this->getResponseData();
             if (empty($responseData['messages'])) {
                 $this->getLogBuffer()->addFail('Product failed to be relisted.');
@@ -47,11 +32,16 @@ class Response extends \M2E\OnBuy\Model\Product\Action\Type\Revise\Response
                 return;
             }
 
+            $firstMessage = reset($responseData['messages']);
+
             $resultMessage = sprintf(
                 'Product failed to be relisted. Reason: %s',
-                $responseData['messages'][0]['text']
+                $firstMessage['text']
             );
+
             $this->getLogBuffer()->addFail($resultMessage);
+
+            return;
         }
 
         $domainListingProduct = $this->getProduct();

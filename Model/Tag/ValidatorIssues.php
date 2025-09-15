@@ -22,6 +22,7 @@ class ValidatorIssues
     public const ERROR_DUPLICATE_SKU_UNMANAGED = '0012-m2e';
     public const ERROR_DUPLICATE_SKU_LISTING = '0013-m2e';
     public const ERROR_INVALID_PRODUCT_NAME_LENGTH = '0014-m2e';
+    public const ERROR_CATEGORY_ATTRIBUTE_MISSING = '0015-m2e';
 
     public function mapByCode(string $code): ?\M2E\OnBuy\Model\Product\Action\Validator\ValidatorMessage
     {
@@ -40,6 +41,7 @@ class ValidatorIssues
             self::ERROR_DUPLICATE_SKU_UNMANAGED => (string)__('Product with the same SKU already exists in Unmanaged Items.'),
             self::ERROR_DUPLICATE_SKU_LISTING => (string)__('Product with the same SKU already exists in another Listing.'),
             self::ERROR_INVALID_PRODUCT_NAME_LENGTH => (string)__('The product name must contain between 1 and 150 characters.'),
+            self::ERROR_CATEGORY_ATTRIBUTE_MISSING => (string)__('Unable to List Product Due to missing Item Attribute(s)'),
         ];
 
         if (!isset($map[$code])) {

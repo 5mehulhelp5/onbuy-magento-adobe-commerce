@@ -15,6 +15,7 @@ class StepDeclarationCollectionFactory
     public const STEP_POLICY_SETTINGS = 'policy-settings';
     public const STEP_SELECT_CATEGORY_MODE = 'category-mode';
     public const STEP_SELECT_CATEGORY = 'select-category';
+    public const STEP_CATEGORY_VALIDATION = 'category-validation';
     public const STEP_REVIEW = 'review';
 
     private static array $steps = [
@@ -53,6 +54,11 @@ class StepDeclarationCollectionFactory
                 'nick' => self::STEP_SELECT_CATEGORY,
                 'route' => '*/listing_wizard_category/view',
                 'back_handler' => null,
+            ],
+            [
+                'nick' => self::STEP_CATEGORY_VALIDATION,
+                'route' => '*/listing_wizard_categoryValidation/view',
+                'back_handler' => \M2E\OnBuy\Model\Listing\Wizard\Step\BackHandler\CategoryValidation::class,
             ],
             [
                 'nick' => self::STEP_REVIEW,

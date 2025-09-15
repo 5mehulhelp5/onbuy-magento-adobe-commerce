@@ -57,11 +57,31 @@ class ResultHandler implements \M2E\OnBuy\Model\Processing\SingleResultHandlerIn
             return;
         }
 
+        $endProcessor = $this->createEndProcessor($listingProduct);
+
+        $endProcessor->process($resultData, $messages);
+    }
+
+    public function processExpire(): void
+    {
+        $listingProduct = $this->listingProductRepository->find($this->listingProductId);
+        if ($listingProduct === null) {
+            return;
+        }
+
+        $endProcessor = $this->createEndProcessor($listingProduct);
+
+        $endProcessor->processExpire();
+    }
+
+    private function createEndProcessor(
+        \M2E\OnBuy\Model\Product $listingProduct
+    ): \M2E\OnBuy\Model\Product\Action\Async\AbstractProcessEnd {
         $configurator = $this->configuratorFactory->create();
         $configurator->setUnserializedData($this->configuratorData);
         $listingProduct->setActionConfigurator($configurator);
 
-        $endProcessor = $this->processorAsyncFactory->createProcessEnd(
+        return $this->processorAsyncFactory->createProcessEnd(
             $this->actionNick,
             $listingProduct,
             $this->initiator,
@@ -72,13 +92,6 @@ class ResultHandler implements \M2E\OnBuy\Model\Processing\SingleResultHandlerIn
             $this->statusChanger,
             $this->warningMessages
         );
-
-        $endProcessor->process($resultData, $messages);
-    }
-
-    public function processExpire(): void
-    {
-        // do nothing
     }
 
     public function clearLock(\M2E\OnBuy\Model\Processing\LockManager $lockManager): void

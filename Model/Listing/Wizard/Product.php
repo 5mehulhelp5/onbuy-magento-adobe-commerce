@@ -201,4 +201,56 @@ class Product extends \M2E\OnBuy\Model\ActiveRecord\AbstractModel
 
         return $instance;
     }
+
+    public function markCategoryAttributesAsValid(): void
+    {
+        $this->setCategoryAttributesValid(true);
+        $this->setCategoryAttributesErrors([]);
+    }
+
+    /**
+     * @param string[] $errors
+     *
+     * @return void
+     */
+    public function markCategoryAttributesAsInvalid(array $errors): void
+    {
+        $this->setCategoryAttributesValid(false);
+        $this->setCategoryAttributesErrors($errors);
+    }
+
+    public function isInvalidCategoryAttributes(): bool
+    {
+        $value = $this->getData(WizardProductResource::COLUMN_IS_VALID_CATEGORY_ATTRIBUTES);
+
+        return $value === null ? false : !$value;
+    }
+
+    private function setCategoryAttributesValid(bool $isValid): void
+    {
+        $this->setData(WizardProductResource::COLUMN_IS_VALID_CATEGORY_ATTRIBUTES, $isValid);
+    }
+
+    private function setCategoryAttributesErrors(array $errors): void
+    {
+        $value = null;
+        if (!empty($errors)) {
+            $value = json_encode($errors);
+        }
+
+        $this->setData(WizardProductResource::COLUMN_CATEGORY_ATTRIBUTES_ERRORS, $value);
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getCategoryAttributesErrors(): array
+    {
+        $value = $this->getData(WizardProductResource::COLUMN_CATEGORY_ATTRIBUTES_ERRORS);
+        if (empty($value)) {
+            return [];
+        }
+
+        return (array)json_decode($value, true);
+    }
 }

@@ -51,6 +51,18 @@ abstract class AbstractProcessEnd
         }
     }
 
+    public function processExpire(): void
+    {
+        try {
+            $this->doExpire();
+        } finally {
+            $this->flushActionLogs();
+            $this->lockManager->unlock($this->listingProduct);
+        }
+    }
+
+    abstract protected function doExpire(): void;
+
     abstract protected function processComplete(array $resultData, array $messages): void;
 
     protected function getListingProduct(): \M2E\OnBuy\Model\Product

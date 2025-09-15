@@ -9,13 +9,10 @@ class View extends \M2E\OnBuy\Controller\Adminhtml\AbstractCategory
 
     public function __construct(
         \M2E\OnBuy\Block\Adminhtml\Template\Category\ViewFactory $viewFactory,
-        \M2E\OnBuy\Model\Category\Dictionary\Repository $dictionaryRepository,
-        \M2E\OnBuy\Model\Category\Dictionary\Manager $manager,
-        \M2E\OnBuy\Model\Category\Dictionary\CreateService $createService
+        \M2E\OnBuy\Model\Category\Dictionary\Repository $dictionaryRepository
     ) {
         parent::__construct();
-        //$t = $manager->getOrCreateDictionary('EU', 2435);
-        //$r = $createService->create('EU', 2435);
+
         $this->viewFactory = $viewFactory;
         $this->dictionaryRepository = $dictionaryRepository;
     }
@@ -35,6 +32,12 @@ class View extends \M2E\OnBuy\Controller\Adminhtml\AbstractCategory
         if ($dictionary === null) {
             throw new \M2E\OnBuy\Model\Exception\Logic('Category not found');
         }
+
+        $this->addContent(
+            $this->getLayout()->createBlock(
+                \M2E\OnBuy\Block\Adminhtml\Category\Attributes\Validation\Popup::class
+            ),
+        );
 
         $block = $this->viewFactory->create($this->getLayout(), $dictionary);
         $this->addContent($block);

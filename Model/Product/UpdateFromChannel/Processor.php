@@ -87,7 +87,16 @@ class Processor
             );
         }
 
+        $isOldStatusNotListed = $this->product->isStatusNotListed();
+
         $this->addLog($this->processNewStatus($calculatedStatus));
+
+        if (
+            $isOldStatusNotListed
+            && !$this->product->isStatusNotListed()
+        ) {
+            $this->processListedOnChannelIssue();
+        }
 
         return true;
     }
@@ -110,6 +119,19 @@ class Processor
         }
 
         return $calculatedStatus->getMessageAboutChange();
+    }
+
+    private function processListedOnChannelIssue(): void
+    {
+        $this->product
+            ->setOpc($this->channelProduct->getOpc())
+            ->setChannelProductId($this->channelProduct->getChannelProductId())
+            ->setOnlineQty($this->channelProduct->getQty())
+            ->setOnlinePrice($this->channelProduct->getPrice())
+            ->setOnlineSku($this->channelProduct->getSku())
+            ->setOnlineGroupSku($this->channelProduct->getGroupSku())
+            ->setProductLinkOnChannel($this->channelProduct->getProductUrl())
+            ->setOnlineDeliveryTemplateId($this->channelProduct->getDeliveryTemplateId());
     }
 
     # endregion

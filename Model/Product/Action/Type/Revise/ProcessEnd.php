@@ -14,6 +14,11 @@ class ProcessEnd extends \M2E\OnBuy\Model\Product\Action\Async\AbstractProcessEn
         $this->responseFactory = $responseFactory;
     }
 
+    protected function doExpire(): void
+    {
+        // do nothing
+    }
+
     protected function processComplete(array $resultData, array $messages): void
     {
         if (empty($resultData)) {

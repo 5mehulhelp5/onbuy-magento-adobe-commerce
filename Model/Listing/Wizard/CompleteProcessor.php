@@ -11,19 +11,22 @@ class CompleteProcessor
     private \M2E\OnBuy\Model\UnmanagedProduct\DeleteService $unmanagedProductDeleteService;
     private \M2E\OnBuy\Model\Listing\Wizard\Repository $wizardRepository;
     private \M2E\OnBuy\Model\Magento\Product\CacheFactory $magentoProductFactory;
+    private \M2E\OnBuy\Model\Product\Category\Attribute\ValidateManager $productAttributeValidateManager;
 
     public function __construct(
         \M2E\OnBuy\Model\Listing\AddProductsService $addProductsService,
         \M2E\OnBuy\Model\UnmanagedProduct\Repository $listingOtherRepository,
         \M2E\OnBuy\Model\UnmanagedProduct\DeleteService $unmanagedProductDeleteService,
         \M2E\OnBuy\Model\Listing\Wizard\Repository $wizardRepository,
-        \M2E\OnBuy\Model\Magento\Product\CacheFactory $magentoProductFactory
+        \M2E\OnBuy\Model\Magento\Product\CacheFactory $magentoProductFactory,
+        \M2E\OnBuy\Model\Product\Category\Attribute\ValidateManager $productAttributeValidateManager
     ) {
         $this->addProductsService = $addProductsService;
         $this->listingOtherRepository = $listingOtherRepository;
         $this->unmanagedProductDeleteService = $unmanagedProductDeleteService;
         $this->wizardRepository = $wizardRepository;
         $this->magentoProductFactory = $magentoProductFactory;
+        $this->productAttributeValidateManager = $productAttributeValidateManager;
     }
 
     public function process(Manager $wizardManager): array
@@ -84,6 +87,15 @@ class CompleteProcessor
 
             if ($listingProduct === null) {
                 continue;
+            }
+
+            if ($wizardProduct->isInvalidCategoryAttributes()) {
+                $this->productAttributeValidateManager->markProductAsNotValid(
+                    $listingProduct,
+                    $wizardProduct->getCategoryAttributesErrors()
+                );
+            } else {
+                $this->productAttributeValidateManager->markProductAsValid($listingProduct);
             }
 
             $listingProducts[] = $listingProduct;

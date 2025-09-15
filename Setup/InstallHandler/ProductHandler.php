@@ -193,7 +193,31 @@ class ProductHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
                 ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
+                ProductResource::COLUMN_IS_VALID_CATEGORY_ATTRIBUTES,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => true, 'default' => null],
+            )
+            ->addColumn(
+                ProductResource::COLUMN_CATEGORY_ATTRIBUTES_ERRORS,
+                Table::TYPE_TEXT,
+                \M2E\Core\Model\ResourceModel\Setup::LONG_COLUMN_SIZE,
+                ['nullable' => true, 'default' => null]
+            )
+            ->addColumn(
                 ProductResource::COLUMN_LAST_BLOCKING_ERROR_DATE,
+                Table::TYPE_DATETIME,
+                null,
+                ['nullable' => true, 'default' => null]
+            )
+            ->addColumn(
+                ProductResource::COLUMN_LIST_IN_PROGRESS_ON_CHANNEL,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                ProductResource::COLUMN_LIST_IN_PROGRESS_ON_CHANNEL_START_DATE,
                 Table::TYPE_DATETIME,
                 null,
                 ['nullable' => true, 'default' => null]

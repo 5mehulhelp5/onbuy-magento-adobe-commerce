@@ -429,4 +429,24 @@ class Manager
         $this->wizard->setProductCountTotal($count);
         $this->repository->save($this->wizard);
     }
+
+    /**
+     * @param int $productLimit
+     *
+     * @return \M2E\OnBuy\Model\Listing\Wizard\Product[]
+     */
+    public function findProductsForValidateCategoryAttributes(int $productLimit): array
+    {
+        return $this->repository->findProductsForValidateCategoryAttributes($this->wizard, $productLimit);
+    }
+
+    public function resetCategoryValidationData(): void
+    {
+        $this->repository->resetCategoryAttributesValidationData($this->wizard);
+    }
+
+    public function getProductsCount(): int
+    {
+        return $this->repository->getProductCount($this->wizard);
+    }
 }

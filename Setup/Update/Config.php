@@ -28,6 +28,10 @@ class Config implements \M2E\Core\Model\Setup\Upgrade\Entity\ConfigInterface
             'y25_m07' => [
                 \M2E\OnBuy\Setup\Update\y25_m07\AddHandlingTime::class,
             ],
+            'y25_m09' => [
+                \M2E\OnBuy\Setup\Update\y25_m09\AddListingOnChannelToProduct::class,
+                \M2E\OnBuy\Setup\Update\y25_m09\AddValidationAttributesColumns::class,
+            ]
         ];
     }
 }

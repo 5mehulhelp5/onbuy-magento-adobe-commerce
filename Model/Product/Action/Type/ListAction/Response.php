@@ -32,6 +32,21 @@ class Response extends \M2E\OnBuy\Model\Product\Action\Type\AbstractResponse
         $this->processSuccess();
     }
 
+    public function processExpire(): void
+    {
+        $this->getLogBuffer()
+             ->addNotice(
+                 (string)__(
+                     'OnBuy is completing the product listing. Product status will update once processing is finished.'
+                 )
+             );
+
+        $this->getProduct()
+             ->markProductAsListingOnChannel();
+
+        $this->productRepository->save($this->getProduct());
+    }
+
     protected function processSuccess(): void
     {
         $requestMetadata = $this->getRequestMetaData();
@@ -41,13 +56,11 @@ class Response extends \M2E\OnBuy\Model\Product\Action\Type\AbstractResponse
 
         $product
             ->setOpc($data['opc'])
-            ->setChannelProductId((int)$data['product_listing_id'])
             ->setOnlineQty($requestMetadata['qty'])
             ->setOnlinePrice($requestMetadata['price'])
             ->setOnlineSku($requestMetadata['sku'])
             ->setOnlineGroupSku($requestMetadata['sku'])
-            ->setStatus(\M2E\OnBuy\Model\Product::STATUS_LISTED, $this->getStatusChanger())
-            ->removeBlockingByError();
+            ->setStatusListed((int)$data['product_listing_id'], $this->getStatusChanger());
 
         if (isset($data['product_url'])) {
             $product->setProductLinkOnChannel($data['product_url']);

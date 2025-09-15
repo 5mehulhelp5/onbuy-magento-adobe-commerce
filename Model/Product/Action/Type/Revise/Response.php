@@ -27,11 +27,25 @@ class Response extends \M2E\OnBuy\Model\Product\Action\Type\AbstractResponse
     public function process(): void
     {
         $responseData = $this->getResponseData();
-        if (!empty($responseData['messages'])) {
+        if (!$this->isProcessSuccess()) {
             $this->addTags($responseData['messages']);
+
+            return;
         }
 
         $this->processSuccess();
+    }
+
+    protected function isProcessSuccess(): bool
+    {
+        $response = $this->getResponseData();
+
+        return $response['status'];
+    }
+
+    public function processExpire(): void
+    {
+        // do nothing
     }
 
     protected function processSuccess(): void
@@ -43,16 +57,16 @@ class Response extends \M2E\OnBuy\Model\Product\Action\Type\AbstractResponse
 
         $productResponseData = $responseData['data'];
 
+        $isPriceProcessed = isset($productResponseData['price']);
+        $priceUpdateStatus = $productResponseData['price'] ?? false;
+
+        $isQtyProcessed = isset($productResponseData['qty']);
+        $qtyUpdateStatus = $productResponseData['qty'] ?? false;
+
         $logger = $this->loggerFactory->create();
         $logger->saveProductDataBeforeUpdate($product);
 
-        if (
-            $this->isTriedUpdatePrice(
-                isset($productResponseData['price']),
-                isset($requestMetadata['price'])
-            )
-        ) {
-            $priceUpdateStatus = $productResponseData['price'];
+        if ($this->isTriedUpdatePrice($isPriceProcessed, isset($requestMetadata['price']))) {
             $requestMetadataPrice = $requestMetadata['price'];
             if (!$priceUpdateStatus) {
                 $this->getLogBuffer()->addFail('Price failed to be revised.');
@@ -61,13 +75,7 @@ class Response extends \M2E\OnBuy\Model\Product\Action\Type\AbstractResponse
             }
         }
 
-        if (
-            $this->isTriedUpdateQty(
-                isset($productResponseData['qty']),
-                isset($requestMetadata['qty'])
-            )
-        ) {
-            $qtyUpdateStatus = $productResponseData['qty'];
+        if ($this->isTriedUpdateQty($isQtyProcessed, isset($requestMetadata['qty']))) {
             $requestMetadataQty = $requestMetadata['qty'];
             if (!$qtyUpdateStatus) {
                 $this->getLogBuffer()->addFail('Qty failed to be revised.');
@@ -77,7 +85,7 @@ class Response extends \M2E\OnBuy\Model\Product\Action\Type\AbstractResponse
         }
 
         if (isset($requestMetadata['delivery_template_id'])) {
-            $shippingUpdateStatus = ($productResponseData['qty'] || $productResponseData['price']);
+            $shippingUpdateStatus = $priceUpdateStatus || $qtyUpdateStatus;
             $requestMetadataShipping = (int)$requestMetadata['delivery_template_id'];
             if (!$shippingUpdateStatus) {
                 $this->getLogBuffer()->addFail('Shipping failed to be revised.');
@@ -87,7 +95,7 @@ class Response extends \M2E\OnBuy\Model\Product\Action\Type\AbstractResponse
         }
 
         if (isset($requestMetadata['handling_time'])) {
-            $shippingUpdateStatus = ($productResponseData['qty'] || $productResponseData['price']);
+            $shippingUpdateStatus = $priceUpdateStatus || $qtyUpdateStatus;
             $requestMetadataHandlingTime = (int)$requestMetadata['handling_time'];
             if (!$shippingUpdateStatus) {
                 $this->getLogBuffer()->addFail('Handling Time failed to be revised.');

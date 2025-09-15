@@ -14,17 +14,20 @@ class UpdateFromChannel
     private int $logActionId;
     /** @var \M2E\OnBuy\Model\Product\UpdateFromChannel\ProcessorFactory */
     private UpdateFromChannel\ProcessorFactory $changesProcessorFactory;
+    private LockManager $lockManager;
 
     public function __construct(
         Repository $repository,
         \M2E\OnBuy\Model\InstructionService $instructionService,
         \M2E\OnBuy\Model\Listing\LogService $logService,
-        \M2E\OnBuy\Model\Product\UpdateFromChannel\ProcessorFactory $changesProcessorFactory
+        \M2E\OnBuy\Model\Product\UpdateFromChannel\ProcessorFactory $changesProcessorFactory,
+        \M2E\OnBuy\Model\Product\LockManager $lockManager
     ) {
         $this->repository = $repository;
         $this->instructionService = $instructionService;
         $this->logService = $logService;
         $this->changesProcessorFactory = $changesProcessorFactory;
+        $this->lockManager = $lockManager;
     }
 
     public function process(
@@ -36,18 +39,30 @@ class UpdateFromChannel
             return;
         }
 
-        $existed = $this->repository->findBySkusAccountSite(
+        $existed = $this->repository->findByAnySkus(
             $channelProductCollection->getProductsSku(),
             $account->getId(),
             $site->getId()
         );
 
         foreach ($existed as $product) {
-            if (!$channelProductCollection->has($product->getOnlineSku())) { // fix for duplicate products
+            $existedProductSku = empty($product->getOnlineSku()) ? $product->getMagentoSku() : $product->getOnlineSku();
+            if (empty($existedProductSku)) {
                 continue;
             }
 
-            $channelProduct = $channelProductCollection->get($product->getOnlineSku());
+            if (!$channelProductCollection->has($existedProductSku)) { // fix for duplicate products
+                continue;
+            }
+
+            if (
+                $product->isStatusNotListed() // list channel issue
+                && $this->lockManager->isLocked($product)
+            ) {
+                continue;
+            }
+
+            $channelProduct = $channelProductCollection->get($existedProductSku);
 
             $changesProcessor = $this->changesProcessorFactory->create($product, $channelProduct);
 

@@ -6,7 +6,7 @@ namespace M2E\OnBuy\Model\Product;
 
 class LockManager
 {
-    private const LOCK_ITEM_MAX_ALLOWED_INACTIVE_TIME = 3600; // 1 hour
+    private const LOCK_ITEM_MAX_ALLOWED_INACTIVE_TIME = 3600 * 15; // 15 hour
 
     private LockFactory $lockFactory;
     private LockRepository $lockRepository;

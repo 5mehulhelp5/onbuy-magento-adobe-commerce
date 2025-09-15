@@ -22,6 +22,7 @@ class Repository
     /** @var \M2E\OnBuy\Model\ResourceModel\InventorySync\ReceivedProduct */
     private InventorySyncReceivedProductResource $inventorySyncReceivedProductResource;
     private \M2E\OnBuy\Model\Listing\Wizard\ProductCollectionFactory $wizardProductCollectionFactory;
+    private \M2E\Core\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory;
 
     public function __construct(
         \M2E\OnBuy\Model\ResourceModel\Listing $listingResource,
@@ -32,7 +33,8 @@ class Repository
         SiteResource $siteResource,
         \M2E\OnBuy\Model\Product\AffectedProduct\Finder $affectedProductFinder,
         \M2E\OnBuy\Helper\Module\Database\Structure $dbStructureHelper,
-        \M2E\OnBuy\Model\Listing\Wizard\ProductCollectionFactory $wizardProductCollectionFactory
+        \M2E\OnBuy\Model\Listing\Wizard\ProductCollectionFactory $wizardProductCollectionFactory,
+        \M2E\Core\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory
     ) {
         $this->productResource = $productResource;
         $this->productCollectionFactory = $productCollectionFactory;
@@ -43,6 +45,7 @@ class Repository
         $this->siteResource = $siteResource;
         $this->inventorySyncReceivedProductResource = $inventorySyncReceivedProductResource;
         $this->wizardProductCollectionFactory = $wizardProductCollectionFactory;
+        $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
     }
 
     public function create(\M2E\OnBuy\Model\Product $product): void
@@ -233,9 +236,103 @@ class Repository
         return $this->findBySkus($skus, $accountId, $siteId);
     }
 
-    public function findBySkusAccountListing(array $skus, int $accountId, int $listingId): array
-    {
-        return $this->findBySkus($skus, $accountId, null, $listingId);
+    /**
+     * @param string[] $skus
+     * @param int $accountId
+     * @param int $siteId
+     *
+     * @return string[]
+     */
+    public function findExistedSkusForAnyProductStatusBySkus(
+        array $skus,
+        int $accountId,
+        int $siteId
+    ): array {
+        return array_values($this->findByMagentoOrProductSkuPairs($skus, $accountId, $siteId));
+    }
+
+    /**
+     * @param string[] $skus
+     * @param int $accountId
+     * @param int $siteId
+     *
+     * @return \M2E\OnBuy\Model\Product[]
+     */
+    public function findByAnySkus(
+        array $skus,
+        int $accountId,
+        int $siteId
+    ): array {
+        $pairProductIdSku = $this->findByMagentoOrProductSkuPairs($skus, $accountId, $siteId);
+
+        $productIds = array_keys($pairProductIdSku);
+
+        $result = [];
+        foreach ($this->findByIds($productIds) as $product) {
+            if (isset($pairProductIdSku[$product->getId()])) {
+                $product->setMagentoSku($pairProductIdSku[$product->getId()]);
+            }
+
+            $result[] = $product;
+        }
+
+        return $result;
+    }
+
+    private function findByMagentoOrProductSkuPairs(
+        array $skus,
+        int $accountId,
+        int $siteId
+    ): array {
+        if (empty($skus)) {
+            return [];
+        }
+
+        $collection = $this->magentoProductCollectionFactory->create();
+        $collection->setListingProductModeOn();
+
+        $collection->joinTable(
+            ['lp' => $this->productResource->getMainTable()],
+            sprintf('%s = entity_id', ProductResource::COLUMN_MAGENTO_PRODUCT_ID),
+            [
+                'product_id' => ProductResource::COLUMN_ID,
+                'listing_id' => ProductResource::COLUMN_LISTING_ID,
+                'online_sku' => ProductResource::COLUMN_ONLINE_SKU,
+            ],
+        );
+
+        $collection->joinTable(
+            ['l' => $this->listingResource->getMainTable()],
+            sprintf('%s = listing_id', ListingResource::COLUMN_ID),
+            [
+                'site_id' => ListingResource::COLUMN_SITE_ID,
+                'account_id' => ListingResource::COLUMN_ACCOUNT_ID,
+            ]
+        );
+
+        $collection->addFieldToFilter(
+            [
+                ['attribute' => 'sku', 'in' => $skus],
+                ['attribute' => 'online_sku', 'in' => $skus],
+            ],
+        );
+
+        $collection->addFieldToFilter(
+            'account_id',
+            ['eq' => $accountId],
+        );
+
+        $collection->addFieldToFilter(
+            'site_id',
+            ['eq' => $siteId],
+        );
+
+        $result = [];
+        foreach ($collection->getItems() as $item) {
+            $result[$item->getProductId()] = empty($item->getOnlineSku()) ? $item->getSku() : $item->getOnlineSku();
+        }
+
+        return $result;
     }
 
     /**
@@ -626,5 +723,54 @@ class Repository
         }
 
         return $result;
+    }
+
+    /**
+     * @param int $templateCategoryId
+     *
+     * @return int
+     */
+    public function getCountProductsByCategoryId(int $templateCategoryId): int
+    {
+        $collection = $this->productCollectionFactory->create();
+        $collection->addFieldToFilter(ProductResource::COLUMN_TEMPLATE_CATEGORY_ID, $templateCategoryId);
+
+        return (int)$collection->getSize();
+    }
+
+    /**
+     * @param int $templateCategoryId
+     * @param int|null $limit
+     *
+     * @return \M2E\OnBuy\Model\Product[]
+     */
+    public function findProductsForValidateCategoryAttributes(
+        int $templateCategoryId,
+        int $limit
+    ): array {
+        $collection = $this->productCollectionFactory->create();
+        $collection->addFieldToFilter(ProductResource::COLUMN_TEMPLATE_CATEGORY_ID, $templateCategoryId);
+        $collection->addFieldToFilter(ProductResource::COLUMN_IS_VALID_CATEGORY_ATTRIBUTES, ['null' => true]);
+        $collection->addFieldToFilter(ProductResource::COLUMN_STATUS, \M2E\OnBuy\Model\Product::STATUS_NOT_LISTED);
+
+        $collection->getSelect()->limit($limit);
+
+        return array_values($collection->getItems());
+    }
+
+    public function resetCategoryAttributesValidationData(int $categoryId): void
+    {
+        $this->productResource
+            ->getConnection()
+            ->update(
+                $this->productResource->getMainTable(),
+                [
+                    ProductResource::COLUMN_IS_VALID_CATEGORY_ATTRIBUTES => null,
+                    ProductResource::COLUMN_CATEGORY_ATTRIBUTES_ERRORS => null,
+                ],
+                [
+                    sprintf('%s = %d', ProductResource::COLUMN_TEMPLATE_CATEGORY_ID, $categoryId),
+                ],
+            );
     }
 }

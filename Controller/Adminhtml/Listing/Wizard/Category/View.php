@@ -40,7 +40,11 @@ class View extends \M2E\OnBuy\Controller\Adminhtml\Listing\Wizard\StepAbstract
         $manager = $this->getWizardManager();
         $selectedMode = $manager->getStepData(StepDeclarationCollectionFactory::STEP_SELECT_CATEGORY_MODE);
 
-        $mode = $selectedMode['mode'];
+        $mode = $selectedMode['mode'] ?? '';
+
+        if (empty($mode)) {
+            return $this->goToPreviousStep();
+        }
 
         if ($mode === CategorySelectMode::MODE_SAME) {
             return $this->stepSelectCategoryModeSame();
@@ -50,7 +54,7 @@ class View extends \M2E\OnBuy\Controller\Adminhtml\Listing\Wizard\StepAbstract
             return $this->stepSelectCategoryModeManually();
         }
 
-        throw new \LogicException('Category mode unknown.');
+        return $this->goToPreviousStep();
     }
 
     private function isNeedSkipStep(): bool
@@ -128,5 +132,12 @@ class View extends \M2E\OnBuy\Controller\Adminhtml\Listing\Wizard\StepAbstract
         }
 
         return $result;
+    }
+
+    private function goToPreviousStep(): \Magento\Framework\App\ResponseInterface
+    {
+        $this->getWizardManager()->backByStep();
+
+        return $this->redirectToIndex($this->getWizardManager()->getWizardId());
     }
 }

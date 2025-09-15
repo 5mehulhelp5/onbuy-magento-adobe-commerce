@@ -14,6 +14,8 @@ class Product extends \M2E\OnBuy\Model\ResourceModel\ActiveRecord\AbstractModel
     public const COLUMN_CHANNEL_PRODUCT_ID_SEARCH_STATUS = 'channel_product_id_search_status';
     public const COLUMN_CHANNEL_PRODUCT_DATA = 'channel_product_data';
     public const COLUMN_CATEGORY_ID = 'category_id';
+    public const COLUMN_IS_VALID_CATEGORY_ATTRIBUTES = 'is_valid_category_attributes';
+    public const COLUMN_CATEGORY_ATTRIBUTES_ERRORS = 'category_attributes_errors';
     public const COLUMN_IS_PROCESSED = 'is_processed';
 
     protected function _construct(): void

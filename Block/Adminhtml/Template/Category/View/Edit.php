@@ -32,45 +32,27 @@ class Edit extends \M2E\OnBuy\Block\Adminhtml\Magento\Form\AbstractContainer
             'OnBuyTemplateCategorySpecificsObj.resetSpecifics()'
         );
 
+        $editUrl = $this->_urlBuilder->getUrl(
+            '*/category/saveCategoryAttributes',
+            ['back' => 'edit']
+        );
+
+        $closeUrl = $this->_urlBuilder->getUrl(
+            '*/category/SaveCategoryAttributes',
+            ['back' => 'categories_grid']
+        );
+
         $saveButtons = [
             'id' => 'save_and_continue',
             'label' => __('Save And Continue Edit'),
             'class' => 'add',
             'button_class' => '',
-            'data_attribute' => [
-                'mage-init' => [
-                    'button' => [
-                        'event' => 'save',
-                        'target' => '#edit_form',
-                        'eventData' => [
-                            'action' => [
-                                'args' => [
-                                    'back' => 'edit',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
             'class_name' => \M2E\OnBuy\Block\Adminhtml\Magento\Button\SplitButton::class,
+            'onclick' => "OnBuyTemplateCategorySpecificsObj.saveAndEditClick('$editUrl')",
             'options' => [
                 'save' => [
                     'label' => __('Save And Back'),
-                    'data_attribute' => [
-                        'mage-init' => [
-                            'button' => [
-                                'event' => 'save',
-                                'target' => '#edit_form',
-                                'eventData' => [
-                                    'action' => [
-                                        'args' => [
-                                            'back' => 'categories_grid',
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
+                    'onclick' => "OnBuyTemplateCategorySpecificsObj.saveAndCloseClick('$closeUrl')",
                 ],
             ],
         ];

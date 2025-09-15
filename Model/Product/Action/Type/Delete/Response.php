@@ -29,6 +29,11 @@ class Response extends \M2E\OnBuy\Model\Product\Action\Type\AbstractResponse
         $this->processSuccess();
     }
 
+    public function processExpire(): void
+    {
+        // do nothing
+    }
+
     private function isSuccess(): bool
     {
         $responseData = $this->getResponseData();

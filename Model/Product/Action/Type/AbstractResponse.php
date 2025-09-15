@@ -25,6 +25,7 @@ abstract class AbstractResponse
     }
 
     abstract public function process(): void;
+    abstract public function processExpire(): void;
 
     abstract public function generateResultMessage(): void;
 

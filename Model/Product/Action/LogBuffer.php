@@ -24,6 +24,11 @@ class LogBuffer
         $this->logs[] = new LogRecord($message, \M2E\Core\Model\Response\Message::TYPE_ERROR);
     }
 
+    public function addNotice($message): void
+    {
+        $this->logs[] = new LogRecord($message, \M2E\Core\Model\Response\Message::TYPE_NOTICE);
+    }
+
     /**
      * @return \M2E\OnBuy\Model\Product\Action\LogRecord[]
      */

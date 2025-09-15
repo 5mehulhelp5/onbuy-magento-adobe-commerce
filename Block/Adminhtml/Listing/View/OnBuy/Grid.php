@@ -100,6 +100,7 @@ class Grid extends \M2E\OnBuy\Block\Adminhtml\Listing\View\AbstractGrid
                 'online_product_url' => ListingProductResource::COLUMN_ONLINE_PRODUCT_URL,
                 'listing_id' => ListingProductResource::COLUMN_LISTING_ID,
                 'is_product_creator' => ListingProductResource::COLUMN_IS_PRODUCT_CREATOR,
+                'is_valid_category_attributes' => ListingProductResource::COLUMN_IS_VALID_CATEGORY_ATTRIBUTES,
             ],
             sprintf(
                 '{{table}}.%s = %s',
